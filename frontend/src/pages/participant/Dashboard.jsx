@@ -85,7 +85,7 @@ const Dashboard = () => {
           {profile.status === 'active' && <p>Waiting for R1 Results...</p>}
           
           {profile.status === 'r1_qualified' && !profile.r2Completed && (
-            <button className="btn btn-primary" onClick={() => navigate('/test')}>Start R2</button>
+            <button className="btn btn-primary" onClick={() => navigate('/test-instructions')}>Start R2</button>
           )}
           
           {profile.status === 'r1_qualified' && profile.r2Completed && (

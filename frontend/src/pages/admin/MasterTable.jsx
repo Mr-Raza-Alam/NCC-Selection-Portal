@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import api from '../../utils/api';
 
 const MasterTable = () => {
@@ -54,7 +55,7 @@ const MasterTable = () => {
     if (!window.confirm("Are you sure you want to permanently delete all eliminated records?")) return;
     try {
       const res = await api.delete('/admin/students/eliminated');
-      alert(res.data.message);
+      toast.success(res.data.message);
       fetchData();
     } catch (err) {
       console.error(err);
@@ -118,7 +119,7 @@ const MasterTable = () => {
         <h2>Master Table (Merit List)</h2>
         <div style={{ display: 'flex', gap: '1rem' }}>
           {role === 'assistant' && canVerify && (
-            <button className="btn btn-primary" onClick={() => alert('Document Entry Finalized!')}>Entry Done</button>
+            <button className="btn btn-primary" onClick={() => toast.success('Document Entry Finalized!')}>Entry Done</button>
           )}
           {role === 'lead_admin' && (
             <button className="btn btn-danger" onClick={handleDeleteEliminated}>Delete Eliminated</button>

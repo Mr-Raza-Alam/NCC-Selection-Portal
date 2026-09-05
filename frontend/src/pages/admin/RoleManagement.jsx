@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import toast from 'react-hot-toast';
 
 const ALL_FEATURES = [
   'R1_SETUP', 'R1_SCORE', 
@@ -36,7 +37,7 @@ const RoleManagement = () => {
       await api.post('/admin/roles/update', { adminId, features: newFeatures });
       fetchAdmins(); // refresh
     } catch (err) {
-      alert('Failed to update features');
+      toast.error('Failed to update features');
     }
   };
 

@@ -4,6 +4,8 @@ import Register from './pages/participant/Register';
 import Login from './pages/participant/Login';
 import Dashboard from './pages/participant/Dashboard';
 import Test from './pages/participant/Test';
+import TestInstructions from './pages/participant/TestInstructions';
+import { Toaster } from 'react-hot-toast';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Round1Setup from './pages/admin/Round1Setup';
@@ -46,6 +48,7 @@ const AppContent = () => {
 
   return (
     <>
+      <Toaster position="top-right" toastOptions={{ style: { background: 'var(--surface-grey)', color: 'var(--text-primary)' } }} />
       {!isAdminRoute && <Navbar />}
       <div className={!isAdminRoute ? 'container' : ''}>
         <Routes>
@@ -55,6 +58,10 @@ const AppContent = () => {
           
           <Route path="/dashboard" element={
             <PrivateRoute role="participant"><Dashboard /></PrivateRoute>
+          } />
+
+          <Route path="/test-instructions" element={
+            <PrivateRoute role="participant"><TestInstructions /></PrivateRoute>
           } />
           
           <Route path="/test" element={

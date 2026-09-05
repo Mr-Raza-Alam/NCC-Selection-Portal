@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+import toast from 'react-hot-toast';
 
 const Round2Entry = () => {
   const navigate = useNavigate();
@@ -23,21 +24,21 @@ const Round2Entry = () => {
   const handleApplyCutoff = async () => {
     try {
       await api.post('/admin/r2/cutoff', { cutoff: Number(cutoff) });
-      alert('Cutoff applied. Non-qualifiers removed from active list.');
+      toast.success('Cutoff applied. Non-qualifiers removed from active list.');
       fetchData();
     } catch (err) {
-      alert('Error applying cutoff');
+      toast.error('Error applying cutoff');
     }
   };
 
   const handleDone = async () => {
     try {
       await api.post('/admin/r2/done');
-      alert('Round 2 Finalized');
+      toast.success('Round 2 Finalized');
       navigate('/admin/r2');
     } catch (err) {
       console.error(err);
-      alert('Error finalizing R2');
+      toast.error('Error finalizing R2');
     }
   };
 

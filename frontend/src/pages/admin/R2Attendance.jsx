@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import toast from 'react-hot-toast';
 
 const R2Attendance = () => {
   const [students, setStudents] = useState([]);
@@ -38,10 +39,10 @@ const R2Attendance = () => {
   const handleDone = async () => {
     try {
       await api.post('/admin/r2/start');
-      alert('Attendance saved. Round 2 is now ACTIVE!');
+      toast.success('Attendance saved. Round 2 is now ACTIVE!');
       window.location.href = '/admin/r2';
     } catch (err) {
-      alert('Error starting Round 2');
+      toast.error('Error starting Round 2');
     }
   };
 

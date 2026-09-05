@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+import toast from 'react-hot-toast';
 
 const Test = () => {
   const navigate = useNavigate();
@@ -12,6 +13,11 @@ const Test = () => {
   const timerRef = useRef(null);
 
   useEffect(() => {
+    if (!sessionStorage.getItem('agreedToInstructions')) {
+      navigate('/test-instructions');
+      return;
+    }
+
     const initTest = async () => {
       try {
         const { data: qData } = await api.get('/test/questions');
@@ -60,10 +66,10 @@ const Test = () => {
   const submitTest = async () => {
     try {
       await api.post('/test/submit', { answersMap: answers });
-      alert('Test submitted successfully!');
+      toast.success('Test submitted successfully!');
       navigate('/dashboard');
     } catch (err) {
-      alert('Error submitting test');
+      toast.error('Error submitting test');
     }
   };
 

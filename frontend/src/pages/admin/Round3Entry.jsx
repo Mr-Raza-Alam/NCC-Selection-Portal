@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+import toast from 'react-hot-toast';
 
 const Round3Entry = () => {
   const navigate = useNavigate();
@@ -34,11 +35,11 @@ const Round3Entry = () => {
   const handleDone = async () => {
     try {
       await api.post('/admin/r3/done');
-      alert('Round 3 Finalized');
+      toast.success('Round 3 Finalized');
       navigate('/admin/r3');
     } catch (err) {
       console.error(err);
-      alert('Error finalizing R3');
+      toast.error('Error finalizing R3');
     }
   };
 
