@@ -9,7 +9,7 @@ const generateUniqueCode = async () => {
   let code;
   let isUnique = false;
   while (!isUnique) {
-    code = Math.floor(Math.random() * 90 + 10); // 10 to 99
+    code = Math.floor(Math.random() * 401) + 100; // 100 to 500 (3-digit chest number)
     const existing = await Student.findOne({ code });
     if (!existing) isUnique = true;
   }
@@ -66,15 +66,15 @@ exports.registerParticipant = async (req, res) => {
 exports.loginParticipant = async (req, res) => {
   try {
     const { name, dob, password } = req.body;
-    
-    const startDate = new Date(dob);
-    startDate.setUTCHours(0,0,0,0);
-    const endDate = new Date(dob);
-    endDate.setUTCHours(23,59,59,999);
 
-    const student = await Student.findOne({ 
-      name, 
-      dob: { $gte: startDate, $lte: endDate } 
+    const startDate = new Date(dob);
+    startDate.setUTCHours(0, 0, 0, 0);
+    const endDate = new Date(dob);
+    endDate.setUTCHours(23, 59, 59, 999);
+
+    const student = await Student.findOne({
+      name,
+      dob: { $gte: startDate, $lte: endDate }
     });
 
     if (student && (await bcrypt.compare(password, student.password))) {
@@ -96,19 +96,19 @@ exports.loginParticipant = async (req, res) => {
 exports.loginAdmin = async (req, res) => {
   try {
     const { username, password } = req.body;
-    
+
     if (!username || !password) {
       return res.status(400).json({ message: 'Username and password are required' });
     }
-    
+
     // Trim username to handle mobile auto-spaces
     const trimmedUsername = username.trim();
-    
+
     const admin = await Admin.findOne({ username: trimmedUsername });
     if (admin && (await bcrypt.compare(password, admin.password))) {
       const token = jwt.sign(
-        { id: admin._id, role: admin.role, features: admin.features }, 
-        process.env.JWT_SECRET, 
+        { id: admin._id, role: admin.role, features: admin.features },
+        process.env.JWT_SECRET,
         { expiresIn: '30d' }
       );
       return res.json({ role: admin.role, features: admin.features, username: admin.username, token });

@@ -26,8 +26,8 @@ import Navbar from './components/Navbar';
 import AdminLayout from './components/AdminLayout';
 
 const PrivateRoute = ({ children, role }) => {
-  const token = sessionStorage.getItem('token');
-  const userRole = sessionStorage.getItem('role');
+  const token = localStorage.getItem('token');
+  const userRole = localStorage.getItem('role');
   
   if (!token) return <Navigate to={role === 'participant' ? '/login' : '/admin/login'} />;
   

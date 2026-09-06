@@ -12,10 +12,10 @@ const AdminLogin = () => {
     e.preventDefault();
     try {
       const { data } = await api.post('/auth/admin/login', formData);
-      sessionStorage.setItem('token', data.token);
-      sessionStorage.setItem('role', data.role);
-      sessionStorage.setItem('features', JSON.stringify(data.features || []));
-      sessionStorage.setItem('adminName', data.username || '');
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('role', data.role);
+      localStorage.setItem('features', JSON.stringify(data.features || []));
+      localStorage.setItem('adminName', data.username || '');
       navigate('/admin/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Admin login failed');

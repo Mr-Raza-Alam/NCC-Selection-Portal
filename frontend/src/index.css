@@ -15,6 +15,7 @@
   --warning-amber: #F57F17;
 
   --border-color: #E0E0E0;
+  --heading-color: var(--primary-navy);
 }
 
 * {
@@ -37,12 +38,13 @@ body.navy-theme {
   --text-primary: #e0e0e0;
   --text-secondary: #a0a0a0;
   --border-color: #1e336b;
+  --heading-color: #ffffff;
 }
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
-  color: var(--primary-navy);
+  color: var(--heading-color);
   letter-spacing: -0.02em;
 }
 

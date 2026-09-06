@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const token = sessionStorage.getItem('token');
-  const role = sessionStorage.getItem('role');
-  const name = sessionStorage.getItem('username') || sessionStorage.getItem('name');
-  const code = sessionStorage.getItem('code');
+  const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role');
+  const name = localStorage.getItem('username') || localStorage.getItem('name');
+  const code = localStorage.getItem('code');
 
   const handleLogout = () => {
-    sessionStorage.clear();
+    localStorage.clear();
     navigate(role === 'participant' ? '/login' : '/admin/login');
   };
 

@@ -5,15 +5,15 @@ import Navbar from './Navbar';
 const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const role = sessionStorage.getItem('role');
-  const features = JSON.parse(sessionStorage.getItem('features') || '[]');
-  const name = sessionStorage.getItem('adminName');
+  const role = localStorage.getItem('role');
+  const features = JSON.parse(localStorage.getItem('features') || '[]');
+  const name = localStorage.getItem('adminName');
   const [profileOpen, setProfileOpen] = useState(false);
 
   const hasFeature = (f) => features.includes(f);
 
   const handleLogout = () => {
-    sessionStorage.clear();
+    localStorage.clear();
     navigate('/admin/login');
   };
 

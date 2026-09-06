@@ -13,10 +13,10 @@ const Login = () => {
     e.preventDefault();
     try {
       const { data } = await api.post('/auth/login', formData);
-      sessionStorage.setItem('token', data.token);
-      sessionStorage.setItem('role', 'participant');
-      sessionStorage.setItem('name', data.name);
-      sessionStorage.setItem('code', data.code);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('role', 'participant');
+      localStorage.setItem('name', data.name);
+      localStorage.setItem('code', data.code);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
