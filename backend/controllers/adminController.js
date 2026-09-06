@@ -83,6 +83,13 @@ exports.enterR1Score = async (req, res) => {
     
     await r1Result.save();
     
+    const record = await MasterRecord.findOne({ studentId });
+    if (record) {
+      record.r1 = r1Result.totalScore;
+      record.total = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0) + (record.hs || 0) + (record.aCert || 0) + (record.other || 0);
+      await record.save();
+    }
+    
     res.json({ message: 'Score updated', totalScore: r1Result.totalScore });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -99,6 +106,13 @@ exports.finalizeR1 = async (req, res) => {
         { r1: r.totalScore }
       );
     }
+    
+    const masters = await MasterRecord.find();
+    for (let m of masters) {
+      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0) + (m.hs || 0) + (m.aCert || 0) + (m.other || 0);
+      await MasterRecord.updateOne({ _id: m._id }, { $set: { total } });
+    }
+    
     res.json({ message: 'R1 Finalized and synced to Master Table' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -132,12 +146,12 @@ exports.setR1Cutoff = async (req, res) => {
     );
     
     await Student.updateMany(
-      { _id: { $in: eliminatedIds }, status: 'active' },
+      { _id: { $nin: qualifiedIds }, status: 'active' },
       { $set: { status: 'eliminated' } }
     );
     
     await MasterRecord.updateMany(
-      { studentId: { $in: eliminatedIds } },
+      { studentId: { $nin: qualifiedIds } },
       { $set: { status: 'eliminated' } }
     );
     
@@ -206,6 +220,13 @@ exports.finalizeR2 = async (req, res) => {
         { r2: r.totalScore }
       );
     }
+    
+    const masters = await MasterRecord.find();
+    for (let m of masters) {
+      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0) + (m.hs || 0) + (m.aCert || 0) + (m.other || 0);
+      await MasterRecord.updateOne({ _id: m._id }, { $set: { total } });
+    }
+    
     res.json({ message: 'R2 Finalized and synced to Master Table' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -238,12 +259,12 @@ exports.setR2Cutoff = async (req, res) => {
     );
     
     await Student.updateMany(
-      { _id: { $in: eliminatedIds }, status: 'r1_qualified' },
+      { _id: { $nin: qualifiedIds }, status: 'r1_qualified' },
       { $set: { status: 'eliminated' } }
     );
     
     await MasterRecord.updateMany(
-      { studentId: { $in: eliminatedIds } },
+      { studentId: { $nin: qualifiedIds }, status: { $ne: 'eliminated' } },
       { $set: { status: 'eliminated' } }
     );
     
@@ -301,6 +322,16 @@ exports.enterR3Score = async (req, res) => {
       { $set: updateFields },
       { upsert: true, returnDocument: 'after' }
     );
+
+    if (r3Score !== undefined) {
+      const record = await MasterRecord.findOne({ studentId });
+      if (record) {
+        record.r3 = r3Score;
+        record.total = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0) + (record.hs || 0) + (record.aCert || 0) + (record.other || 0);
+        await record.save();
+      }
+    }
+
     res.json({ message: 'Interview score updated' });
   } catch (error) {
     res.status(500).json({ message: error.message });

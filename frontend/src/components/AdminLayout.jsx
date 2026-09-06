@@ -25,6 +25,8 @@ const AdminLayout = () => {
     { title: 'Records', isHeader: true },
     { name: 'Student Record', path: '/admin/students', feature: ['STUDENT_TABLE'] },
     { name: 'Master Table', path: '/admin/master', feature: ['MASTER_TABLE', 'R3_VERIFY'] },
+    { name: 'Test Management', path: '/admin/test-management', feature: ['TEST_MANAGEMENT'] },
+    { name: 'Settings', path: '/admin/settings', feature: ['SETTINGS'] },
     { title: 'System', isHeader: true, role: 'lead_admin' },
     { name: 'Role Management', path: '/admin/roles', role: 'lead_admin' }
   ];

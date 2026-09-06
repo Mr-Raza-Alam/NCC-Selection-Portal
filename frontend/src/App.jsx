@@ -19,6 +19,9 @@ import Round3Verify from './pages/admin/Round3Verify';
 import Round3Home from './pages/admin/Round3Home';
 import MasterTable from './pages/admin/MasterTable';
 import RoleManagement from './pages/admin/RoleManagement';
+import TestManagement from './pages/admin/TestManagement';
+import SettingsPage from './pages/admin/SettingsPage';
+import LandingPage from './pages/participant/LandingPage';
 import Navbar from './components/Navbar';
 import AdminLayout from './components/AdminLayout';
 
@@ -45,6 +48,7 @@ import StudentTable from './pages/admin/StudentTable';
 const AppContent = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isLandingPage = location.pathname === '/';
 
   return (
     <>
@@ -52,7 +56,7 @@ const AppContent = () => {
       {!isAdminRoute && <Navbar />}
       <div className={!isAdminRoute ? 'container' : ''}>
         <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           
@@ -85,6 +89,8 @@ const AppContent = () => {
             <Route path="r3/verify" element={<Round3Verify />} />
             <Route path="master" element={<MasterTable />} />
             <Route path="roles" element={<RoleManagement />} />
+            <Route path="test-management" element={<TestManagement />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Routes>
       </div>

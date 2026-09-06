@@ -1,0 +1,518 @@
+{
+  "title": "NCC Selection Process Written Test — Batch 2026-2027",
+  "total_questions": 40,
+  "total_marks": 40,
+  "instructions": [
+    "This is an online test. Ensure you have a stable internet connection before starting.",
+    "All questions are compulsory. Each question carries 1 mark. There is no negative marking.",
+    "Read each question carefully and select the most appropriate option (A, B, C, or D).",
+    "You can navigate between questions using the Next/Previous buttons.",
+    "Do NOT refresh the page or close the browser window during the test — your progress will be lost.",
+    "The test will auto-submit when the 30-minute timer ends. Click Submit only when you are done.",
+    "The timer is displayed at the top of your screen. Manage your time wisely."
+  ],
+  "sections": [
+    {
+      "name": "Section A: Current Affairs",
+      "question_count": 20,
+      "questions": "Q1-Q20"
+    },
+    {
+      "name": "Section B: NCC Foundation",
+      "question_count": 8,
+      "questions": "Q21-Q28"
+    },
+    {
+      "name": "Section C: General Aptitude & General Studies",
+      "question_count": 7,
+      "questions": "Q29-Q35"
+    },
+    {
+      "name": "Section D: Reasoning",
+      "question_count": 5,
+      "questions": "Q36-Q40"
+    }
+  ],
+  "questions": [
+    {
+      "question_number": 1,
+      "section": "Current Affairs",
+      "question": "With which country will the Indian Army commence the 15th edition of the joint military exercise 'Maitree'?",
+      "options": {
+        "A": "Thailand",
+        "B": "Indonesia",
+        "C": "Vietnam",
+        "D": "Myanmar"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "question_number": 2,
+      "section": "Current Affairs",
+      "question": "Where has the 'Onam Festival' recently commenced?",
+      "options": {
+        "A": "Karnataka",
+        "B": "Kerala",
+        "C": "Tamil Nadu",
+        "D": "Andhra Pradesh"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 3,
+      "section": "Current Affairs",
+      "question": "Who recently became the fourth all-rounder in the world to achieve the milestone of 350 wickets and 4,108 runs in Test cricket?",
+      "options": {
+        "A": "Ravichandran Ashwin",
+        "B": "Ravindra Jadeja",
+        "C": "Axar Patel",
+        "D": "Hardik Pandya"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 4,
+      "section": "Current Affairs",
+      "question": "The Thamirabarani River of which state recently received the status of a legal person?",
+      "options": {
+        "A": "Kerala",
+        "B": "Karnataka",
+        "C": "Tamil Nadu",
+        "D": "Andhra Pradesh"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 5,
+      "section": "Current Affairs",
+      "question": "Which country has recently conferred the honorary rank of Army General upon Indian Army Chief General Dhiraj Seth?",
+      "options": {
+        "A": "Bhutan",
+        "B": "Bangladesh",
+        "C": "Nepal",
+        "D": "Sri Lanka"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 6,
+      "section": "Current Affairs",
+      "question": "When is National Space Day observed in India?",
+      "options": {
+        "A": "15 August",
+        "B": "23 August",
+        "C": "12 November",
+        "D": "28 February"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 7,
+      "section": "Current Affairs",
+      "question": "Who is the current Chairman of ISRO?",
+      "options": {
+        "A": "Dr. S. Somanath",
+        "B": "Dr. K. Sivan",
+        "C": "Dr. V. Narayanan",
+        "D": "Dr. A.S. Kiran Kumar"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 8,
+      "section": "Current Affairs",
+      "question": "Which state recently rolled out the Ayushman Bharat scheme?",
+      "options": {
+        "A": "West Bengal",
+        "B": "Odisha",
+        "C": "Bihar",
+        "D": "Jharkhand"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "question_number": 9,
+      "section": "Current Affairs",
+      "question": "Which country did India defeat to win the men's team title at the Commonwealth Table Tennis Championships 2026?",
+      "options": {
+        "A": "England",
+        "B": "Singapore",
+        "C": "Malaysia",
+        "D": "Australia"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 10,
+      "section": "Current Affairs",
+      "question": "Who recently won the 135th Durand Cup title?",
+      "options": {
+        "A": "Mohun Bagan SG",
+        "B": "East Bengal FC",
+        "C": "Bengaluru FC",
+        "D": "Hyderabad FC"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 11,
+      "section": "Current Affairs",
+      "question": "Which anniversary of UPI was celebrated on 25 August 2026?",
+      "options": {
+        "A": "5th",
+        "B": "8th",
+        "C": "10th",
+        "D": "12th"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 12,
+      "section": "Current Affairs",
+      "question": "Who recently became the first Indian chess player to win the Grand Chess Tour in the USA?",
+      "options": {
+        "A": "D. Gukesh",
+        "B": "R. Praggnanandhaa",
+        "C": "Viswanathan Anand",
+        "D": "P. Harikrishna"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 13,
+      "section": "Current Affairs",
+      "question": "The King of which country, Harald V, recently passed away at the age of 89?",
+      "options": {
+        "A": "Sweden",
+        "B": "Denmark",
+        "C": "Norway",
+        "D": "Netherlands"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 14,
+      "section": "Current Affairs",
+      "question": "Where did the 'Suru Summer Festival' recently commence?",
+      "options": {
+        "A": "Sikkim",
+        "B": "Ladakh",
+        "C": "Himachal Pradesh",
+        "D": "Arunachal Pradesh"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 15,
+      "section": "Current Affairs",
+      "question": "Where was the 'Sungal Tunnel' recently inaugurated?",
+      "options": {
+        "A": "Himachal Pradesh",
+        "B": "Uttarakhand",
+        "C": "Jammu & Kashmir",
+        "D": "Sikkim"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 16,
+      "section": "Current Affairs",
+      "question": "Who recently won the title of Miss Universe India 2026?",
+      "options": {
+        "A": "Kaziah Liz Mejo",
+        "B": "Ritika Khatnani",
+        "C": "Sini Shetty",
+        "D": "Nandini Gupta"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "question_number": 17,
+      "section": "Current Affairs",
+      "question": "Usain Bolt's 100-meter sprint record was recently broken at the World Humanoid Robot Games. Where did this event take place?",
+      "options": {
+        "A": "Tokyo, Japan",
+        "B": "Beijing, China",
+        "C": "Seoul, South Korea",
+        "D": "Boston, USA"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 18,
+      "section": "Current Affairs",
+      "question": "The 26th Shanghai Cooperation Organisation (SCO) Summit was held in which city?",
+      "options": {
+        "A": "Tashkent, Uzbekistan",
+        "B": "Bishkek, Kyrgyzstan",
+        "C": "Astana, Kazakhstan",
+        "D": "Samarkand, Uzbekistan"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 19,
+      "section": "Current Affairs",
+      "question": "Where did DRDO recently conduct the first successful test of the indigenous military combat parachute system?",
+      "options": {
+        "A": "Ladakh",
+        "B": "Siachen",
+        "C": "Andaman & Nicobar",
+        "D": "Pokhran"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "question_number": 20,
+      "section": "Current Affairs",
+      "question": "Where did Chief Election Commissioner Gyanesh Kumar recently launch the 'Electoral Literacy Club 2.0'?",
+      "options": {
+        "A": "Jaipur",
+        "B": "Patna",
+        "C": "Lucknow",
+        "D": "Bhopal"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 21,
+      "section": "NCC Foundation",
+      "question": "What is the full form of NCC?",
+      "options": {
+        "A": "National Cadet Corps",
+        "B": "National Civil Corps",
+        "C": "National Country Cadets",
+        "D": "National Combined Corps"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "question_number": 22,
+      "section": "NCC Foundation",
+      "question": "What is the motto of NCC?",
+      "options": {
+        "A": "Duty and Honour",
+        "B": "Unity and Discipline",
+        "C": "Service before Self",
+        "D": "Courage and Unity"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 23,
+      "section": "NCC Foundation",
+      "question": "In which year was the NCC established?",
+      "options": {
+        "A": "1946",
+        "B": "1947",
+        "C": "1948",
+        "D": "1950"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 24,
+      "section": "NCC Foundation",
+      "question": "Under which Act was the NCC formally established?",
+      "options": {
+        "A": "NCC Act, 1948",
+        "B": "Defence Act, 1947",
+        "C": "National Defence Act, 1948",
+        "D": "Cadet Corps Act, 1947"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "question_number": 25,
+      "section": "NCC Foundation",
+      "question": "How many wings does the NCC have?",
+      "options": {
+        "A": "Two (Army and Navy)",
+        "B": "Three (Army, Navy, Air Force)",
+        "C": "Four (Army, Navy, Air, Coast Guard)",
+        "D": "One (Unified)"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 26,
+      "section": "NCC Foundation",
+      "question": "What are the colours of the NCC flag?",
+      "options": {
+        "A": "Red, White and Blue",
+        "B": "Saffron, White and Green",
+        "C": "Red, Navy Blue and Sky Blue",
+        "D": "Saffron, White and Navy"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 27,
+      "section": "NCC Foundation",
+      "question": "What is the highest rank a cadet can hold in NCC (Senior Division)?",
+      "options": {
+        "A": "Cadet Captain",
+        "B": "Senior Under Officer",
+        "C": "Cadet Under Officer",
+        "D": "Company Commander"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 28,
+      "section": "NCC Foundation",
+      "question": "Who heads the NCC at the national level?",
+      "options": {
+        "A": "Defence Minister",
+        "B": "Director General of NCC (DG NCC)",
+        "C": "Chief of Army Staff",
+        "D": "President of India"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 29,
+      "section": "General Aptitude & General Studies",
+      "question": "Which Article of the Indian Constitution guarantees the Right to Equality?",
+      "options": {
+        "A": "Article 14",
+        "B": "Article 19",
+        "C": "Article 21",
+        "D": "Article 32"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "question_number": 30,
+      "section": "General Aptitude & General Studies",
+      "question": "Which vitamin is produced by the human body when exposed to sunlight?",
+      "options": {
+        "A": "Vitamin A",
+        "B": "Vitamin B12",
+        "C": "Vitamin C",
+        "D": "Vitamin D"
+      },
+      "correct_answer": "D"
+    },
+    {
+      "question_number": 31,
+      "section": "General Aptitude & General Studies",
+      "question": "Which is the longest river entirely within India?",
+      "options": {
+        "A": "Yamuna",
+        "B": "Ganga",
+        "C": "Godavari",
+        "D": "Narmada"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 32,
+      "section": "General Aptitude & General Studies",
+      "question": "If the radius of a circle is increased by 50%, by what percentage does its area increase?",
+      "options": {
+        "A": "50%",
+        "B": "100%",
+        "C": "125%",
+        "D": "150%"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 33,
+      "section": "General Aptitude & General Studies",
+      "question": "Who is the constitutional head of the Government of India?",
+      "options": {
+        "A": "Prime Minister",
+        "B": "Chief Justice of India",
+        "C": "President of India",
+        "D": "Speaker of Lok Sabha"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 34,
+      "section": "General Aptitude & General Studies",
+      "question": "Which gas is most abundant in the Earth's atmosphere?",
+      "options": {
+        "A": "Oxygen",
+        "B": "Carbon Dioxide",
+        "C": "Nitrogen",
+        "D": "Hydrogen"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 35,
+      "section": "General Aptitude & General Studies",
+      "question": "A shopkeeper marks an item at Rs. 500 and offers a 20% discount. What is the selling price?",
+      "options": {
+        "A": "Rs. 380",
+        "B": "Rs. 400",
+        "C": "Rs. 420",
+        "D": "Rs. 450"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 36,
+      "section": "Reasoning",
+      "question": "Find the next number in the series: 2, 6, 12, 20, 30, ?",
+      "options": {
+        "A": "40",
+        "B": "42",
+        "C": "44",
+        "D": "36"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 37,
+      "section": "Reasoning",
+      "question": "In a class of 60 students, 40% are girls. How many boys are there in the class?",
+      "options": {
+        "A": "24",
+        "B": "30",
+        "C": "36",
+        "D": "40"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 38,
+      "section": "Reasoning",
+      "question": "Five friends — A, B, C, D, and E — sit in a row. A is to the immediate left of B. C is at the rightmost end. D is between A and E. Who is sitting in the middle?",
+      "options": {
+        "A": "A",
+        "B": "B",
+        "C": "D",
+        "D": "E"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "question_number": 39,
+      "section": "Reasoning",
+      "question": "If 'APPLE' is coded as 'DSSOH', what will 'MANGO' be coded as?",
+      "options": {
+        "A": "PDQJR",
+        "B": "QDPRJ",
+        "C": "PDQRJ",
+        "D": "PDRQJ"
+      },
+      "correct_answer": "A"
+    },
+    {
+      "question_number": 40,
+      "section": "Reasoning",
+      "question": "A man spends 30% of his salary on rent, 20% on food, and 15% on other expenses. If he saves Rs. 7,000, what is his total salary?",
+      "options": {
+        "A": "Rs. 15,000",
+        "B": "Rs. 18,000",
+        "C": "Rs. 20,000",
+        "D": "Rs. 25,000"
+      },
+      "correct_answer": "C"
+    }
+  ]
+}

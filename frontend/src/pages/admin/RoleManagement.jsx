@@ -6,7 +6,7 @@ const ALL_FEATURES = [
   'R1_SETUP', 'R1_SCORE', 
   'R2_START', 'R2_ATTENDANCE', 'R2_SCORE',
   'R3_SCORE', 'R3_VERIFY', 
-  'STUDENT_TABLE', 'MASTER_TABLE'
+  'STUDENT_TABLE', 'MASTER_TABLE', 'TEST_MANAGEMENT', 'SETTINGS'
 ];
 
 const RoleManagement = () => {
@@ -26,12 +26,9 @@ const RoleManagement = () => {
   };
 
   const toggleFeature = async (adminId, feature, currentFeatures) => {
-    let newFeatures = [...currentFeatures];
-    if (newFeatures.includes(feature)) {
-      newFeatures = newFeatures.filter(f => f !== feature);
-    } else {
-      newFeatures.push(feature);
-    }
+    const newFeatures = currentFeatures.includes(feature)
+      ? currentFeatures.filter(f => f !== feature)
+      : [...currentFeatures, feature];
     
     try {
       await api.post('/admin/roles/update', { adminId, features: newFeatures });
@@ -42,49 +39,40 @@ const RoleManagement = () => {
   };
 
   return (
-    <div className="container">
-      <h2>Role Management (Lead Admin Only)</h2>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Dynamically assign features to Sub-Admins.</p>
-      
-      <div className="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Role</th>
-              <th>Assigned Features</th>
+    <div>
+      <h2>Role Management</h2>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Features Access</th>
+          </tr>
+        </thead>
+        <tbody>
+          {admins.map(admin => (
+            <tr key={admin._id}>
+              <td>{admin.username}</td>
+              <td>{admin.role}</td>
+              <td>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                  {ALL_FEATURES.map(f => (
+                    <label key={f} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={admin.features.includes('ALL') || admin.features.includes(f)}
+                        disabled={admin.features.includes('ALL')}
+                        onChange={() => toggleFeature(admin._id, f, admin.features)}
+                      />
+                      <span style={{ fontSize: '0.85rem' }}>{f}</span>
+                    </label>
+                  ))}
+                </div>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {admins.map(admin => (
-              <tr key={admin._id}>
-                <td style={{ fontWeight: 'bold' }}>{admin.username}</td>
-                <td style={{ color: 'var(--accent-green)' }}>{admin.role}</td>
-                <td>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    {admin.features.includes('ALL') ? (
-                      <span style={{ padding: '0.25rem 0.5rem', background: 'var(--accent-green)', borderRadius: '4px', color: 'black' }}>
-                        ALL ACCESS
-                      </span>
-                    ) : (
-                      ALL_FEATURES.map(f => (
-                        <label key={f} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', background: 'var(--surface-grey)', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer' }}>
-                          <input 
-                            type="checkbox" 
-                            checked={admin.features.includes(f)}
-                            onChange={() => toggleFeature(admin._id, f, admin.features)}
-                          />
-                          <span style={{ fontSize: '0.85rem' }}>{f}</span>
-                        </label>
-                      ))
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

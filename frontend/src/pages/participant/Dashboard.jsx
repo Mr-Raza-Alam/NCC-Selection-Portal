@@ -115,7 +115,14 @@ const Dashboard = () => {
           )}
           
           {['r3_qualified', 'selected'].includes(profile.status) && (
-            <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>R3-Qualified ✓ (Score: {profile.r3Score ?? '-'})</p>
+            <div>
+              <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>R3-Qualified ✓ (Score: {profile.r3Score ?? '-'})</p>
+              {profile.status === 'r3_qualified' && (
+                <p style={{ color: 'var(--warning-amber)', fontWeight: 'bold', fontSize: '0.9rem', marginTop: '0.5rem' }}>
+                  Waiting for CTO Sir's confirmation after document verification.
+                </p>
+              )}
+            </div>
           )}
           
           {profile.status === 'eliminated' && profile.r3Completed && <p style={{ color: 'red' }}>Eliminated in R3</p>}
