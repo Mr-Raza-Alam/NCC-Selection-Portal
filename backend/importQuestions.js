@@ -8,11 +8,12 @@ dotenv.config();
 
 const importData = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    const atlasURI = 'mongodb+srv://alamraza2327_db_user:FeoQpEBDksz33GAv@cluster0.lp5tyx9.mongodb.net/ncc_portal?appName=Cluster0';
+    await mongoose.connect(atlasURI);
     console.log('Connected to DB for importing questions');
 
     // Read the JSON file
-    const dataPath = path.join(__dirname, 'data', 'questions.json');
+    const dataPath = path.join(__dirname, 'data', 'originalQuestions.json');
     const rawData = fs.readFileSync(dataPath);
     const jsonData = JSON.parse(rawData);
 

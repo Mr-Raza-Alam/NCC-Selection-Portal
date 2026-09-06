@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const adminSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true }, // hashed
-  role: { type: String, enum: ['cto', 'lead_admin', 'assistant'], required: true },
+  role: { type: String, enum: ['cto', 'lead_admin', 'assistant', 'assistant1', 'assistant2'], required: true },
   // Dynamic features assigned by Raza (Lead Admin)
   features: {
     type: [String],
