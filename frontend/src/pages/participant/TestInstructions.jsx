@@ -17,7 +17,7 @@ const TestInstructions = () => {
 
   const handleStart = () => {
     if (agreed) {
-      sessionStorage.setItem('agreedToInstructions', 'true');
+      localStorage.setItem('agreedToInstructions', 'true');
       navigate('/test');
     }
   };

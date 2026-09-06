@@ -5,10 +5,11 @@ import api from '../../utils/api';
 const MasterTable = () => {
   const [masters, setMasters] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: 'total', direction: 'desc' });
-  const role = sessionStorage.getItem('role');
-  const features = JSON.parse(sessionStorage.getItem('features') || '[]');
+  const role = localStorage.getItem('role');
+  const features = JSON.parse(localStorage.getItem('features') || '[]');
   const canVerify = features.includes('ALL') || features.includes('R3_VERIFY');
 
+  const [cutoff, setCutoff] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -118,7 +119,7 @@ const MasterTable = () => {
       <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <h2>Master Table (Merit List)</h2>
         <div style={{ display: 'flex', gap: '1rem' }}>
-          {role === 'assistant' && canVerify && (
+          {['assistant1', 'assistant2'].includes(role) && canVerify && (
             <button className="btn btn-primary" onClick={() => toast.success('Document Entry Finalized!')}>Entry Done</button>
           )}
           {role === 'lead_admin' && (
@@ -128,6 +129,22 @@ const MasterTable = () => {
           <button className="btn btn-outline" onClick={handleExportCSV}>Export CSV</button>
         </div>
       </div>
+
+      {/* Apply Cutoff Section - Lead Admin Only */}
+      {role === 'lead_admin' && (
+        <div className="no-print" style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem', padding: '1rem', background: 'var(--surface-grey)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+          <label style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>R1 Cutoff Score:</label>
+          <input type="number" value={cutoff} onChange={(e) => setCutoff(e.target.value)} placeholder="Enter minimum R1 score" style={{ padding: '0.5rem', border: '1px solid var(--border-color)', borderRadius: '4px', width: '180px', background: 'var(--bg-white)', color: 'var(--text-primary)' }} />
+          <button className="btn btn-primary" onClick={async () => {
+            if (!cutoff) { toast.error('Enter a cutoff score'); return; }
+            try {
+              const res = await api.post('/admin/r1/cutoff', { cutoffScore: Number(cutoff) });
+              toast.success(res.data.message || 'Cutoff Applied!');
+              fetchData();
+            } catch (err) { toast.error('Failed to apply cutoff'); }
+          }}>Apply Cutoff</button>
+        </div>
+      )}
       
       <div className="table-wrapper print-area">
         <table>
@@ -143,6 +160,7 @@ const MasterTable = () => {
               <th>A-Cert</th>
               <th>Other</th>
               <th onClick={() => sortData('total')} style={{ cursor: 'pointer' }}>Total {sortConfig.key === 'total' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</th>
+              <th>Status</th>
               {(role === 'cto' || role === 'lead_admin') && (
                 <th className="no-print">Selection (CTO)</th>
               )}
@@ -179,6 +197,12 @@ const MasterTable = () => {
                 </td>
                 
                 <td style={{ fontWeight: 'bold', color: 'var(--accent-green)', fontSize: '1.2rem' }}>{m.total}</td>
+                
+                <td>
+                  <span className={`badge ${m.status === 'eliminated' ? 'badge-danger' : m.status === 'Selected' ? 'badge-success' : 'badge-warning'}`}>
+                    {m.status}
+                  </span>
+                </td>
                 
                 {(role === 'cto' || role === 'lead_admin') && (
                   <td className="no-print">

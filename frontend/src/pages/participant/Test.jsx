@@ -13,7 +13,7 @@ const Test = () => {
   const timerRef = useRef(null);
 
   useEffect(() => {
-    if (!sessionStorage.getItem('agreedToInstructions')) {
+    if (!localStorage.getItem('agreedToInstructions')) {
       navigate('/test-instructions');
       return;
     }

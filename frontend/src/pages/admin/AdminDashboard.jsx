@@ -1,17 +1,15 @@
 import React from 'react';
 
 const AdminDashboard = () => {
-  const role = sessionStorage.getItem('role');
-  const adminName = sessionStorage.getItem('adminName') || '';
+  const role = localStorage.getItem('role');
+  const adminName = localStorage.getItem('adminName') || '';
 
   const getRoleName = () => {
     switch(role) {
       case 'lead_admin': return 'Lead Admin';
       case 'cto': return 'Care Taker Officer';
-      case 'assistant':
-        if (adminName === 'Ravi Kumar') return 'Assistant 1';
-        if (adminName === 'Mallika Thapa') return 'Assistant 2';
-        return 'Assistant';
+      case 'assistant1': return 'Assistant 1';
+      case 'assistant2': return 'Assistant 2';
       default: return 'Admin';
     }
   };
@@ -26,7 +24,7 @@ const AdminDashboard = () => {
           Assam University NCC, Silchar
         </h2>
       )}
-      {role === 'assistant' && (
+      {['assistant1', 'assistant2'].includes(role) && (
         <h2 style={{ fontSize: '1.8rem', marginBottom: '1.5rem', color: 'var(--text-secondary)' }}>
           {adminName}
         </h2>

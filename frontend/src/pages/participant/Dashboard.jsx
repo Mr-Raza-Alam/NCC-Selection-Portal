@@ -38,7 +38,8 @@ const Dashboard = () => {
         {/* Code Card */}
         <div className="glass-card" style={{ flex: '1 1 300px', padding: '2rem', border: profile.status === 'selected' ? '2px solid var(--accent-green)' : 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <h1 style={{ fontSize: '4rem', color: 'var(--accent-green)', margin: 0 }}>{profile.code}</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Your 2-digit unique identifier for Round 1</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Your Chest Number</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '0.25rem' }}>Remember this during Physical Test</p>
         </div>
 
         {/* My Details Card */}
@@ -47,7 +48,7 @@ const Dashboard = () => {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.9rem' }}>
             <div><strong style={{ color: 'var(--text-secondary)' }}>Name</strong><br/>{profile.name}</div>
             <div><strong style={{ color: 'var(--text-secondary)' }}>Department</strong><br/>{profile.department}</div>
-            <div><strong style={{ color: 'var(--text-secondary)' }}>DOB</strong><br/>{profile.dob ? new Date(profile.dob).toLocaleDateString() : 'N/A'}</div>
+            <div><strong style={{ color: 'var(--text-secondary)' }}>DOB</strong><br/>{profile.dob ? new Date(profile.dob).toLocaleDateString('en-GB') : 'N/A'}</div>
             <div><strong style={{ color: 'var(--text-secondary)' }}>Admission No</strong><br/>{profile.admissionNo}</div>
             <div><strong style={{ color: 'var(--text-secondary)' }}>Email</strong><br/>{profile.email}</div>
             <div><strong style={{ color: 'var(--text-secondary)' }}>Contact No</strong><br/>{profile.contactNo}</div>
