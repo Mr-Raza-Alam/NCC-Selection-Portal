@@ -35,7 +35,7 @@ const PrivateRoute = ({ children, role }) => {
     return <Navigate to="/login" />;
   }
   
-  if (role === 'admin' && !['cto', 'lead_admin', 'assistant'].includes(userRole)) {
+  if (role === 'admin' && !['cto', 'lead_admin', 'assistant', 'assistant1', 'assistant2'].includes(userRole)) {
     return <Navigate to="/admin/login" />;
   }
   

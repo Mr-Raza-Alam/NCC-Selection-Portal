@@ -97,7 +97,10 @@ exports.loginAdmin = async (req, res) => {
   try {
     const { username, password } = req.body;
     
-    const admin = await Admin.findOne({ username });
+    // Trim username to handle mobile auto-spaces
+    const trimmedUsername = username.trim();
+    
+    const admin = await Admin.findOne({ username: trimmedUsername });
     if (admin && (await bcrypt.compare(password, admin.password))) {
       const token = jwt.sign(
         { id: admin._id, role: admin.role, features: admin.features }, 
