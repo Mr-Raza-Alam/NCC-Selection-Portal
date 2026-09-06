@@ -34,10 +34,10 @@ const AdminLayout = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
       <Navbar />
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div className="admin-layout-wrapper">
 
         {/* Sidebar */}
-        <div style={{ width: '250px', background: 'var(--surface-grey)', borderRight: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column' }}>
+        <div className="admin-sidebar">
           <div 
             onClick={() => navigate('/admin/dashboard')}
             style={{ cursor: 'pointer', height: '70px', display: 'flex', alignItems: 'center', padding: '0 1.5rem', fontWeight: 'bold', fontSize: '1.2rem', color: 'var(--primary-navy)', borderBottom: '1px solid var(--border-color)' }}

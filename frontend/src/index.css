@@ -283,6 +283,46 @@ td input:focus, td select:focus {
   }
 }
 
+/* Admin Layout Responsiveness */
+.admin-layout-wrapper {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.admin-sidebar {
+  width: 250px;
+  background: var(--surface-grey);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .admin-layout-wrapper {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 250px; /* Allows scrolling of menu items on mobile */
+    border-right: none;
+    border-bottom: 2px solid var(--border-color);
+  }
+  
+  /* Landing Page Hero Tweaks for Mobile */
+  .hero-section h1 {
+    font-size: 2rem !important;
+  }
+  .hero-section h2 {
+    font-size: 1.2rem !important;
+  }
+  .hero-section p {
+    font-size: 0.95rem !important;
+  }
+}
+
 /* Auth Container */
 .auth-container {
   display: flex;
