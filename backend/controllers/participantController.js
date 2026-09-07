@@ -14,6 +14,9 @@ exports.getProfile = async (req, res) => {
     const r2 = await R2Result.findOne({ studentId: req.user.id });
     const r3 = await R3Result.findOne({ studentId: req.user.id });
     
+    const TestConfig = require('../models/TestConfig');
+    const config = await TestConfig.findOne();
+    
     res.json({
       ...student.toObject(),
       r1Completed: !!r1,
@@ -21,7 +24,9 @@ exports.getProfile = async (req, res) => {
       r2Completed: r2 ? r2.completed : false,
       r2Score: (r2 && r2.completed) ? r2.totalScore : null,
       r3Completed: !!r3,
-      r3Score: r3 ? r3.r3Score : null
+      r3Score: r3 ? r3.r3Score : null,
+      testWindowStart: config ? config.windowStart : null,
+      testWindowEnd: config ? config.windowEnd : null
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

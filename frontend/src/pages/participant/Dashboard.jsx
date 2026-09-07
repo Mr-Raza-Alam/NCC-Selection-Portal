@@ -6,11 +6,12 @@ const Dashboard = () => {
   const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
 
+  const [timeRemaining, setTimeRemaining] = useState(null);
+  const [testStatus, setTestStatus] = useState('unknown');
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // Because of the schema change, we might need a custom profile route to grab the Student data. 
-        // But assuming the route returns the student document:
         const { data } = await api.get('/participants/profile');
         setProfile(data);
       } catch (err) {
@@ -19,6 +20,41 @@ const Dashboard = () => {
     };
     fetchProfile();
   }, []);
+
+  useEffect(() => {
+    if (profile?.testWindowStart && profile?.testWindowEnd) {
+      const updateTimer = () => {
+        const now = new Date();
+        const start = new Date(profile.testWindowStart);
+        const end = new Date(profile.testWindowEnd);
+
+        if (now < start) {
+          setTestStatus('before');
+          const diff = start - now;
+          const hours = Math.floor(diff / 3600000);
+          const mins = Math.floor((diff % 3600000) / 60000);
+          const secs = Math.floor((diff % 60000) / 1000);
+          if (hours > 24) {
+             setTimeRemaining(`${Math.floor(hours/24)} days left`);
+          } else if (hours > 0) {
+             setTimeRemaining(`${hours}h ${mins}m`);
+          } else {
+             setTimeRemaining(`${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`);
+          }
+        } else if (now >= start && now <= end) {
+          setTestStatus('open');
+        } else {
+          setTestStatus('closed');
+        }
+      };
+      
+      updateTimer();
+      const interval = setInterval(updateTimer, 1000);
+      return () => clearInterval(interval);
+    } else if (profile) {
+      setTestStatus('open'); // Default if no window is set
+    }
+  }, [profile]);
 
   if (!profile) return <div className="container">Loading...</div>;
 
@@ -86,7 +122,22 @@ const Dashboard = () => {
           {profile.status === 'active' && <p>Waiting for R1 Results...</p>}
           
           {profile.status === 'r1_qualified' && !profile.r2Completed && (
-            <button className="btn btn-primary" onClick={() => navigate('/test-instructions')}>Start R2</button>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
+              {testStatus === 'before' && (
+                <div style={{ padding: '1rem 2rem', background: 'var(--surface-grey)', borderRadius: '8px', border: '1px solid var(--border-color)', animation: 'pulse 2s infinite' }}>
+                  <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Written Test opens in:</p>
+                  <h2 style={{ margin: 0, color: 'var(--primary-navy)', fontFamily: 'monospace', fontSize: '2.5rem' }}>{timeRemaining}</h2>
+                </div>
+              )}
+              {testStatus === 'open' && (
+                <button className="btn btn-primary" style={{ width: '100%', fontSize: '1.2rem', padding: '1rem', animation: 'fadeIn 1s ease-in' }} onClick={() => navigate('/test-instructions')}>
+                  Start R2 Written Test
+                </button>
+              )}
+              {testStatus === 'closed' && (
+                <p style={{ color: 'var(--danger-red)', fontWeight: 'bold' }}>Test Window is Closed</p>
+              )}
+            </div>
           )}
           
           {profile.status === 'r1_qualified' && profile.r2Completed && (
