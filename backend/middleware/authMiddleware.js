@@ -25,7 +25,7 @@ const protectAdmin = (req, res, next) => {
     try {
       token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      if (!['cto', 'lead_admin', 'assistant'].includes(decoded.role)) {
+      if (!['cto', 'lead_admin', 'assistant', 'assistant1', 'assistant2'].includes(decoded.role)) {
          return res.status(403).json({ message: 'Not authorized as admin' });
       }
       req.admin = decoded;
