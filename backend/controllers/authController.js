@@ -65,17 +65,9 @@ exports.registerParticipant = async (req, res) => {
 
 exports.loginParticipant = async (req, res) => {
   try {
-    const { name, dob, password } = req.body;
+    const { code, password } = req.body;
 
-    const startDate = new Date(dob);
-    startDate.setUTCHours(0, 0, 0, 0);
-    const endDate = new Date(dob);
-    endDate.setUTCHours(23, 59, 59, 999);
-
-    const student = await Student.findOne({
-      name,
-      dob: { $gte: startDate, $lte: endDate }
-    });
+    const student = await Student.findOne({ code });
 
     if (student && (await bcrypt.compare(password, student.password))) {
       const token = jwt.sign({ id: student._id, role: 'participant' }, process.env.JWT_SECRET, { expiresIn: '30d' });

@@ -450,6 +450,23 @@ exports.finalizeSelection = async (req, res) => {
   }
 };
 
+exports.publishFinalResults = async (req, res) => {
+  try {
+    // Anyone left at r3_qualified becomes eliminated
+    await Student.updateMany(
+      { status: 'r3_qualified' }, 
+      { $set: { status: 'eliminated' } }
+    );
+    await MasterRecord.updateMany(
+      { status: { $in: ['Pending', 'r3_qualified'] } },
+      { $set: { status: 'Eliminated' } }
+    );
+    res.json({ message: 'Final results published! Unselected students eliminated.' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // ==========================================
 // ROLE MANAGEMENT (Lead Admin only)
 // ==========================================

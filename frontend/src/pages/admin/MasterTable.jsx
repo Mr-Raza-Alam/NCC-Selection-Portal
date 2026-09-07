@@ -75,8 +75,10 @@ const MasterTable = () => {
     const sorted = [...masters];
     sorted.sort((a, b) => {
       // Eliminated always sink to bottom
-      if (a.status === 'eliminated' && b.status !== 'eliminated') return 1;
-      if (a.status !== 'eliminated' && b.status === 'eliminated') return -1;
+      const aElim = a.status === 'eliminated' || a.status === 'Eliminated';
+      const bElim = b.status === 'eliminated' || b.status === 'Eliminated';
+      if (aElim && !bElim) return 1;
+      if (!aElim && bElim) return -1;
       
       if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
       if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
@@ -122,6 +124,16 @@ const MasterTable = () => {
           {['assistant1', 'assistant2'].includes(role) && canVerify && (
             <button className="btn btn-primary" onClick={() => toast.success('Document Entry Finalized!')}>Entry Done</button>
           )}
+          {['lead_admin', 'cto'].includes(role) && (
+            <button className="btn btn-primary" onClick={async () => {
+              if (!window.confirm("Publish Final Results? This will mark all unselected students as eliminated.")) return;
+              try {
+                const res = await api.post('/admin/publish-results');
+                toast.success(res.data.message);
+                fetchData();
+              } catch (err) { toast.error('Failed to publish results'); }
+            }}>Publish Final Results</button>
+          )}
           {role === 'lead_admin' && (
             <button className="btn btn-danger" onClick={handleDeleteEliminated}>Delete Eliminated</button>
           )}
@@ -130,8 +142,8 @@ const MasterTable = () => {
         </div>
       </div>
 
-      {/* Apply Cutoff Section - Lead Admin Only */}
-      {role === 'lead_admin' && (
+      {/* Apply Cutoff Section - Lead Admin & CTO */}
+      {['lead_admin', 'cto'].includes(role) && (
         <div className="no-print" style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem', padding: '1rem', background: 'var(--surface-grey)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
           <label style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>R1 Cutoff Score:</label>
           <input type="number" value={cutoff} onChange={(e) => setCutoff(e.target.value)} placeholder="Enter minimum R1 score" style={{ padding: '0.5rem', border: '1px solid var(--border-color)', borderRadius: '4px', width: '180px', background: 'var(--bg-white)', color: 'var(--text-primary)' }} />
@@ -170,7 +182,7 @@ const MasterTable = () => {
             {getSortedData().map(m => (
               <tr key={m._id} style={{ 
                 background: m.status === 'Selected' ? 'rgba(0, 255, 128, 0.1)' : 'transparent',
-                opacity: m.status === 'eliminated' ? 0.5 : 1
+                opacity: (m.status === 'eliminated' || m.status === 'Eliminated') ? 0.5 : 1
               }}>
                 <td style={{ fontWeight: 'bold' }}>{m.name}</td>
                 <td style={{ color: 'var(--accent-green)' }}>{m.studentId?.code}</td>

@@ -59,6 +59,12 @@ const Register = () => {
             <label>Password</label>
             <input type="password" name="password" required onChange={handleChange} />
           </div>
+          <div className="input-group" style={{ flexDirection: 'row', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '1.5rem' }}>
+            <input type="checkbox" required style={{ marginTop: '0.3rem', width: 'auto' }} />
+            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+              I declare that I am a legitimate student of Assam University and all information provided is true. Any false information will lead to immediate disqualification from the NCC selection process.
+            </label>
+          </div>
           <button type="submit" className="btn btn-primary" style={{width: '100%'}}>Register</button>
         </form>
         <p style={{marginTop: '1rem', textAlign: 'center'}}>

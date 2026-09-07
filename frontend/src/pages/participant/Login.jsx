@@ -4,7 +4,7 @@ import api from '../../utils/api';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ name: '', dob: '', password: '' });
+  const [formData, setFormData] = useState({ code: '', password: '' });
   const [error, setError] = useState('');
 
   const handleChange = (e) => setFormData({...formData, [e.target.name]: e.target.value});
@@ -30,12 +30,8 @@ const Login = () => {
         {error && <p style={{color: 'var(--danger-red)', marginBottom: '1rem'}}>{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label>Full Name</label>
-            <input type="text" name="name" required onChange={handleChange} />
-          </div>
-          <div className="input-group">
-            <label>Date of Birth</label>
-            <input type="date" name="dob" required onChange={handleChange} />
+            <label>Chest No (Code)</label>
+            <input type="number" name="code" required onChange={handleChange} placeholder="e.g. 128" />
           </div>
           <div className="input-group">
             <label>Password</label>

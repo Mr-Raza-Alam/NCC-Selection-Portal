@@ -85,9 +85,9 @@ const Test = () => {
 
   return (
     <div className="container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <h2>Round 2: Written Test</h2>
-        <div className="glass-card" style={{ padding: '1rem', color: 'var(--danger-red)', fontSize: '1.5rem', fontWeight: 'bold' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', position: 'sticky', top: '0', zIndex: 100, background: 'var(--bg-white)', padding: '1rem', borderBottom: '2px solid var(--border-color)' }}>
+        <h2 style={{ margin: 0 }}>Round 2: Written Test</h2>
+        <div className="glass-card" style={{ padding: '0.5rem 1rem', color: 'var(--danger-red)', fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>
           Time Left: {formatTime(timeLeft)}
         </div>
       </div>
