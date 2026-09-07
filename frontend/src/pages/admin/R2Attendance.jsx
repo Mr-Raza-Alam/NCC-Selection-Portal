@@ -75,8 +75,8 @@ const R2Attendance = () => {
                     style={{ background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)', padding: '0.25rem', width: '80px' }}
                   >
                     <option value="">--</option>
-                    <option value="P">P - Present</option>
-                    <option value="A">A - Absent</option>
+                    <option value="P">P</option>
+                    <option value="A">A</option>
                   </select>
                 </td>
               </tr>
