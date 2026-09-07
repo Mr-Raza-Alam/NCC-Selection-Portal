@@ -25,6 +25,11 @@
   font-family: 'Inter', sans-serif;
 }
 
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 body {
   background: var(--bg-white);
   color: var(--text-primary);
@@ -277,12 +282,17 @@ td input:focus, td select:focus {
     justify-content: center;
     margin-bottom: 0.5rem;
   }
-  .navbar .logos.left { display: none; } /* Hide left logo on small screens to save space */
+  .navbar .logos.left img { display: none; } /* Hide left logo on small screens to save space */
+  .mobile-only-btn { display: block !important; }
   .navbar .nav-actions {
     width: 100%;
     justify-content: center;
     margin-top: 0.5rem;
   }
+}
+
+.mobile-only-btn {
+  display: none !important;
 }
 
 /* Admin Layout Responsiveness */
@@ -301,17 +311,71 @@ td input:focus, td select:focus {
   transition: all 0.3s ease;
 }
 
+/* Action Bar */
+.action-bar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
   .admin-layout-wrapper {
     flex-direction: column;
   }
+  
+  /* Sidebar Drawer */
   .admin-sidebar {
-    width: 100%;
-    height: auto;
-    max-height: 250px; /* Allows scrolling of menu items on mobile */
-    border-right: none;
-    border-bottom: 2px solid var(--border-color);
+    position: fixed;
+    top: 0;
+    left: -300px;
+    height: 100vh;
+    width: 280px;
+    z-index: 2000;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    transition: left 0.3s ease;
   }
+  
+  .admin-sidebar.open {
+    left: 0;
+  }
+  
+  /* Sidebar Overlay */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 1999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .sidebar-overlay.open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .action-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .action-bar > * {
+    width: 100%;
+  }
+
+  /* Responsive Typography */
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
   
   /* Landing Page Hero Tweaks for Mobile */
   .hero-section h1 {
@@ -335,8 +399,14 @@ td input:focus, td select:focus {
   }
 
   table th, table td {
-    padding: 0.75rem;
+    padding: 0.85rem 0.5rem; /* Larger vertical padding for touch */
     font-size: 0.85rem;
+  }
+  
+  /* Input tap targets */
+  td input, td select {
+    padding: 0.6rem;
+    font-size: 16px; /* Prevents iOS zoom */
   }
 }
 

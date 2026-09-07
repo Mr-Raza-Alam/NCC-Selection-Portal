@@ -118,9 +118,9 @@ const MasterTable = () => {
 
   return (
     <div>
-      <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h2>Master Table (Merit List)</h2>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+      <div className="no-print action-bar" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2 style={{ margin: 0 }}>Master Table (Merit List)</h2>
+        <div className="action-bar" style={{ margin: 0 }}>
           {['assistant1', 'assistant2'].includes(role) && canVerify && (
             <button className="btn btn-primary" onClick={() => toast.success('Document Entry Finalized!')}>Entry Done</button>
           )}
@@ -144,7 +144,7 @@ const MasterTable = () => {
 
       {/* Apply Cutoff Section - Lead Admin & CTO */}
       {['lead_admin', 'cto'].includes(role) && (
-        <div className="no-print" style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem', padding: '1rem', background: 'var(--surface-grey)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+        <div className="no-print action-bar" style={{ padding: '1rem', background: 'var(--surface-grey)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
           <label style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>R1 Cutoff Score:</label>
           <input type="number" value={cutoff} onChange={(e) => setCutoff(e.target.value)} placeholder="Enter minimum R1 score" style={{ padding: '0.5rem', border: '1px solid var(--border-color)', borderRadius: '4px', width: '180px', background: 'var(--bg-white)', color: 'var(--text-primary)' }} />
           <button className="btn btn-primary" onClick={async () => {

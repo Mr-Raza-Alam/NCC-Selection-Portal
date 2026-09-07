@@ -36,14 +36,14 @@ const Dashboard = () => {
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', justifyContent: 'center', marginTop: profile.status === 'selected' ? '1rem' : '2rem' }}>
         
         {/* Code Card */}
-        <div className="glass-card" style={{ flex: '1 1 300px', padding: '2rem', border: profile.status === 'selected' ? '2px solid var(--accent-green)' : 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div className="glass-card" style={{ flex: '1 1 250px', padding: '2rem', border: profile.status === 'selected' ? '2px solid var(--accent-green)' : 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <h1 style={{ fontSize: '4rem', color: 'var(--accent-green)', margin: 0 }}>{profile.code}</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Your Chest Number</p>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '0.25rem' }}>Remember this during Physical Test</p>
         </div>
 
         {/* My Details Card */}
-        <div className="glass-card" style={{ flex: '1 1 300px', padding: '2rem', textAlign: 'left' }}>
+        <div className="glass-card" style={{ flex: '1 1 250px', padding: '2rem', textAlign: 'left' }}>
           <h3 style={{ marginTop: 0, color: 'var(--primary-navy)', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '1.5rem' }}>My Details</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.9rem' }}>
             <div><strong style={{ color: 'var(--text-secondary)' }}>Name</strong><br/>{profile.name}</div>

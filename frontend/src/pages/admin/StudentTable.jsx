@@ -24,8 +24,8 @@ const StudentTable = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h2>Student Record (Registration Data)</h2>
+      <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2 style={{ margin: 0 }}>Student Record (Registration Data)</h2>
       </div>
       
       <div className="table-wrapper">

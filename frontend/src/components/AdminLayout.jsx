@@ -31,13 +31,15 @@ const AdminLayout = () => {
     { name: 'Role Management', path: '/admin/roles', role: 'lead_admin' }
   ];
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
-      <Navbar />
-      <div className="admin-layout-wrapper">
-
+      <Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+      <div className="admin-layout-wrapper" style={{ position: 'relative' }}>
+        <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)}></div>
         {/* Sidebar */}
-        <div className="admin-sidebar">
+        <div className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
           <div 
             onClick={() => navigate('/admin/dashboard')}
             style={{ cursor: 'pointer', height: '70px', display: 'flex', alignItems: 'center', padding: '0 1.5rem', fontWeight: 'bold', fontSize: '1.2rem', color: 'var(--primary-navy)', borderBottom: '1px solid var(--border-color)' }}
@@ -65,7 +67,7 @@ const AdminLayout = () => {
               return (
                 <div
                   key={item.path}
-                  onClick={() => navigate(item.path)}
+                  onClick={() => { navigate(item.path); setSidebarOpen(false); }}
                   style={{
                     padding: '0.75rem 1.5rem',
                     cursor: 'pointer',

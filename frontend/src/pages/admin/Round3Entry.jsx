@@ -47,8 +47,8 @@ const Round3Entry = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h2>Round 3: Interview Desk (Ass.1)</h2>
+      <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2 style={{ margin: 0 }}>Round 3: Interview Desk (Ass.1)</h2>
         <button className="btn btn-primary" onClick={handleDone}>Done</button>
       </div>
       <div className="table-wrapper">

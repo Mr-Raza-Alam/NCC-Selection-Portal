@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Navbar = () => {
+const Navbar = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const role = localStorage.getItem('role');
@@ -15,7 +15,16 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <div className="logos left">
+      <div className="logos left" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        {onMenuClick && (
+          <button 
+            className="mobile-only-btn"
+            onClick={onMenuClick}
+            style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', padding: '0.5rem', color: 'var(--primary-navy)' }}
+          >
+            ☰
+          </button>
+        )}
         <img src="/AUS_Logo.jpg" alt="Assam University Logo" />
       </div>
       

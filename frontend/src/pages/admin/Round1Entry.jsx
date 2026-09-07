@@ -60,12 +60,12 @@ const Round1Entry = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h2>Round 1 Score Entry</h2>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
+      <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2 style={{ margin: 0 }}>Round 1 Score Entry</h2>
+        <div className="action-bar" style={{ margin: 0 }}>
           <div className="input-group" style={{ margin: 0 }}>
-            <label>Set R1 Cutoff</label>
-            <input type="number" value={cutoff} onChange={e => setCutoff(e.target.value)} style={{ width: '100px' }} />
+            <label style={{ fontSize: '0.8rem' }}>Set R1 Cutoff</label>
+            <input type="number" value={cutoff} onChange={e => setCutoff(e.target.value)} style={{ width: '100%', maxWidth: '100px' }} />
           </div>
           <button className="btn btn-danger" onClick={handleApplyCutoff}>Apply Cutoff</button>
           <button className="btn btn-primary" onClick={handleDone}>Done</button>
