@@ -7,6 +7,7 @@ const studentSchema = new mongoose.Schema({
   admissionNo: { type: String, required: true, unique: true },
   email: { type: String, required: true },
   contactNo: { type: String, required: true },
+  parentContactNo: { type: String, default: '' },
   password: { type: String, required: true },
   code: { type: Number, unique: true }, // 2-digit 10-99
   status: { 

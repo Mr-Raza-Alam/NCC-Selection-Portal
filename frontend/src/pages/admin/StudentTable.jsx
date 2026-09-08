@@ -7,6 +7,22 @@ const StudentTable = () => {
   const [loading, setLoading] = useState(true);
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: '', targetId: null, confirmText: '' });
   const [inputVal, setInputVal] = useState('');
+  const [editModal, setEditModal] = useState({ isOpen: false, student: null });
+
+  const handleEditChange = (e) => {
+    setEditModal({ ...editModal, student: { ...editModal.student, [e.target.name]: e.target.value } });
+  };
+
+  const saveEdit = async () => {
+    try {
+      await api.put(`/admin/students/${editModal.student._id}`, editModal.student);
+      toast.success('Student updated successfully');
+      setEditModal({ isOpen: false, student: null });
+      fetchStudents();
+    } catch (err) {
+      toast.error('Failed to update student');
+    }
+  };
 
   useEffect(() => {
     fetchStudents();
@@ -89,6 +105,13 @@ const StudentTable = () => {
                 </td>
                 <td>
                   <button 
+                    style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--primary-navy)', marginRight: '0.5rem' }}
+                    title="Edit Student"
+                    onClick={() => setEditModal({ isOpen: true, student: s })}
+                  >
+                    ✏️
+                  </button>
+                  <button 
                     style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--danger-red)' }}
                     title="Delete Student"
                     onClick={() => setModalConfig({ isOpen: true, type: 'single', targetId: s._id, confirmText: `Are you sure you want to permanently delete ${s.name}?` })}
@@ -129,6 +152,47 @@ const StudentTable = () => {
               <button className="btn btn-danger" onClick={executeDelete}>
                 Delete
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editModal.isOpen && editModal.student && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ background: 'var(--bg-white)', padding: '2rem', borderRadius: '8px', width: '400px', maxWidth: '90%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
+            <h3 style={{ marginTop: 0, color: 'var(--primary-navy)' }}>Edit Student</h3>
+            <div className="input-group">
+              <label>Name</label>
+              <input type="text" name="name" value={editModal.student.name} onChange={handleEditChange} />
+            </div>
+            <div className="input-group">
+              <label>Department</label>
+              <input type="text" name="department" value={editModal.student.department} onChange={handleEditChange} />
+            </div>
+            <div className="input-group">
+              <label>Admission No.</label>
+              <input type="text" name="admissionNo" value={editModal.student.admissionNo} onChange={handleEditChange} />
+            </div>
+            <div className="input-group">
+              <label>DOB</label>
+              <input type="date" name="dob" value={new Date(editModal.student.dob).toISOString().split('T')[0]} onChange={handleEditChange} />
+            </div>
+            <div className="input-group">
+              <label>Email</label>
+              <input type="email" name="email" value={editModal.student.email} onChange={handleEditChange} />
+            </div>
+            <div className="input-group">
+              <label>Student Contact</label>
+              <input type="text" name="contactNo" value={editModal.student.contactNo} onChange={handleEditChange} />
+            </div>
+            <div className="input-group">
+              <label>Parent Contact</label>
+              <input type="text" name="parentContactNo" value={editModal.student.parentContactNo || ''} onChange={handleEditChange} placeholder="+91 xxxxxxxxxx" />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem' }}>
+              <button className="btn btn-secondary" onClick={() => setEditModal({ isOpen: false, student: null })}>Cancel</button>
+              <button className="btn btn-primary" onClick={saveEdit}>Save Changes</button>
             </div>
           </div>
         </div>

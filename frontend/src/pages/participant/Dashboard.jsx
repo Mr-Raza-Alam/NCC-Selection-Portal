@@ -93,6 +93,31 @@ const Dashboard = () => {
 
       </div>
 
+      {/* Complete Profile Card */}
+      {profile.parentContactNo === '' && (
+        <div className="glass-card" style={{ maxWidth: '600px', margin: '2rem auto', padding: '2rem', border: '2px solid var(--warning-amber)' }}>
+          <h3 style={{ color: 'var(--warning-amber)', marginTop: 0 }}>⚠️ Complete Your Profile</h3>
+          <p style={{ color: 'var(--text-secondary)' }}>Please provide your parent's contact number to complete your profile.</p>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+            <input 
+              type="tel" 
+              id="parentContactInput"
+              placeholder="+91 xxxxxxxxxx" 
+              style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '4px' }}
+            />
+            <button className="btn btn-primary" onClick={async () => {
+              const val = document.getElementById('parentContactInput').value;
+              try {
+                const { data } = await api.post('/participants/complete-profile', { parentContactNo: val });
+                setProfile({...profile, parentContactNo: data.parentContactNo});
+              } catch (err) {
+                alert(err.response?.data?.message || 'Error updating profile');
+              }
+            }}>Save</button>
+          </div>
+        </div>
+      )}
+
       <div style={{ marginTop: '3rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
         
         {/* Down Arrow from Code to Round 1 */}

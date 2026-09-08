@@ -3,9 +3,9 @@ const router = express.Router();
 const { protectAdmin } = require('../middleware/authMiddleware');
 const {
   setupR1, getR1Table, enterR1Score, finalizeR1, setR1Cutoff,
-  startR2, markR2Attendance, getR2Table, finalizeR2, setR2Cutoff,
+  startR2, markR2Attendance, enterR2Score, getR2Table, finalizeR2, setR2Cutoff,
   startR3, getR3Table, enterR3Score, verifyDocs, finalizeR3,
-  getMasterTable, getStudentsTable, finalizeSelection, deleteEliminated, publishFinalResults, wipeAllStudents, deleteStudent,
+  getMasterTable, getStudentsTable, updateStudentProfile, finalizeSelection, deleteEliminated, publishFinalResults, wipeAllStudents, deleteStudent,
   getAdmins, updateAdminFeatures, getSettingsData
 } = require('../controllers/adminController');
 
@@ -19,6 +19,7 @@ router.post('/r1/cutoff', setR1Cutoff);
 
 router.post('/r2/start', startR2);
 router.post('/r2/attendance', markR2Attendance);
+router.post('/r2/score', enterR2Score);
 router.get('/r2/table', getR2Table);
 router.post('/r2/done', finalizeR2);
 router.post('/r2/cutoff', setR2Cutoff);
@@ -31,6 +32,7 @@ router.post('/r3/done', finalizeR3);
 
 router.get('/master', getMasterTable);
 router.get('/students', getStudentsTable);
+router.put('/students/:id', updateStudentProfile);
 router.delete('/students/all', wipeAllStudents);
 router.delete('/students/:id', deleteStudent);
 router.delete('/students/eliminated', deleteEliminated);

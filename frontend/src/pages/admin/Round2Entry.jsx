@@ -91,7 +91,25 @@ const Round2Entry = () => {
                       <option value="A">A</option>
                     </select>
                   </td>
-                  <td style={{ fontWeight: 'bold', color: 'var(--accent-green)' }}>{r2Score?.totalScore ?? '0'}</td>
+                  <td style={{ fontWeight: 'bold', color: 'var(--accent-green)' }}>
+                    <input 
+                      type="number" 
+                      defaultValue={r2Score?.totalScore ?? ''} 
+                      onBlur={async (e) => {
+                        const score = e.target.value;
+                        if(score === '') return;
+                        try {
+                          await api.post('/admin/r2/score', { studentId: p._id, score: Number(score) });
+                          toast.success(`Score updated for ${p.name}`);
+                          fetchData();
+                        } catch (err) {
+                          toast.error('Failed to update score');
+                        }
+                      }}
+                      disabled={r2Score?.attendance === 'A'}
+                      style={{ padding: '0.25rem', width: '80px', border: '1px solid var(--border-color)', background: 'var(--bg-white)', color: 'inherit' }}
+                    />
+                  </td>
                 </tr>
               );
             })}

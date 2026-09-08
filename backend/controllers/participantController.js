@@ -32,3 +32,28 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.completeProfile = async (req, res) => {
+  try {
+    const { parentContactNo } = req.body;
+    
+    // Basic validation
+    if (!parentContactNo || !/^\+91 \d{10}$/.test(parentContactNo)) {
+      return res.status(400).json({ message: 'Parent contact must be in format: +91 xxxxxxxxxx' });
+    }
+
+    const student = await Student.findByIdAndUpdate(
+      req.user.id,
+      { parentContactNo },
+      { new: true }
+    );
+
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    res.json({ message: 'Profile completed successfully', parentContactNo: student.parentContactNo });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

@@ -191,6 +191,31 @@ exports.markR2Attendance = async (req, res) => {
   }
 };
 
+exports.enterR2Score = async (req, res) => {
+  try {
+    const { studentId, score } = req.body;
+    
+    // Upsert into R2Result
+    await R2Result.findOneAndUpdate(
+      { studentId },
+      { totalScore: score, completed: true },
+      { upsert: true, returnDocument: 'after' }
+    );
+
+    // Sync to MasterRecord
+    const record = await MasterRecord.findOne({ studentId });
+    if (record) {
+      record.r2 = score;
+      record.total = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0) + (record.hs || 0) + (record.aCert || 0) + (record.other || 0);
+      await record.save();
+    }
+
+    res.json({ message: 'R2 Score saved and synced' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 exports.getR2Table = async (req, res) => {
   try {
     const r2Scores = await R2Result.find();
@@ -501,8 +526,6 @@ exports.getSettingsData = async (req, res) => {
 
 // ==========================================
 // STUDENT RECORD DELETION
-// ==========================================
-
 exports.wipeAllStudents = async (req, res) => {
   try {
     await Student.deleteMany({});
@@ -537,3 +560,30 @@ exports.deleteStudent = async (req, res) => {
   }
 };
 
+exports.updateStudentProfile = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    const { name, department, dob, email, admissionNo, contactNo, parentContactNo } = req.body;
+    
+    // We explicitly do NOT include `code` or `status` in the update
+    const updatedStudent = await Student.findByIdAndUpdate(
+      studentId,
+      { $set: { name, department, dob, email, admissionNo, contactNo, parentContactNo } },
+      { new: true }
+    );
+    
+    if (!updatedStudent) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    // MasterRecord has name and department, so update those too
+    await MasterRecord.findOneAndUpdate(
+      { studentId },
+      { $set: { name, department } }
+    );
+
+    res.json({ message: 'Student profile updated successfully', student: updatedStudent });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

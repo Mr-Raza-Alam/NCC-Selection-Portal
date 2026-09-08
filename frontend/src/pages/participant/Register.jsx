@@ -5,11 +5,22 @@ import api from '../../utils/api';
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '', department: '', dob: '', admissionNo: '', email: '', contactNo: '', password: ''
+    name: '', department: '', dob: '', admissionNo: '', email: '', contactNo: '', parentContactNo: '', password: ''
   });
   const [error, setError] = useState('');
+  const [emailWarning, setEmailWarning] = useState('');
 
-  const handleChange = (e) => setFormData({...formData, [e.target.name]: e.target.value});
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.name]: e.target.value});
+    if (e.target.name === 'email') {
+      const email = e.target.value;
+      if (email.length > 0 && !/^[a-zA-Z]/.test(email)) {
+        setEmailWarning('Are you sure this is your correct email? It looks unusual.');
+      } else {
+        setEmailWarning('');
+      }
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,10 +61,15 @@ const Register = () => {
           <div className="input-group">
             <label>Email ID</label>
             <input type="email" name="email" required onChange={handleChange} />
+            {emailWarning && <span style={{color: 'var(--warning-amber)', fontSize: '0.8rem', marginTop: '0.2rem'}}>{emailWarning}</span>}
           </div>
           <div className="input-group">
-            <label>Contact No</label>
+            <label>Student Contact No</label>
             <input type="tel" name="contactNo" required onChange={handleChange} />
+          </div>
+          <div className="input-group">
+            <label>Parent Contact No</label>
+            <input type="tel" name="parentContactNo" onChange={handleChange} placeholder="+91 xxxxxxxxxx" />
           </div>
           <div className="input-group">
             <label>Password</label>

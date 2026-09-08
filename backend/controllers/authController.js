@@ -18,7 +18,7 @@ const generateUniqueCode = async () => {
 
 exports.registerParticipant = async (req, res) => {
   try {
-    const { name, department, dob, admissionNo, email, contactNo, password } = req.body;
+    const { name, department, dob, admissionNo, email, contactNo, parentContactNo, password } = req.body;
 
     const existingStudent = await Student.findOne({ admissionNo });
     if (existingStudent) {
@@ -30,7 +30,7 @@ exports.registerParticipant = async (req, res) => {
     const code = await generateUniqueCode();
 
     const student = await Student.create({
-      name, department, dob, admissionNo, email, contactNo, password: hashedPassword, code
+      name, department, dob, admissionNo, email, contactNo, parentContactNo, password: hashedPassword, code
     });
 
     // Calculate Age relative to Selection Date (7th Sept 2026)
