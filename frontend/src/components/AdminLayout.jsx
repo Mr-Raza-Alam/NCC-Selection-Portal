@@ -35,16 +35,22 @@ const AdminLayout = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
-      <Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+      <Navbar />
       <div className="admin-layout-wrapper" style={{ position: 'relative' }}>
         <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)}></div>
         {/* Sidebar */}
         <div className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
           <div 
-            onClick={() => navigate('/admin/dashboard')}
-            style={{ cursor: 'pointer', height: '70px', display: 'flex', alignItems: 'center', padding: '0 1.5rem', fontWeight: 'bold', fontSize: '1.2rem', color: 'var(--primary-navy)', borderBottom: '1px solid var(--border-color)' }}
+            style={{ height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.5rem', fontWeight: 'bold', fontSize: '1.2rem', color: 'var(--primary-navy)', borderBottom: '1px solid var(--border-color)' }}
           >
-            Admin Panel
+            <span onClick={() => navigate('/admin/dashboard')} style={{ cursor: 'pointer' }}>Admin Panel</span>
+            <button 
+              className="mobile-only-btn"
+              onClick={() => setSidebarOpen(false)}
+              style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--primary-navy)', padding: '0.5rem' }}
+            >
+              ✕
+            </button>
           </div>
           <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 0' }}>
             {menuItems.map((item, idx) => {
@@ -89,6 +95,13 @@ const AdminLayout = () => {
 
           {/* Sub-header / Profile Bar */}
           <div style={{ height: '70px', background: 'var(--bg-white)', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 2rem' }}>
+            <button 
+              className="mobile-only-btn"
+              onClick={() => setSidebarOpen(true)}
+              style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', padding: '0.5rem', color: 'var(--primary-navy)', marginRight: 'auto' }}
+            >
+              ☰
+            </button>
             <div style={{ position: 'relative' }}>
               <div
                 onClick={() => setProfileOpen(!profileOpen)}

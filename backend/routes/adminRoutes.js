@@ -5,7 +5,7 @@ const {
   setupR1, getR1Table, enterR1Score, finalizeR1, setR1Cutoff,
   startR2, markR2Attendance, getR2Table, finalizeR2, setR2Cutoff,
   startR3, getR3Table, enterR3Score, verifyDocs, finalizeR3,
-  getMasterTable, getStudentsTable, finalizeSelection, deleteEliminated, publishFinalResults,
+  getMasterTable, getStudentsTable, finalizeSelection, deleteEliminated, publishFinalResults, wipeAllStudents, deleteStudent,
   getAdmins, updateAdminFeatures, getSettingsData
 } = require('../controllers/adminController');
 
@@ -31,6 +31,8 @@ router.post('/r3/done', finalizeR3);
 
 router.get('/master', getMasterTable);
 router.get('/students', getStudentsTable);
+router.delete('/students/all', wipeAllStudents);
+router.delete('/students/:id', deleteStudent);
 router.delete('/students/eliminated', deleteEliminated);
 router.post('/finalize', finalizeSelection);
 router.post('/publish-results', publishFinalResults);

@@ -498,3 +498,42 @@ exports.getSettingsData = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// ==========================================
+// STUDENT RECORD DELETION
+// ==========================================
+
+exports.wipeAllStudents = async (req, res) => {
+  try {
+    await Student.deleteMany({});
+    await MasterRecord.deleteMany({});
+    await R1Result.deleteMany({});
+    await R2Result.deleteMany({});
+    await R3Result.deleteMany({});
+    res.json({ message: 'All student records have been wiped entirely.' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteStudent = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+    const code = student.code;
+
+    await Student.findByIdAndDelete(studentId);
+    await MasterRecord.findOneAndDelete({ code });
+    await R1Result.findOneAndDelete({ code });
+    await R2Result.findOneAndDelete({ code });
+    await R3Result.findOneAndDelete({ code });
+
+    res.json({ message: 'Student record deleted entirely.' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
