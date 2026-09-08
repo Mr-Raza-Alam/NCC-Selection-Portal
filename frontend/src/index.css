@@ -294,8 +294,6 @@ td input:focus, td select:focus {
   }
 }
 
-}
-
 /* Admin Layout Responsiveness */
 .admin-layout-wrapper {
   display: flex;
