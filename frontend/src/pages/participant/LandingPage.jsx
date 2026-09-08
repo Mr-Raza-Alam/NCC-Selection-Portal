@@ -32,6 +32,13 @@ const LandingPage = () => {
     fetchSchedule();
   }, []);
 
+  const formatDateTime = (dateStr) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    const options = { hour: 'numeric', minute: '2-digit', hour12: true, day: '2-digit', month: 'short', year: 'numeric' };
+    return d.toLocaleString('en-IN', options);
+  };
+
   // Create the 3x3 matrix as requested
   const glimpses = [
     pic1, pic2, pic3,
@@ -45,7 +52,7 @@ const LandingPage = () => {
       {schedule.start && schedule.end && (
         <div className="marquee-container">
           <div className="marquee-content">
-            🚀 SELECTION PROCESS SCHEDULE: {new Date(schedule.start).toLocaleString()} to {new Date(schedule.end).toLocaleString()} &nbsp;&nbsp;|&nbsp;&nbsp; Venue: NCC office &nbsp;&nbsp;|&nbsp;&nbsp; Location: War Museum, i.e opposite to university main gate at left side
+            🚀 SELECTION PROCESS SCHEDULE: {formatDateTime(schedule.start)} to {formatDateTime(schedule.end)} &nbsp;&nbsp;|&nbsp;&nbsp; Venue: NCC office &nbsp;&nbsp;|&nbsp;&nbsp; Location: War Museum, i.e opposite to university main gate at left side
           </div>
         </div>
       )}
