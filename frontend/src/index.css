@@ -267,6 +267,9 @@ td input:focus, td select:focus {
   align-items: center;
   gap: 1rem;
 }
+.mobile-only-btn {
+  display: none !important;
+}
 
 /* Mobile Media Queries */
 @media (max-width: 768px) {
@@ -291,8 +294,6 @@ td input:focus, td select:focus {
   }
 }
 
-.mobile-only-btn {
-  display: none !important;
 }
 
 /* Admin Layout Responsiveness */
