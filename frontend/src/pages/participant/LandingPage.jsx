@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../utils/api';
 
 // Hero Image
 import nccHero from '../../assets/ncc_pic13.jpeg';
@@ -17,6 +18,19 @@ import pic12 from '../../assets/ncc_pic12.jpeg';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [schedule, setSchedule] = useState({ start: null, end: null });
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const res = await api.get('/public/schedule');
+        setSchedule({ start: res.data.windowStart, end: res.data.windowEnd });
+      } catch (err) {
+        console.error('Failed to fetch schedule');
+      }
+    };
+    fetchSchedule();
+  }, []);
 
   // Create the 3x3 matrix as requested
   const glimpses = [
@@ -27,6 +41,15 @@ const LandingPage = () => {
 
   return (
     <div className="landing-container">
+      {/* Schedule Broadcast Animation */}
+      {schedule.start && schedule.end && (
+        <div className="marquee-container">
+          <div className="marquee-content">
+            🚀 SELECTION PROCESS SCHEDULE: {new Date(schedule.start).toLocaleString()} to {new Date(schedule.end).toLocaleString()} &nbsp;&nbsp;|&nbsp;&nbsp; Venue: NCC office &nbsp;&nbsp;|&nbsp;&nbsp; Location: War Museum, i.e opposite to university main gate at left side
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <div 
         className="hero-section" 

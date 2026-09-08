@@ -471,3 +471,32 @@ td input:focus, td select:focus {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Marquee Broadcast Banner */
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--danger-red); /* Using a bright color to stand out */
+  color: white;
+  padding: 0.5rem 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  position: relative;
+  z-index: 10;
+}
+
+.marquee-content {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 30s linear infinite;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+
+.marquee-container:hover .marquee-content {
+  animation-play-state: paused;
+}

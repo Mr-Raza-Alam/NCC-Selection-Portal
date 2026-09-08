@@ -32,6 +32,20 @@ app.use('/api/admin/test-config', testConfigRoutes);
 app.use('/api/admin/questions', questionsRoutes);
 app.use('/api/admin/settings', settingsRoutes);
 
+// Public Route for Landing Page Broadcast
+app.get('/api/public/schedule', async (req, res) => {
+  try {
+    const TestConfig = require('./models/TestConfig');
+    const config = await TestConfig.findOne();
+    if (!config) {
+      return res.json({ windowStart: null, windowEnd: null });
+    }
+    res.json({ windowStart: config.windowStart, windowEnd: config.windowEnd });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 app.get('/', (req, res) => {
   res.send('NCC Selection API is running...');
 });
