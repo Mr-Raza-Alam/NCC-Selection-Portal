@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Register from './pages/participant/Register';
 import Login from './pages/participant/Login';
+import ForgotPassword from './pages/participant/ForgotPassword';
 import Dashboard from './pages/participant/Dashboard';
 import Test from './pages/participant/Test';
 import TestInstructions from './pages/participant/TestInstructions';
@@ -59,6 +60,7 @@ const AppContent = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           
           <Route path="/dashboard" element={
             <PrivateRoute role="participant"><Dashboard /></PrivateRoute>

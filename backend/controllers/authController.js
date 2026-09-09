@@ -111,3 +111,47 @@ exports.loginAdmin = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.verifyDetails = async (req, res) => {
+  try {
+    const { admissionNo, dob, contactNo } = req.body;
+    if (!admissionNo || !dob || !contactNo) {
+      return res.status(400).json({ message: 'Please provide admissionNo, dob, and contactNo' });
+    }
+
+    const student = await Student.findOne({ admissionNo, contactNo });
+    if (!student) {
+      return res.status(400).json({ message: 'Details do not match. Please check and try again.' });
+    }
+
+    // Compare Dates (ignore time)
+    const dbDob = new Date(student.dob).toISOString().split('T')[0];
+    const inputDob = new Date(dob).toISOString().split('T')[0];
+
+    if (dbDob !== inputDob) {
+      return res.status(400).json({ message: 'Details do not match. Please check and try again.' });
+    }
+
+    res.json({ success: true, studentId: student._id });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { studentId, newPassword } = req.body;
+    if (!studentId || !newPassword || newPassword.length < 6) {
+      return res.status(400).json({ message: 'Invalid request or password too short' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await Student.findByIdAndUpdate(studentId, { password: hashedPassword });
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
