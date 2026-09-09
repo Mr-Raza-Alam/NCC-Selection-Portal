@@ -11,13 +11,15 @@ This application provides a seamless, secure, and intuitive platform for both **
 ### For Participants
 - **Public Landing Page**: View glimpses of NCC activities and real-time scrolling broadcast banners for important selection schedules.
 - **Secure Authentication**: Participant login to access the dashboard.
-- **Interactive Dashboard**: View personal profiles and jump straight into test instructions.
+- **Forgot Password**: A secure, email-free password reset system that verifies student identity using Admission No, Date of Birth, and Contact Number.
+- **Interactive Dashboard**: View personal profiles, complete profile information (e.g., adding Parent Contact Number), and jump straight into test instructions.
 - **Online Examination Module**: Take the written test seamlessly within the allocated time window.
 
 ### For Administrators
 - **Test Management**: Configure test durations, toggle results visibility, and set strict Test Window start/end times (locked to IST).
-- **Student Management**: View all registered students, their basic details, and test status.
+- **Student Management**: View all registered students, their basic details, and test status. Includes the ability for admins to safely edit and correct student profiles (Name, DOB, email, contact details) while securing permanent identifiers.
 - **Master Data Table**: A centralized hub to view candidates across multiple rounds of the selection process.
+- **Manual Scoring**: Admins can easily enter Round 2 (Written Test) pen & paper scores directly into the portal with instant auto-saving capability.
 - **Cascading Deletions**: A secure "Wipe All Records" feature and individual delete actions equipped with a custom-built, modern "Flashbox" confirmation modal (preventing accidental data loss). Deleting a student automatically cleans up all associated test results and master records.
 
 ---
