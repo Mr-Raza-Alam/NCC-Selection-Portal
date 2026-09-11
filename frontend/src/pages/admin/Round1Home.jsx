@@ -22,16 +22,23 @@ const Round1Home = () => {
   if (!settings) return <div>Loading...</div>;
 
   const isCompleted = settings.r1Cutoff !== undefined && settings.r1Cutoff > 0;
+  const isSetup = settings.r1SetupComplete;
 
   return (
     <div>
       <h2 style={{ marginBottom: '2rem' }}>Round 1: Physical Test</h2>
       
-      {!isCompleted ? (
+      {!isSetup ? (
         <div className="glass-card" style={{ maxWidth: '400px' }}>
           <h3>Initial Setup</h3>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Configure activities and max marks before starting.</p>
           <button className="btn btn-primary" onClick={() => navigate('/admin/r1/setup')}>Set-Up R1 Config</button>
+        </div>
+      ) : !isCompleted ? (
+        <div className="glass-card" style={{ maxWidth: '400px', borderColor: 'var(--warning-amber)' }}>
+          <h3 style={{ color: 'var(--warning-amber)' }}>Round 1 Active</h3>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>R1 Setup is complete. You can now enter scores and mark attendance.</p>
+          <button className="btn btn-primary" onClick={() => navigate('/admin/r1/entry')}>Go to Entry Table</button>
         </div>
       ) : (
         <div className="glass-card" style={{ maxWidth: '400px', borderColor: 'var(--accent-green)' }}>
