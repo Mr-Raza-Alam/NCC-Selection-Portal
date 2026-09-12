@@ -61,18 +61,47 @@ const StudentTable = () => {
     }
   };
 
+  const handleExportCSV = () => {
+    const headers = ['Reg Code', 'Name', 'Department', 'DOB', 'Admission No', 'Contact No', 'Parent Contact', 'Email', 'Status'];
+    const rows = students.map(s => [
+      s.code || '',
+      s.name || '',
+      s.department || '',
+      new Date(s.dob).toLocaleDateString() || '',
+      s.admissionNo || '',
+      s.contactNo || '',
+      s.parentContactNo || '',
+      s.email || '',
+      s.status || ''
+    ]);
+    
+    let csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].map(e => e.join(",")).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "student_records.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (loading) return <div>Loading...</div>;
 
   return (
     <div>
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ margin: 0 }}>Student Record (Registration Data)</h2>
-        <button 
-          className="btn btn-danger" 
-          onClick={() => setModalConfig({ isOpen: true, type: 'wipe_all', confirmText: 'WARNING: This will permanently delete ALL student records and their test scores. Type "WIPE ALL" below to confirm.' })}
-        >
-          Wipe All Records
-        </button>
+        <div className="action-bar" style={{ margin: 0 }}>
+          <button className="btn btn-outline" onClick={handleExportCSV}>
+            Export CSV
+          </button>
+          <button 
+            className="btn btn-danger" 
+            onClick={() => setModalConfig({ isOpen: true, type: 'wipe_all', confirmText: 'WARNING: This will permanently delete ALL student records and their test scores. Type "WIPE ALL" below to confirm.' })}
+          >
+            Wipe All Records
+          </button>
+        </div>
       </div>
       
       <div className="table-wrapper">
