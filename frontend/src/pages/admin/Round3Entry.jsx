@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 const Round3Entry = () => {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
+  const [showDoneModal, setShowDoneModal] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -36,6 +37,7 @@ const Round3Entry = () => {
     try {
       await api.post('/admin/r3/done');
       toast.success('Round 3 Finalized');
+      setShowDoneModal(false);
       navigate('/admin/r3');
     } catch (err) {
       console.error(err);
@@ -49,7 +51,7 @@ const Round3Entry = () => {
     <div>
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ margin: 0 }}>Round 3: Interview Desk (Ass.1)</h2>
-        <button className="btn btn-primary" onClick={handleDone}>Done</button>
+        <button className="btn btn-primary" onClick={() => setShowDoneModal(true)}>Done</button>
       </div>
       <div className="table-wrapper">
         <table>
@@ -99,6 +101,24 @@ const Round3Entry = () => {
           </tbody>
         </table>
       </div>
+
+      {showDoneModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+        }}>
+          <div className="glass-card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
+            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Finalize Round 3 & Generate Merit List</h3>
+            <p style={{ color: 'var(--text-primary)', marginBottom: '2rem', fontWeight: 'bold' }}>
+              Are you sure you want to finalize Round 3? This action will calculate the grand total across all rounds and generate the final Master Merit List. This action is irreversible.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+              <button className="btn btn-outline" onClick={() => setShowDoneModal(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleDone}>Yes, Finalize</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -23,12 +23,18 @@ const Round2Home = () => {
 
   const isCompleted = settings.r2Cutoff !== undefined && settings.r2Cutoff > 0;
   const isActive = settings.r2Active;
+  const isR1Completed = settings.r1Cutoff !== undefined && settings.r1Cutoff > 0;
 
   return (
     <div>
       <h2 style={{ marginBottom: '2rem' }}>Round 2: Written Test</h2>
       
-      {(!isActive && !isCompleted) ? (
+      {!isR1Completed ? (
+        <div className="glass-card" style={{ maxWidth: '400px', borderColor: 'var(--danger-red)' }}>
+          <h3 style={{ color: 'var(--danger-red)' }}>Round 1 Incomplete</h3>
+          <p style={{ color: 'var(--text-secondary)' }}>You must finalize Round 1 (Apply Cutoff) before you can start Round 2.</p>
+        </div>
+      ) : (!isActive && !isCompleted) ? (
         <div className="glass-card" style={{ maxWidth: '400px' }}>
           <h3>Initial Setup</h3>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Configure R2 attendance and start the test.</p>

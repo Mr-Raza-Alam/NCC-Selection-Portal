@@ -21,21 +21,39 @@ const Round3Home = () => {
 
   if (!settings) return <div>Loading...</div>;
 
-  // We can assume R3 is completed if a specific flag is set, or if we rely on a manual check.
-  // For now, let's assume if there are no more active R3 students, or we use a flag.
-  // We'll just rely on a theoretical `settings.r3Completed` flag or we'll add a 'Finish R3' route later.
-  // Since we have '/admin/r3/done', let's assume it updates the Master table. We'll show Set-Up R3 for now.
-  const isCompleted = settings.r3Completed === true; // We might need to add this to Settings model
+  const isR2Completed = settings.r2Cutoff !== undefined && settings.r2Cutoff > 0;
+  const isCompleted = settings.r3Completed === true;
+  const isActive = settings.r3Active;
+
+  const handleStartR3 = async () => {
+    try {
+      await api.post('/admin/r3/start');
+      fetchSettings();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div>
       <h2 style={{ marginBottom: '2rem' }}>Round 3: Interview</h2>
       
-      {!isCompleted ? (
+      {!isR2Completed ? (
+        <div className="glass-card" style={{ maxWidth: '400px', borderColor: 'var(--danger-red)' }}>
+          <h3 style={{ color: 'var(--danger-red)' }}>Round 2 Incomplete</h3>
+          <p style={{ color: 'var(--text-secondary)' }}>You must finalize Round 2 (Apply Cutoff) before you can start Round 3.</p>
+        </div>
+      ) : (!isActive && !isCompleted) ? (
         <div className="glass-card" style={{ maxWidth: '400px' }}>
           <h3>Initial Setup</h3>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Configure R3 attendance and enter interview scores.</p>
-          <button className="btn btn-primary" onClick={() => navigate('/admin/r3/entry')}>Set-Up R3 Config</button>
+          <button className="btn btn-primary" onClick={handleStartR3}>Start R3</button>
+        </div>
+      ) : !isCompleted ? (
+        <div className="glass-card" style={{ maxWidth: '400px', borderColor: 'var(--warning-amber)' }}>
+          <h3 style={{ color: 'var(--warning-amber)' }}>Round 3 Active</h3>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Round 3 is active. You can now conduct interviews.</p>
+          <button className="btn btn-primary" onClick={() => navigate('/admin/r3/entry')}>Go to Interview Desk</button>
         </div>
       ) : (
         <div className="glass-card" style={{ maxWidth: '400px', borderColor: 'var(--accent-green)' }}>

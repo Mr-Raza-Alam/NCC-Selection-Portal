@@ -7,6 +7,8 @@ const Round2Entry = () => {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [cutoff, setCutoff] = useState('');
+  const [showCutoffModal, setShowCutoffModal] = useState(false);
+  const [showDoneModal, setShowDoneModal] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -25,6 +27,7 @@ const Round2Entry = () => {
     try {
       await api.post('/admin/r2/cutoff', { cutoff: Number(cutoff) });
       toast.success('Cutoff applied. Non-qualifiers removed from active list.');
+      setShowCutoffModal(false);
       fetchData();
     } catch (err) {
       toast.error('Error applying cutoff');
@@ -35,6 +38,7 @@ const Round2Entry = () => {
     try {
       await api.post('/admin/r2/done');
       toast.success('Round 2 Finalized');
+      setShowDoneModal(false);
       navigate('/admin/r2');
     } catch (err) {
       console.error(err);
@@ -53,8 +57,8 @@ const Round2Entry = () => {
             <label style={{ fontSize: '0.8rem' }}>Set R2 Cutoff</label>
             <input type="number" value={cutoff} onChange={e => setCutoff(e.target.value)} style={{ width: '100%', maxWidth: '100px' }} />
           </div>
-          <button className="btn btn-danger" onClick={handleApplyCutoff}>Apply Cutoff</button>
-          <button className="btn btn-primary" onClick={handleDone}>Done</button>
+          <button className="btn btn-danger" onClick={() => setShowCutoffModal(true)}>Apply Cutoff</button>
+          <button className="btn btn-primary" onClick={() => setShowDoneModal(true)}>Done</button>
         </div>
       </div>
       
@@ -116,6 +120,43 @@ const Round2Entry = () => {
           </tbody>
         </table>
       </div>
+
+      {showCutoffModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+        }}>
+          <div className="glass-card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
+            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Apply Cutoff?</h3>
+            <p style={{ marginBottom: '1rem' }}>This will eliminate non-qualifiers from the active list.</p>
+            <p style={{ color: 'var(--warning-amber)', marginBottom: '2rem', fontWeight: 'bold' }}>
+              Note: You must hit the 'Done' button after applying the cutoff to finalize the round.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+              <button className="btn btn-outline" onClick={() => setShowCutoffModal(false)}>Cancel</button>
+              <button className="btn btn-danger" onClick={handleApplyCutoff}>Yes, Apply Cutoff</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDoneModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+        }}>
+          <div className="glass-card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
+            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Finalize Round 2</h3>
+            <p style={{ color: 'var(--text-primary)', marginBottom: '2rem', fontWeight: 'bold' }}>
+              Are you sure you want to finalize Round 2? This will sync all written test scores to the Master Record. Make sure you have applied the cutoff first.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+              <button className="btn btn-outline" onClick={() => setShowDoneModal(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleDone}>Yes, Finalize</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
