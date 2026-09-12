@@ -9,6 +9,7 @@ const Register = () => {
   });
   const [error, setError] = useState('');
   const [emailWarning, setEmailWarning] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({...formData, [e.target.name]: e.target.value});
@@ -73,7 +74,21 @@ const Register = () => {
           </div>
           <div className="input-group">
             <label>Password</label>
-            <input type="password" name="password" required onChange={handleChange} />
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <input 
+                type={showPassword ? "text" : "password"} 
+                name="password" 
+                style={{ width: '100%', paddingRight: '40px' }}
+                required 
+                onChange={handleChange} 
+              />
+              <span 
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ position: 'absolute', right: '10px', cursor: 'pointer', fontSize: '1.2rem', userSelect: 'none' }}
+              >
+                {showPassword ? '👁️' : '🙈'}
+              </span>
+            </div>
           </div>
           <div className="input-group" style={{ flexDirection: 'row', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '1.5rem' }}>
             <input type="checkbox" required style={{ marginTop: '0.3rem', width: 'auto' }} />

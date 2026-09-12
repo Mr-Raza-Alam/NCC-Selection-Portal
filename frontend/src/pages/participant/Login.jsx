@@ -6,6 +6,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ code: '', password: '' });
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => setFormData({...formData, [e.target.name]: e.target.value});
 
@@ -35,7 +36,21 @@ const Login = () => {
           </div>
           <div className="input-group">
             <label>Password</label>
-            <input type="password" name="password" required onChange={handleChange} />
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <input 
+                type={showPassword ? "text" : "password"} 
+                name="password" 
+                style={{ width: '100%', paddingRight: '40px' }}
+                required 
+                onChange={handleChange} 
+              />
+              <span 
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ position: 'absolute', right: '10px', cursor: 'pointer', fontSize: '1.2rem', userSelect: 'none' }}
+              >
+                {showPassword ? '👁️' : '🙈'}
+              </span>
+            </div>
             <div style={{ textAlign: 'right', marginTop: '0.25rem' }}>
               <Link to="/forgot-password" style={{ fontSize: '0.85rem', color: 'var(--accent-green)' }}>Forgot Password?</Link>
             </div>

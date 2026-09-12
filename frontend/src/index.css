@@ -107,6 +107,12 @@ h3 { font-size: 1.5rem; margin-bottom: 1rem; }
   border-color: var(--primary-navy);
 }
 
+/* Hide native Edge/IE password reveal and clear buttons to prevent overlap with custom React icons */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;

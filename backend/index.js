@@ -46,6 +46,20 @@ app.get('/api/public/schedule', async (req, res) => {
   }
 });
 
+// Public Route for Broadcast Settings
+app.get('/api/public/broadcast', async (req, res) => {
+  try {
+    const Settings = require('./models/Settings');
+    const settings = await Settings.findOne();
+    if (!settings) {
+      return res.json({ broadcastMessage: '', broadcastTarget: 'none' });
+    }
+    res.json({ broadcastMessage: settings.broadcastMessage, broadcastTarget: settings.broadcastTarget });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 app.get('/', (req, res) => {
   res.send('NCC Selection API is running...');
 });

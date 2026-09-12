@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+import BroadcastBanner from '../../components/BroadcastBanner';
 
 const Dashboard = () => {
   const [profile, setProfile] = useState(null);
@@ -60,6 +61,7 @@ const Dashboard = () => {
 
   return (
     <div className="container" style={{ textAlign: 'center' }}>
+      <BroadcastBanner pageType="dashboard" />
       <h2>Welcome, {profile.name}</h2>
       
       {profile.status === 'selected' && (

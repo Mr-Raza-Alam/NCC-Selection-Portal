@@ -9,12 +9,28 @@ const SettingsPage = () => {
   
   const [resetConfirmText, setResetConfirmText] = useState('');
   const [resetAdminPassword, setResetAdminPassword] = useState('');
+  const [resetType, setResetType] = useState('nuclear');
   const [isResetting, setIsResetting] = useState(false);
   const [logs, setLogs] = useState([]);
+  
+  const [broadcastMessage, setBroadcastMessage] = useState('');
+  const [broadcastTarget, setBroadcastTarget] = useState('none');
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false);
 
   useEffect(() => {
     fetchLogs();
+    fetchSettings();
   }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const res = await api.get('/admin/settings');
+      setBroadcastMessage(res.data.broadcastMessage || '');
+      setBroadcastTarget(res.data.broadcastTarget || 'none');
+    } catch (err) {
+      console.error('Failed to load settings');
+    }
+  };
 
   const fetchLogs = async () => {
     try {
@@ -45,10 +61,10 @@ const SettingsPage = () => {
     }
   };
 
-  const handleResetBatch = async (e) => {
+  const handleReset = async (e) => {
     e.preventDefault();
     if (resetConfirmText !== 'RESET') {
-      return toast.error('Type exactly RESET to confirm.');
+      return toast.error('Type RESET to confirm');
     }
     if (!resetAdminPassword) {
       return toast.error('Admin password is required.');
@@ -61,7 +77,8 @@ const SettingsPage = () => {
     try {
       const res = await api.post('/admin/settings/reset-batch', {
         adminPassword: resetAdminPassword,
-        confirmText: resetConfirmText
+        confirmText: resetConfirmText,
+        resetType
       });
       toast.success(res.data.message);
       setResetConfirmText('');
@@ -71,6 +88,16 @@ const SettingsPage = () => {
       toast.error(err.response?.data?.message || 'Error during reset');
     } finally {
       setIsResetting(false);
+    }
+  };
+
+  const handleBroadcastSubmit = async () => {
+    try {
+      await api.post('/admin/settings/broadcast', { broadcastMessage, broadcastTarget });
+      toast.success('Broadcast message updated');
+      setShowBroadcastModal(false);
+    } catch (err) {
+      toast.error('Failed to update broadcast');
     }
   };
 
@@ -116,15 +143,68 @@ const SettingsPage = () => {
         </form>
       </div>
 
-      {/* Reset for New Batch */}
+      {/* Broadcast Notification */}
+      <div className="card" style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid #e2e8f0', borderRadius: '8px', backgroundColor: '#ebf8ff' }}>
+        <h3 style={{ color: '#2b6cb0', marginBottom: '1rem' }}>Broadcast Notification</h3>
+        <p style={{ color: '#2c5282', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+          Pin a global message to the top of specific pages. Select "None" to remove the active broadcast.
+        </p>
+        <div className="form-group" style={{ marginBottom: '1rem' }}>
+          <label>Broadcast Message</label>
+          <textarea 
+            className="form-control" 
+            value={broadcastMessage} 
+            onChange={e => setBroadcastMessage(e.target.value)} 
+            rows="3"
+            placeholder="e.g. Test window is extended by 10 minutes..."
+            style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #bee3f8' }}
+          />
+        </div>
+        <div className="form-group" style={{ marginBottom: '1rem' }}>
+          <label>Target Page</label>
+          <select 
+            className="form-control" 
+            value={broadcastTarget} 
+            onChange={e => setBroadcastTarget(e.target.value)}
+          >
+            <option value="none">None (Disabled)</option>
+            <option value="landing">Landing Page Only</option>
+            <option value="dashboard">Student Dashboard Only</option>
+            <option value="both">Both Landing Page & Dashboard</option>
+          </select>
+        </div>
+        <button 
+          className="btn btn-primary" 
+          onClick={(e) => { e.preventDefault(); setShowBroadcastModal(true); }}
+        >
+          Update Broadcast
+        </button>
+      </div>
+
+      {/* Granular Reset */}
       <div className="card" style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid #fc8181', borderRadius: '8px', backgroundColor: '#fff5f5' }}>
-        <h3 style={{ color: '#c53030', marginBottom: '1rem' }}>Reset for New Batch (Nuclear Option)</h3>
-        <p style={{ color: '#742a2a', marginBottom: '1.5rem' }}>
-          <strong>WARNING:</strong> This action will permanently delete all student registrations, attendance, and test results for the current batch. 
-          The system will automatically generate a CSV backup before deletion. Question Bank and Admin accounts will be preserved.
+        <h3 style={{ color: '#c53030', marginBottom: '1rem' }}>Database Reset Options</h3>
+        <p style={{ color: '#9b2c2c', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+          Select which part of the database you want to reset. This action requires your admin password.
         </p>
         
-        <form onSubmit={handleResetBatch}>
+        <form onSubmit={handleReset}>
+          <div className="form-group" style={{ marginBottom: '1rem' }}>
+            <label>Reset Target</label>
+            <select 
+              className="form-control" 
+              value={resetType} 
+              onChange={e => setResetType(e.target.value)}
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #feb2b2' }}
+            >
+              <option value="nuclear">Nuclear Reset (Everything - New Batch)</option>
+              <option value="questions">Question Bank Only</option>
+              <option value="r1">Round 1 Scores & Setup Only</option>
+              <option value="r2">Round 2 Scores Only</option>
+              <option value="r3">Round 3 Scores Only</option>
+            </select>
+          </div>
+
           <div className="form-group" style={{ marginBottom: '1rem' }}>
             <label style={{ color: '#c53030', fontWeight: 'bold' }}>Step 1: Type RESET in all caps to confirm</label>
             <input 
@@ -190,6 +270,22 @@ const SettingsPage = () => {
           </div>
         )}
       </div>
+
+      {/* Broadcast Flashbox Modal */}
+      {showBroadcastModal && (
+        <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+          <div className="modal-content glass-card" style={{ maxWidth: '400px', width: '90%', padding: '2rem', textAlign: 'center', backgroundColor: '#fff', borderRadius: '8px' }}>
+            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Confirm Broadcast</h3>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '0.95rem', lineHeight: '1.5' }}>
+              Are you sure to send this broadcast msg right away? It will instantly appear on the selected target page(s).
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button className="btn btn-outline" onClick={() => setShowBroadcastModal(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleBroadcastSubmit}>Confirm & Send</button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

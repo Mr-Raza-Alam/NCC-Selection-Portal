@@ -3,6 +3,10 @@ const router = express.Router();
 const Question = require('../models/Question');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
+const { parse } = require('csv-parse');
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 // GET /api/admin/questions - Fetch all questions
 router.get('/', async (req, res) => {
@@ -83,6 +87,48 @@ router.post('/reset', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error resetting questions' });
+  }
+});
+
+// POST /api/admin/questions/upload - Upload CSV
+router.post('/upload', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const csvData = req.file.buffer.toString('utf-8');
+    
+    parse(csvData, { columns: true, skip_empty_lines: true, trim: true }, async (err, records) => {
+      if (err) {
+        return res.status(400).json({ message: 'Failed to parse CSV file' });
+      }
+
+      try {
+        const formattedQuestions = records.map((q, index) => {
+          const options = [q.OptionA, q.OptionB, q.OptionC, q.OptionD];
+          const correctMap = { 'A': 0, 'B': 1, 'C': 2, 'D': 3, 'a': 0, 'b': 1, 'c': 2, 'd': 3 };
+          return {
+            questionNumber: q.QuestionNumber ? parseInt(q.QuestionNumber) : index + 1,
+            questionText: q.QuestionText,
+            options: options,
+            correctAnswer: correctMap[q.CorrectAnswer] !== undefined ? correctMap[q.CorrectAnswer] : 0,
+            section: q.Section || 'General'
+          };
+        });
+
+        await Question.deleteMany({});
+        await Question.insertMany(formattedQuestions);
+
+        res.json({ message: 'Questions uploaded successfully', count: formattedQuestions.length });
+      } catch (dbErr) {
+        console.error(dbErr);
+        res.status(500).json({ message: 'Database error while saving uploaded questions' });
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error uploading questions' });
   }
 });
 

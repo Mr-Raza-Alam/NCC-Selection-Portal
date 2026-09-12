@@ -15,6 +15,8 @@ const ForgotPassword = () => {
 
   // Step 2 State
   const [resetData, setResetData] = useState({ newPassword: '', confirmPassword: '' });
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleVerifyChange = (e) => setVerifyData({ ...verifyData, [e.target.name]: e.target.value });
   const handleResetChange = (e) => setResetData({ ...resetData, [e.target.name]: e.target.value });
@@ -104,11 +106,41 @@ const ForgotPassword = () => {
             </p>
             <div className="input-group">
               <label>New Password</label>
-              <input type="password" name="newPassword" value={resetData.newPassword} onChange={handleResetChange} required />
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <input 
+                  type={showNewPassword ? "text" : "password"} 
+                  name="newPassword" 
+                  value={resetData.newPassword} 
+                  onChange={handleResetChange} 
+                  style={{ width: '100%', paddingRight: '40px' }}
+                  required 
+                />
+                <span 
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  style={{ position: 'absolute', right: '10px', cursor: 'pointer', fontSize: '1.2rem', userSelect: 'none' }}
+                >
+                  {showNewPassword ? '👁️' : '🙈'}
+                </span>
+              </div>
             </div>
             <div className="input-group">
               <label>Confirm Password</label>
-              <input type="password" name="confirmPassword" value={resetData.confirmPassword} onChange={handleResetChange} required />
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <input 
+                  type={showConfirmPassword ? "text" : "password"} 
+                  name="confirmPassword" 
+                  value={resetData.confirmPassword} 
+                  onChange={handleResetChange} 
+                  style={{ width: '100%', paddingRight: '40px' }}
+                  required 
+                />
+                <span 
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{ position: 'absolute', right: '10px', cursor: 'pointer', fontSize: '1.2rem', userSelect: 'none' }}
+                >
+                  {showConfirmPassword ? '👁️' : '🙈'}
+                </span>
+              </div>
             </div>
             
             <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }} disabled={loading}>

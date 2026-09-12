@@ -34,7 +34,18 @@ const TestManagement = () => {
 
   const handleSaveConfig = async () => {
     try {
-      await api.post('/admin/test-config', config);
+      const payload = { ...config };
+      
+      // Fix timezone bug: datetime-local returns YYYY-MM-DDThh:mm
+      // Append +05:30 to ensure the backend saves it as IST instead of assuming UTC
+      if (payload.windowStart && payload.windowStart.length === 16) {
+        payload.windowStart += '+05:30';
+      }
+      if (payload.windowEnd && payload.windowEnd.length === 16) {
+        payload.windowEnd += '+05:30';
+      }
+
+      await api.post('/admin/test-config', payload);
       toast.success('Test Configuration Saved');
       fetchConfig();
     } catch (err) {
@@ -51,6 +62,35 @@ const TestManagement = () => {
       fetchConfig();
     } catch (err) {
       toast.error('Failed to clear window');
+    }
+  };
+
+  const handleDownloadTemplate = () => {
+    const csvContent = "data:text/csv;charset=utf-8,QuestionNumber,QuestionText,OptionA,OptionB,OptionC,OptionD,CorrectAnswer,Section\n1,What is the capital of India?,New Delhi,Mumbai,Kolkata,Chennai,A,General";
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'question_template.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleUploadQuestions = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await api.post('/admin/questions/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      toast.success(`${res.data.message} (${res.data.count} questions)`);
+      e.target.value = null; // reset file input
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to upload questions');
     }
   };
 
@@ -137,6 +177,35 @@ const TestManagement = () => {
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button className="btn btn-primary" onClick={handleSaveConfig}>Save Window</button>
             <button className="btn btn-danger" onClick={handleClearWindow}>Clear Window</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Question Bank Management */}
+      <div className="card" style={{ padding: '1.5rem', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+        <h3 style={{ color: '#2d3748', marginBottom: '1rem' }}>Question Bank Management</h3>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
+          Upload a CSV file to completely replace the current question bank. The CSV must have specific columns.
+        </p>
+        
+        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+          <button className="btn btn-outline" onClick={handleDownloadTemplate}>
+            Download CSV Template
+          </button>
+          
+          <div style={{ borderLeft: '1px solid var(--border-color)', height: '40px' }}></div>
+          
+          <div>
+            <label htmlFor="csvUpload" className="btn btn-primary" style={{ margin: 0, cursor: 'pointer' }}>
+              Upload Questions (CSV)
+            </label>
+            <input 
+              id="csvUpload" 
+              type="file" 
+              accept=".csv" 
+              style={{ display: 'none' }} 
+              onChange={handleUploadQuestions}
+            />
           </div>
         </div>
       </div>

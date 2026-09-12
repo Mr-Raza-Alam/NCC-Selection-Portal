@@ -7,7 +7,9 @@ const settingsSchema = new mongoose.Schema({
   r1SetupComplete: { type: Boolean, default: false },
   r2Active: { type: Boolean, default: false },
   r3Active: { type: Boolean, default: false },
-  r3Completed: { type: Boolean, default: false }
+  r3Completed: { type: Boolean, default: false },
+  broadcastMessage: { type: String, default: '' },
+  broadcastTarget: { type: String, enum: ['none', 'landing', 'dashboard', 'both'], default: 'none' }
 });
 
 module.exports = mongoose.model('Settings', settingsSchema);
