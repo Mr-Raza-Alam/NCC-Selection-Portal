@@ -101,6 +101,18 @@ const SettingsPage = () => {
     }
   };
 
+  const handleStopBroadcast = async () => {
+    if (!window.confirm("Are you sure you want to stop the active broadcast?")) return;
+    try {
+      await api.post('/admin/settings/broadcast', { broadcastMessage: '', broadcastTarget: 'none' });
+      setBroadcastMessage('');
+      setBroadcastTarget('none');
+      toast.success('Broadcast stopped successfully');
+    } catch (err) {
+      toast.error('Failed to stop broadcast');
+    }
+  };
+
   return (
     <div className="container" style={{ padding: '2rem' }}>
       <h2 style={{ color: '#1a365d', marginBottom: '2rem' }}>System Settings</h2>
@@ -173,12 +185,22 @@ const SettingsPage = () => {
             <option value="both">Both Landing Page & Dashboard</option>
           </select>
         </div>
-        <button 
-          className="btn btn-primary" 
-          onClick={(e) => { e.preventDefault(); setShowBroadcastModal(true); }}
-        >
-          Update Broadcast
-        </button>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button 
+            className="btn btn-primary" 
+            onClick={(e) => { e.preventDefault(); setShowBroadcastModal(true); }}
+          >
+            Update Broadcast
+          </button>
+
+          <button 
+            className="btn" 
+            style={{ backgroundColor: '#e53e3e', color: 'white', fontWeight: 'bold', border: 'none' }}
+            onClick={(e) => { e.preventDefault(); handleStopBroadcast(); }}
+          >
+            Stop Active Broadcast
+          </button>
+        </div>
       </div>
 
       {/* Granular Reset */}
