@@ -76,11 +76,11 @@ const MasterTable = () => {
   const getSortedData = () => {
     const filtered = masters.filter(m => {
       if (!searchTerm) return true;
-      const term = searchTerm.toLowerCase();
+      const term = String(searchTerm).toLowerCase();
       return (
-        (m.name && m.name.toLowerCase().includes(term)) ||
-        (m.studentId?.code && m.studentId.code.toLowerCase().includes(term)) ||
-        (m.status && m.status.toLowerCase().includes(term))
+        (m.name && String(m.name).toLowerCase().includes(term)) ||
+        (m.studentId?.code && String(m.studentId.code).toLowerCase().includes(term)) ||
+        (m.status && String(m.status).toLowerCase().includes(term))
       );
     });
 

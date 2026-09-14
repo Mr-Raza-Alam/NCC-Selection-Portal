@@ -66,10 +66,10 @@ const Round1Entry = () => {
 
   const filteredStudents = data.students.filter(p => {
     if (!searchTerm) return true;
-    const term = searchTerm.toLowerCase();
+    const term = String(searchTerm).toLowerCase();
     return (
-      (p.name && p.name.toLowerCase().includes(term)) ||
-      (p.code && p.code.toLowerCase().includes(term))
+      (p.name && String(p.name).toLowerCase().includes(term)) ||
+      (p.code && String(p.code).toLowerCase().includes(term))
     );
   });
 

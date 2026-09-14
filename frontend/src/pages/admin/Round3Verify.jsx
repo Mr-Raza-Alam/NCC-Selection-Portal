@@ -53,12 +53,12 @@ const Round3Verify = () => {
 
   const filteredMasters = masters.filter(m => {
     if (!searchTerm) return true;
-    const term = searchTerm.toLowerCase();
+    const term = String(searchTerm).toLowerCase();
     const name = m.studentId?.name || m.name || '';
     const code = m.studentId?.code || '';
     return (
-      name.toLowerCase().includes(term) ||
-      code.toLowerCase().includes(term)
+      String(name).toLowerCase().includes(term) ||
+      String(code).toLowerCase().includes(term)
     );
   });
 

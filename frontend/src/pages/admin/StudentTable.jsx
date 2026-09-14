@@ -13,12 +13,12 @@ const StudentTable = () => {
 
   const filteredStudents = students.filter(s => {
     if (!searchTerm) return true;
-    const term = searchTerm.toLowerCase();
+    const term = String(searchTerm).toLowerCase();
     return (
-      (s.name && s.name.toLowerCase().includes(term)) ||
-      (s.code && s.code.toLowerCase().includes(term)) ||
-      (s.admissionNo && s.admissionNo.toLowerCase().includes(term)) ||
-      (s.department && s.department.toLowerCase().includes(term))
+      (s.name && String(s.name).toLowerCase().includes(term)) ||
+      (s.code && String(s.code).toLowerCase().includes(term)) ||
+      (s.admissionNo && String(s.admissionNo).toLowerCase().includes(term)) ||
+      (s.department && String(s.department).toLowerCase().includes(term))
     );
   });
 
