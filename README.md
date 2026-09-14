@@ -20,6 +20,8 @@ This application provides a seamless, secure, and intuitive platform for both **
 - **Question Bank Management**: Easily download a CSV template and upload hundreds of test questions instantly using an optimized in-memory CSV parser.
 - **Student Management**: View all registered students, their basic details, and test status. Download raw student records as a CSV file. Includes the ability for admins to safely edit and correct student profiles.
 - **Master Data Table**: A centralized hub to view candidates across multiple rounds of the selection process.
+- **Strict Chronological Round Locking**: Ensures the process flows flawlessly from Round 1 to Round 3, automatically transforming editable entry tables into read-only, locked result pages once a round is finalized.
+- **Robust Searching**: Efficient, case-insensitive, and crash-proof search capabilities across all student and round data tables.
 - **Manual Scoring**: Admins can easily enter Round 2 (Written Test) pen & paper scores directly into the portal with instant auto-saving capability.
 - **System Settings & Broadcast**: Pin global real-time broadcast messages to student dashboards and the landing page.
 - **Granular Database Reset**: Safely wipe specific rounds (R1, R2, R3), the question bank, or perform a full "Nuclear Wipe" for new batches, generating automatic CSV backups on the server.
@@ -89,6 +91,7 @@ npm run dev
 ---
 
 ## 📱 UI/UX Highlights
+- **Global Loader System**: A beautiful, custom-designed Sky Blue and Gold spinner that handles inline data loading and provides a full-screen frosted glass overlay lock during heavy server computations, preventing double-clicks and ensuring a premium feel.
 - **Custom Modals**: Replaced all native, ugly browser `window.confirm` dialogs with a sleek, centered overlay "Flashbox" to ensure UI consistency.
 - **Marquee Broadcasts**: Dynamic scrolling banners on the Landing Page and Dashboard that fetch live admin announcements.
 - **Cross-Browser Password UI**: Implemented custom React-based password reveal (eye) icons while suppressing native browser injected UI (e.g., Microsoft Edge's `::-ms-reveal`) to guarantee a pixel-perfect layout everywhere.
