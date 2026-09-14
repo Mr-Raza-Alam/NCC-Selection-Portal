@@ -11,6 +11,7 @@ const MasterTable = () => {
 
   const [cutoff, setCutoff] = useState('');
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -72,7 +73,17 @@ const MasterTable = () => {
   };
 
   const getSortedData = () => {
-    const sorted = [...masters];
+    const filtered = masters.filter(m => {
+      if (!searchTerm) return true;
+      const term = searchTerm.toLowerCase();
+      return (
+        (m.name && m.name.toLowerCase().includes(term)) ||
+        (m.studentId?.code && m.studentId.code.toLowerCase().includes(term)) ||
+        (m.status && m.status.toLowerCase().includes(term))
+      );
+    });
+
+    const sorted = [...filtered];
     sorted.sort((a, b) => {
       // Eliminated always sink to bottom
       const aElim = a.status === 'eliminated' || a.status === 'Eliminated';
@@ -118,8 +129,22 @@ const MasterTable = () => {
 
   return (
     <div>
-      <div className="no-print action-bar" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="no-print action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
         <h2 style={{ margin: 0 }}>Master Table (Merit List)</h2>
+        
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem' }}>
+            Showing: {getSortedData().length} / {masters.length}
+          </div>
+          <input 
+            type="text" 
+            placeholder="Search Name, Code, Status..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)', minWidth: '220px' }}
+          />
+        </div>
+
         <div className="action-bar" style={{ margin: 0 }}>
           {['assistant1', 'assistant2'].includes(role) && canVerify && (
             <button className="btn btn-primary" onClick={() => toast.success('Document Entry Finalized!')}>Entry Done</button>

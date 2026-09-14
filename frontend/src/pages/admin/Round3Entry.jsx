@@ -7,6 +7,7 @@ const Round3Entry = () => {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [showDoneModal, setShowDoneModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -36,9 +37,9 @@ const Round3Entry = () => {
   const handleDone = async () => {
     try {
       await api.post('/admin/r3/done');
-      toast.success('Round 3 Finalized');
+      toast.success('Round 3 Finalized! You are now viewing the locked results.');
       setShowDoneModal(false);
-      navigate('/admin/r3');
+      fetchData();
     } catch (err) {
       console.error(err);
       toast.error('Error finalizing R3');
@@ -47,10 +48,34 @@ const Round3Entry = () => {
 
   if (!data) return <div className="container">Loading...</div>;
 
+  const filteredStudents = data.students.filter(p => {
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      (p.name && p.name.toLowerCase().includes(term)) ||
+      (p.code && p.code.toLowerCase().includes(term)) ||
+      (p.department && p.department.toLowerCase().includes(term))
+    );
+  });
+
   return (
     <div>
-      <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
         <h2 style={{ margin: 0 }}>Round 3: Interview Desk (Ass.1)</h2>
+        
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem' }}>
+            Showing: {filteredStudents.length} / {data.students.length}
+          </div>
+          <input 
+            type="text" 
+            placeholder="Search Name, Code, Dept..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)', minWidth: '220px' }}
+          />
+        </div>
+
         <button className="btn btn-primary" onClick={() => setShowDoneModal(true)}>Done</button>
       </div>
       <div className="table-wrapper">
@@ -64,7 +89,7 @@ const Round3Entry = () => {
             </tr>
           </thead>
           <tbody>
-            {data.students.map(p => {
+            {filteredStudents.map(p => {
               const r3 = data.r3Scores.find(s => String(s.studentId) === String(p._id) || (s.studentId && s.studentId._id && String(s.studentId._id) === String(p._id)));
               const isPresent = r3 ? r3.attendance : true;
               return (

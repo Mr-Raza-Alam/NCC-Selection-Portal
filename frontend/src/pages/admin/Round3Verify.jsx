@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 const Round3Verify = () => {
   const navigate = useNavigate();
   const [masters, setMasters] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -49,10 +50,35 @@ const Round3Verify = () => {
     }
   };
 
+  const filteredMasters = masters.filter(m => {
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase();
+    const name = m.studentId?.name || m.name || '';
+    const code = m.studentId?.code || '';
+    return (
+      name.toLowerCase().includes(term) ||
+      code.toLowerCase().includes(term)
+    );
+  });
+
   return (
     <div className="container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h2>Round 3: Document Verify (Ass.2)</h2>
+      <div className="action-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap' }}>
+        <h2 style={{ margin: 0 }}>Round 3: Document Verify (Ass.2)</h2>
+        
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem' }}>
+            Showing: {filteredMasters.length} / {masters.length}
+          </div>
+          <input 
+            type="text" 
+            placeholder="Search Name or Code..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)', minWidth: '220px' }}
+          />
+        </div>
+
         <button className="btn btn-primary" onClick={handleDone}>Finalize R3 & Calculate Totals</button>
       </div>
       
@@ -68,7 +94,7 @@ const Round3Verify = () => {
             </tr>
           </thead>
           <tbody>
-            {masters.map(m => (
+            {filteredMasters.map(m => (
               <tr key={m._id}>
                 <td>{m.studentId.name || m.name}</td>
                 <td>{m.studentId.code}</td>

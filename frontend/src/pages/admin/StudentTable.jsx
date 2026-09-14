@@ -8,6 +8,18 @@ const StudentTable = () => {
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: '', targetId: null, confirmText: '' });
   const [inputVal, setInputVal] = useState('');
   const [editModal, setEditModal] = useState({ isOpen: false, student: null });
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredStudents = students.filter(s => {
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      (s.name && s.name.toLowerCase().includes(term)) ||
+      (s.code && s.code.toLowerCase().includes(term)) ||
+      (s.admissionNo && s.admissionNo.toLowerCase().includes(term)) ||
+      (s.department && s.department.toLowerCase().includes(term))
+    );
+  });
 
   const handleEditChange = (e) => {
     setEditModal({ ...editModal, student: { ...editModal.student, [e.target.name]: e.target.value } });
@@ -89,8 +101,22 @@ const StudentTable = () => {
 
   return (
     <div>
-      <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
         <h2 style={{ margin: 0 }}>Student Record (Registration Data)</h2>
+        
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem' }}>
+            Showing: {filteredStudents.length} / {students.length}
+          </div>
+          <input 
+            type="text" 
+            placeholder="Search Name, Code, Dept..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)', minWidth: '220px' }}
+          />
+        </div>
+
         <div className="action-bar" style={{ margin: 0 }}>
           <button className="btn btn-outline" onClick={handleExportCSV}>
             Export CSV
@@ -120,7 +146,7 @@ const StudentTable = () => {
             </tr>
           </thead>
           <tbody>
-            {students.map(s => (
+            {filteredStudents.map(s => (
               <tr key={s._id}>
                 <td style={{ fontWeight: 'bold', color: 'var(--accent-green)' }}>{s.code}</td>
                 <td>{s.name}</td>

@@ -9,6 +9,7 @@ const Round2Entry = () => {
   const [cutoff, setCutoff] = useState('');
   const [showCutoffModal, setShowCutoffModal] = useState(false);
   const [showDoneModal, setShowDoneModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -37,9 +38,9 @@ const Round2Entry = () => {
   const handleDone = async () => {
     try {
       await api.post('/admin/r2/done');
-      toast.success('Round 2 Finalized');
+      toast.success('Round 2 Finalized! You are now viewing the locked results.');
       setShowDoneModal(false);
-      navigate('/admin/r2');
+      fetchData();
     } catch (err) {
       console.error(err);
       toast.error('Error finalizing R2');
@@ -48,10 +49,34 @@ const Round2Entry = () => {
 
   if (!data) return <div className="container">Loading...</div>;
 
+  const filteredStudents = data.students.filter(p => {
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      (p.name && p.name.toLowerCase().includes(term)) ||
+      (p.code && p.code.toLowerCase().includes(term)) ||
+      (p.department && p.department.toLowerCase().includes(term))
+    );
+  });
+
   return (
     <div>
-      <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
         <h2 style={{ margin: 0 }}>Round 2 Results (Written Test)</h2>
+        
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem' }}>
+            Showing: {filteredStudents.length} / {data.students.length}
+          </div>
+          <input 
+            type="text" 
+            placeholder="Search Name, Code, Dept..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)', minWidth: '220px' }}
+          />
+        </div>
+
         <div className="action-bar" style={{ margin: 0 }}>
           <div className="input-group" style={{ margin: 0 }}>
             <label style={{ fontSize: '0.8rem' }}>Set R2 Cutoff</label>
@@ -73,7 +98,7 @@ const Round2Entry = () => {
             </tr>
           </thead>
           <tbody>
-            {data.students.map(p => {
+            {filteredStudents.map(p => {
               const r2Score = data.r2Scores.find(s => String(s.studentId) === String(p._id) || (s.studentId && s.studentId._id && String(s.studentId._id) === String(p._id)));
               const isPresent = r2Score ? r2Score.attendance : true;
               return (
