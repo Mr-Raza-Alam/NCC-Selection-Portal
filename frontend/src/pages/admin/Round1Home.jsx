@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+import Loader from '../../components/Loader';
 
 const Round1Home = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const Round1Home = () => {
     }
   };
 
-  if (!settings) return <div>Loading...</div>;
+  if (!settings) return <Loader />;
 
   const isCompleted = settings.r1Completed;
   const isSetup = settings.r1SetupComplete;

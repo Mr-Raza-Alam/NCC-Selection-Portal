@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+import Loader from '../../components/Loader';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const { data } = await api.post('/auth/admin/login', formData);
       localStorage.setItem('token', data.token);
@@ -19,11 +22,14 @@ const AdminLogin = () => {
       navigate('/admin/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Admin login failed');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="auth-container">
+      {isLoading && <Loader overlay message="Authenticating..." />}
       <div className="glass-card auth-box">
         <h2>Admin Portal</h2>
         {error && <p style={{color: 'var(--danger-red)', marginBottom: '1rem'}}>{error}</p>}

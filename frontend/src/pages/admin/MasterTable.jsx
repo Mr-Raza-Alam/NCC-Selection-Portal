@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
+import Loader from '../../components/Loader';
 
 const MasterTable = () => {
   const [masters, setMasters] = useState([]);
@@ -13,6 +14,7 @@ const MasterTable = () => {
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -125,11 +127,12 @@ const MasterTable = () => {
     document.body.removeChild(link);
   };
 
-  if (loading) return <div className="container">Loading...</div>;
+  if (loading) return <Loader />;
   if (!masters.length) return <div className="container">No Master Records Found. Ensure students are registered properly.</div>;
 
   return (
     <div>
+      {isProcessing && <Loader overlay message="Publishing Final Merit List..." />}
       <div className="no-print action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
         <h2 style={{ margin: 0 }}>Master Table (Merit List)</h2>
         
@@ -158,11 +161,13 @@ const MasterTable = () => {
           {['lead_admin', 'cto'].includes(role) && (
             <button className="btn btn-primary" onClick={async () => {
               if (!window.confirm("Publish Final Results? This will mark all unselected students as eliminated.")) return;
+              setIsProcessing(true);
               try {
                 const res = await api.post('/admin/publish-results');
                 toast.success(res.data.message);
                 fetchData();
               } catch (err) { toast.error('Failed to publish results'); }
+              finally { setIsProcessing(false); }
             }}>Publish Final Results</button>
           )}
           {role === 'lead_admin' && (

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import BroadcastBanner from '../../components/BroadcastBanner';
+import Loader from '../../components/Loader';
 
 const Dashboard = () => {
   const [profile, setProfile] = useState(null);
@@ -57,7 +58,7 @@ const Dashboard = () => {
     }
   }, [profile]);
 
-  if (!profile) return <div className="container">Loading...</div>;
+  if (!profile) return <Loader />;
 
   return (
     <div className="container" style={{ textAlign: 'center' }}>

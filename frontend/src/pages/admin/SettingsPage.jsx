@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
+import Loader from '../../components/Loader';
 
 const SettingsPage = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -115,6 +116,7 @@ const SettingsPage = () => {
 
   return (
     <div className="container" style={{ padding: '2rem' }}>
+      {isResetting && <Loader overlay message="Wiping Database..." />}
       <h2 style={{ color: '#1a365d', marginBottom: '2rem' }}>System Settings</h2>
 
       {/* Change Password */}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
+import Loader from '../../components/Loader';
 
 const Round2Entry = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const Round2Entry = () => {
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isCompleted, setIsCompleted] = useState(false);
+  const [processingMsg, setProcessingMsg] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -31,6 +33,7 @@ const Round2Entry = () => {
   };
 
   const handleApplyCutoff = async () => {
+    setProcessingMsg('Applying Cutoff...');
     try {
       await api.post('/admin/r2/cutoff', { cutoff: Number(cutoff) });
       toast.success('Cutoff applied. Non-qualifiers removed from active list.');
@@ -38,10 +41,13 @@ const Round2Entry = () => {
       fetchData();
     } catch (err) {
       toast.error('Error applying cutoff');
+    } finally {
+      setProcessingMsg('');
     }
   };
 
   const handleDone = async () => {
+    setProcessingMsg('Finalizing Round 2...');
     try {
       await api.post('/admin/r2/done');
       toast.success('Round 2 Finalized! You are now viewing the locked results.');
@@ -50,10 +56,12 @@ const Round2Entry = () => {
     } catch (err) {
       console.error(err);
       toast.error('Error finalizing R2');
+    } finally {
+      setProcessingMsg('');
     }
   };
 
-  if (!data) return <div className="container">Loading...</div>;
+  if (!data) return <Loader />;
 
   const filteredStudents = data.students.filter(p => {
     if (!searchTerm) return true;
@@ -67,6 +75,7 @@ const Round2Entry = () => {
 
   return (
     <div>
+      {processingMsg && <Loader overlay message={processingMsg} />}
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
         <h2 style={{ margin: 0 }}>{isCompleted ? "Round 2 Results (Locked)" : "Round 2 Results (Written Test)"}</h2>
         

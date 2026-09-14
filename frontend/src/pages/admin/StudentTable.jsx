@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import { toast } from 'react-hot-toast';
+import Loader from '../../components/Loader';
 
 const StudentTable = () => {
   const [students, setStudents] = useState([]);
@@ -98,7 +99,7 @@ const StudentTable = () => {
     document.body.removeChild(link);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loader />;
 
   return (
     <div>

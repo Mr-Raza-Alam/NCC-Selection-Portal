@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
+import Loader from '../../components/Loader';
 
 const Round3Verify = () => {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ const Round3Verify = () => {
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -46,12 +48,15 @@ const Round3Verify = () => {
   };
 
   const handleDone = async () => {
+    setIsProcessing(true);
     try {
       await api.post('/admin/r3/done');
       toast.success('Round 3 Finalized! Totals calculated.');
       navigate('/admin/master');
     } catch (err) {
       toast.error('Failed to finalize R3');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -68,6 +73,7 @@ const Round3Verify = () => {
 
   return (
     <div className="container">
+      {isProcessing && <Loader overlay message="Calculating Master Totals..." />}
       <div className="action-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap' }}>
         <h2 style={{ margin: 0 }}>{isCompleted ? "Round 3 Results (Locked)" : "Round 3: Document Verify (Ass.2)"}</h2>
         

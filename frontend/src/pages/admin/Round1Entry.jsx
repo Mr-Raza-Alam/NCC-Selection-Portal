@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
+import Loader from '../../components/Loader';
 
 const Round1Entry = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const Round1Entry = () => {
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isCompleted, setIsCompleted] = useState(false);
+  const [processingMsg, setProcessingMsg] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -45,6 +47,7 @@ const Round1Entry = () => {
   };
 
   const handleApplyCutoff = async () => {
+    setProcessingMsg('Applying Cutoff...');
     try {
       await api.post('/admin/r1/cutoff', { cutoff: Number(cutoff) });
       toast.success('Cutoff applied. Non-qualifiers removed from active list.');
@@ -52,10 +55,13 @@ const Round1Entry = () => {
       fetchData();
     } catch (err) {
       toast.error('Error applying cutoff');
+    } finally {
+      setProcessingMsg('');
     }
   };
 
   const handleDone = async () => {
+    setProcessingMsg('Finalizing Round 1...');
     try {
       await api.post('/admin/r1/done');
       toast.success('Round 1 Finalized! You are now viewing the locked results.');
@@ -64,10 +70,12 @@ const Round1Entry = () => {
     } catch (err) {
       console.error(err);
       toast.error('Error finalizing R1');
+    } finally {
+      setProcessingMsg('');
     }
   };
 
-  if (!data) return <div className="container">Loading...</div>;
+  if (!data) return <Loader />;
 
   const filteredStudents = data.students.filter(p => {
     if (!searchTerm) return true;
@@ -80,6 +88,7 @@ const Round1Entry = () => {
 
   return (
     <div>
+      {processingMsg && <Loader overlay message={processingMsg} />}
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
         <h2 style={{ margin: 0 }}>{isCompleted ? "Round 1 Results (Locked)" : "Round 1 Score Entry"}</h2>
         

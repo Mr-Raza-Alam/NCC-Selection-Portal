@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../utils/api';
+import Loader from '../../components/Loader';
 
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ code: '', password: '' });
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => setFormData({...formData, [e.target.name]: e.target.value});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const { data } = await api.post('/auth/login', formData);
       localStorage.setItem('token', data.token);
@@ -21,11 +24,14 @@ const Login = () => {
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="auth-container">
+      {isLoading && <Loader overlay message="Logging in..." />}
       <div className="glass-card auth-box">
         <h2>Participant Login</h2>
         {error && <p style={{color: 'var(--danger-red)', marginBottom: '1rem'}}>{error}</p>}

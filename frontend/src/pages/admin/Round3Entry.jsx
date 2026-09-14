@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
+import Loader from '../../components/Loader';
 
 const Round3Entry = () => {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ const Round3Entry = () => {
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isCompleted, setIsCompleted] = useState(false);
+  const [processingMsg, setProcessingMsg] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -41,6 +43,7 @@ const Round3Entry = () => {
   };
 
   const handleDone = async () => {
+    setProcessingMsg('Finalizing Round 3 (Ass.1)...');
     try {
       await api.post('/admin/r3/done');
       toast.success('Round 3 Finalized! You are now viewing the locked results.');
@@ -49,10 +52,12 @@ const Round3Entry = () => {
     } catch (err) {
       console.error(err);
       toast.error('Error finalizing R3');
+    } finally {
+      setProcessingMsg('');
     }
   };
 
-  if (!data) return <div className="container">Loading...</div>;
+  if (!data) return <Loader />;
 
   const filteredStudents = data.students.filter(p => {
     if (!searchTerm) return true;
@@ -66,6 +71,7 @@ const Round3Entry = () => {
 
   return (
     <div>
+      {processingMsg && <Loader overlay message={processingMsg} />}
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
         <h2 style={{ margin: 0 }}>{isCompleted ? "Round 3 Results (Locked)" : "Round 3: Interview Desk (Ass.1)"}</h2>
         

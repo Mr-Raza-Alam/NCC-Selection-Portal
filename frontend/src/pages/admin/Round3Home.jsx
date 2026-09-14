@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+import Loader from '../../components/Loader';
 
 const Round3Home = () => {
   const navigate = useNavigate();
   const [settings, setSettings] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     fetchSettings();
@@ -19,23 +21,27 @@ const Round3Home = () => {
     }
   };
 
-  if (!settings) return <div>Loading...</div>;
+  if (!settings) return <Loader />;
 
   const isR2Completed = settings.r2Completed;
   const isCompleted = settings.r3Completed === true;
   const isActive = settings.r3Active;
 
   const handleStartR3 = async () => {
+    setIsProcessing(true);
     try {
       await api.post('/admin/r3/start');
       fetchSettings();
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   return (
     <div>
+      {isProcessing && <Loader overlay message="Starting Round 3..." />}
       <h2 style={{ marginBottom: '2rem' }}>Round 3: Interview</h2>
       
       {!isR2Completed ? (
