@@ -11,6 +11,7 @@ const MasterTable = () => {
 
   const [cutoff, setCutoff] = useState('');
   const [loading, setLoading] = useState(true);
+  const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -132,17 +133,22 @@ const MasterTable = () => {
       <div className="no-print action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
         <h2 style={{ margin: 0 }}>Master Table (Merit List)</h2>
         
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem', marginRight: '0.5rem' }}>
             Showing: {getSortedData().length} / {masters.length}
           </div>
           <input 
             type="text" 
             placeholder="Search Name, Code, Status..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && setSearchTerm(searchInput)}
             style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)', minWidth: '220px' }}
           />
+          <button className="btn btn-primary" onClick={() => setSearchTerm(searchInput)}>Search</button>
+          {searchTerm && (
+            <button className="btn btn-outline" onClick={() => { setSearchInput(''); setSearchTerm(''); }}>Clear</button>
+          )}
         </div>
 
         <div className="action-bar" style={{ margin: 0 }}>
