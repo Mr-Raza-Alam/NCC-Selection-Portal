@@ -8,6 +8,7 @@ const Round3Verify = () => {
   const [masters, setMasters] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -15,10 +16,13 @@ const Round3Verify = () => {
 
   const fetchData = async () => {
     try {
-      const res = await api.get('/admin/master');
-      // Filter for students who are at least r2_qualified (so r2_qualified or r3_qualified)
+      const [res, settingsRes] = await Promise.all([
+        api.get('/admin/master'),
+        api.get('/admin/settings')
+      ]);
       const qualified = res.data.filter(m => m.studentId.status === 'r2_qualified' || m.studentId.status === 'r3_qualified');
       setMasters(qualified);
+      setIsCompleted(settingsRes.data.r3Completed);
     } catch (err) {
       console.error(err);
     }
@@ -65,7 +69,7 @@ const Round3Verify = () => {
   return (
     <div className="container">
       <div className="action-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap' }}>
-        <h2 style={{ margin: 0 }}>Round 3: Document Verify (Ass.2)</h2>
+        <h2 style={{ margin: 0 }}>{isCompleted ? "Round 3 Results (Locked)" : "Round 3: Document Verify (Ass.2)"}</h2>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem', marginRight: '0.5rem' }}>
@@ -84,8 +88,9 @@ const Round3Verify = () => {
             <button className="btn btn-outline" onClick={() => { setSearchInput(''); setSearchTerm(''); }}>Clear</button>
           )}
         </div>
-
-        <button className="btn btn-primary" onClick={handleDone}>Finalize R3 & Calculate Totals</button>
+        {!isCompleted && (
+          <button className="btn btn-primary" onClick={handleDone}>Finalize R3 & Calculate Totals</button>
+        )}
       </div>
       
       <div className="table-wrapper">
@@ -109,6 +114,7 @@ const Round3Verify = () => {
                     type="number" 
                     step="0.1"
                     defaultValue={m.hs ?? ''}
+                    disabled={isCompleted}
                     onBlur={(e) => handleVerify(m.studentId._id, 'hs', e.target.value)}
                     style={{ width: '80px', padding: '0.25rem', background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)' }}
                   />
@@ -116,6 +122,7 @@ const Round3Verify = () => {
                 <td>
                   <select 
                     value={m.aCert || 0}
+                    disabled={isCompleted}
                     onChange={(e) => handleVerify(m.studentId._id, 'aCert', e.target.value)}
                     style={{ background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)', padding: '0.25rem' }}
                   >
@@ -126,6 +133,7 @@ const Round3Verify = () => {
                 <td>
                   <select 
                     value={m.other || 0}
+                    disabled={isCompleted}
                     onChange={(e) => handleVerify(m.studentId._id, 'other', e.target.value)}
                     style={{ background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)', padding: '0.25rem' }}
                   >

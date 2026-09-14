@@ -21,9 +21,9 @@ const Round2Home = () => {
 
   if (!settings) return <div>Loading...</div>;
 
-  const isCompleted = settings.r2Cutoff !== undefined && settings.r2Cutoff > 0;
+  const isCompleted = settings.r2Completed;
   const isActive = settings.r2Active;
-  const isR1Completed = settings.r1Cutoff !== undefined && settings.r1Cutoff > 0;
+  const isR1Completed = settings.r1Completed;
 
   return (
     <div>

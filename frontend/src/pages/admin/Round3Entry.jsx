@@ -9,6 +9,7 @@ const Round3Entry = () => {
   const [showDoneModal, setShowDoneModal] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -16,8 +17,12 @@ const Round3Entry = () => {
 
   const fetchData = async () => {
     try {
-      const res = await api.get('/admin/r3/table');
+      const [res, settingsRes] = await Promise.all([
+        api.get('/admin/r3/table'),
+        api.get('/admin/settings')
+      ]);
       setData(res.data);
+      setIsCompleted(settingsRes.data.r3Completed);
     } catch (err) {
       console.error(err);
     }
@@ -62,7 +67,7 @@ const Round3Entry = () => {
   return (
     <div>
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-        <h2 style={{ margin: 0 }}>Round 3: Interview Desk (Ass.1)</h2>
+        <h2 style={{ margin: 0 }}>{isCompleted ? "Round 3 Results (Locked)" : "Round 3: Interview Desk (Ass.1)"}</h2>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem', marginRight: '0.5rem' }}>
@@ -81,8 +86,9 @@ const Round3Entry = () => {
             <button className="btn btn-outline" onClick={() => { setSearchInput(''); setSearchTerm(''); }}>Clear</button>
           )}
         </div>
-
-        <button className="btn btn-primary" onClick={() => setShowDoneModal(true)}>Done</button>
+        {!isCompleted && (
+          <button className="btn btn-primary" onClick={() => setShowDoneModal(true)}>Done</button>
+        )}
       </div>
       <div className="table-wrapper">
         <table>
@@ -104,7 +110,8 @@ const Round3Entry = () => {
                 <td>{p.department}</td>
                 <td>
                   <select 
-                    value={r3?.attendance || ''} 
+                    value={r3?.attendance || ''}
+                    disabled={isCompleted} 
                     onChange={async (e) => {
                       const val = e.target.value;
                       await api.post('/admin/r3/score', { studentId: p._id, attendance: val });
@@ -122,6 +129,7 @@ const Round3Entry = () => {
                     type="number" 
                     step="0.1"
                     defaultValue={r3?.r3Score ?? ''}
+                    disabled={isCompleted || r3?.attendance === 'A'}
                     onBlur={(e) => handleScoreChange(p._id, e.target.value)}
                     style={{ width: '80px', padding: '0.25rem', background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)' }}
                   />

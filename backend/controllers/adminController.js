@@ -113,6 +113,10 @@ exports.finalizeR1 = async (req, res) => {
       await MasterRecord.updateOne({ _id: m._id }, { $set: { total } });
     }
     
+    const settings = await getSettings();
+    settings.r1Completed = true;
+    await settings.save();
+    
     res.json({ message: 'R1 Finalized and synced to Master Table' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -252,6 +256,10 @@ exports.finalizeR2 = async (req, res) => {
       await MasterRecord.updateOne({ _id: m._id }, { $set: { total } });
     }
     
+    const settings = await getSettings();
+    settings.r2Completed = true;
+    await settings.save();
+
     res.json({ message: 'R2 Finalized and synced to Master Table' });
   } catch (error) {
     res.status(500).json({ message: error.message });

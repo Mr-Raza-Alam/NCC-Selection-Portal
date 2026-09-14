@@ -11,6 +11,7 @@ const Round1Entry = () => {
   const [showDoneModal, setShowDoneModal] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -18,8 +19,12 @@ const Round1Entry = () => {
 
   const fetchData = async () => {
     try {
-      const res = await api.get('/admin/r1/table');
+      const [res, settingsRes] = await Promise.all([
+        api.get('/admin/r1/table'),
+        api.get('/admin/settings')
+      ]);
       setData(res.data);
+      setIsCompleted(settingsRes.data.r1Completed);
     } catch (err) {
       console.error(err);
     }
@@ -76,7 +81,7 @@ const Round1Entry = () => {
   return (
     <div>
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-        <h2 style={{ margin: 0 }}>Round 1 Score Entry</h2>
+        <h2 style={{ margin: 0 }}>{isCompleted ? "Round 1 Results (Locked)" : "Round 1 Score Entry"}</h2>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem', marginRight: '0.5rem' }}>
@@ -97,12 +102,16 @@ const Round1Entry = () => {
         </div>
 
         <div className="action-bar" style={{ margin: 0 }}>
-          <div className="input-group" style={{ margin: 0 }}>
-            <label style={{ fontSize: '0.8rem' }}>Set R1 Cutoff</label>
-            <input type="number" value={cutoff} onChange={e => setCutoff(e.target.value)} style={{ width: '100%', maxWidth: '100px' }} />
-          </div>
-          <button className="btn btn-danger" onClick={() => setShowCutoffModal(true)}>Apply Cutoff</button>
-          <button className="btn btn-primary" onClick={() => setShowDoneModal(true)}>Done</button>
+          {!isCompleted && (
+            <>
+              <div className="input-group" style={{ margin: 0 }}>
+                <label style={{ fontSize: '0.8rem' }}>Set R1 Cutoff</label>
+                <input type="number" value={cutoff} onChange={e => setCutoff(e.target.value)} style={{ width: '100%', maxWidth: '100px' }} />
+              </div>
+              <button className="btn btn-danger" onClick={() => setShowCutoffModal(true)}>Apply Cutoff</button>
+              <button className="btn btn-primary" onClick={() => setShowDoneModal(true)}>Done</button>
+            </>
+          )}
         </div>
       </div>
       
@@ -129,7 +138,8 @@ const Round1Entry = () => {
                   <td>{p.name}</td>
                   <td>
                     <select 
-                      value={pScores?.attendance || ''} 
+                      value={pScores?.attendance || ''}
+                      disabled={isCompleted} 
                       onChange={async (e) => {
                         const val = e.target.value;
                         await api.post('/admin/r1/score', { studentId: p._id, attendance: val });
@@ -149,6 +159,7 @@ const Round1Entry = () => {
                         <input 
                           type="number" 
                           defaultValue={scoreObj ? scoreObj.score : ''}
+                          disabled={isCompleted}
                           onBlur={(e) => handleScoreChange(p._id, act._id, act.activityName, e.target.value)}
                           style={{ width: '60px', padding: '0.25rem', background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)' }}
                         />

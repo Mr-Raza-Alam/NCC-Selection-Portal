@@ -11,6 +11,7 @@ const Round2Entry = () => {
   const [showDoneModal, setShowDoneModal] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -18,8 +19,12 @@ const Round2Entry = () => {
 
   const fetchData = async () => {
     try {
-      const res = await api.get('/admin/r2/table');
+      const [res, settingsRes] = await Promise.all([
+        api.get('/admin/r2/table'),
+        api.get('/admin/settings')
+      ]);
       setData(res.data);
+      setIsCompleted(settingsRes.data.r2Completed);
     } catch (err) {
       console.error(err);
     }
@@ -63,7 +68,7 @@ const Round2Entry = () => {
   return (
     <div>
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-        <h2 style={{ margin: 0 }}>Round 2 Results (Written Test)</h2>
+        <h2 style={{ margin: 0 }}>{isCompleted ? "Round 2 Results (Locked)" : "Round 2 Results (Written Test)"}</h2>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem', marginRight: '0.5rem' }}>
@@ -84,12 +89,16 @@ const Round2Entry = () => {
         </div>
 
         <div className="action-bar" style={{ margin: 0 }}>
-          <div className="input-group" style={{ margin: 0 }}>
-            <label style={{ fontSize: '0.8rem' }}>Set R2 Cutoff</label>
-            <input type="number" value={cutoff} onChange={e => setCutoff(e.target.value)} style={{ width: '100%', maxWidth: '100px' }} />
-          </div>
-          <button className="btn btn-danger" onClick={() => setShowCutoffModal(true)}>Apply Cutoff</button>
-          <button className="btn btn-primary" onClick={() => setShowDoneModal(true)}>Done</button>
+          {!isCompleted && (
+            <>
+              <div className="input-group" style={{ margin: 0 }}>
+                <label style={{ fontSize: '0.8rem' }}>Set R2 Cutoff</label>
+                <input type="number" value={cutoff} onChange={e => setCutoff(e.target.value)} style={{ width: '100%', maxWidth: '100px' }} />
+              </div>
+              <button className="btn btn-danger" onClick={() => setShowCutoffModal(true)}>Apply Cutoff</button>
+              <button className="btn btn-primary" onClick={() => setShowDoneModal(true)}>Done</button>
+            </>
+          )}
         </div>
       </div>
       
@@ -113,7 +122,8 @@ const Round2Entry = () => {
                   <td>{p.department}</td>
                   <td>
                     <select 
-                      value={r2Score?.attendance || ''} 
+                      value={r2Score?.attendance || ''}
+                      disabled={isCompleted} 
                       onChange={async (e) => {
                         const val = e.target.value;
                         await api.post('/admin/r2/attendance', { studentId: p._id, attendance: val });
@@ -141,7 +151,7 @@ const Round2Entry = () => {
                           toast.error('Failed to update score');
                         }
                       }}
-                      disabled={r2Score?.attendance === 'A'}
+                      disabled={isCompleted || r2Score?.attendance === 'A'}
                       style={{ padding: '0.25rem', width: '80px', border: '1px solid var(--border-color)', background: 'var(--bg-white)', color: 'inherit' }}
                     />
                   </td>
