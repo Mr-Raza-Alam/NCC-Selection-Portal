@@ -43,70 +43,89 @@ const Register = () => {
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-wrapper" style={{ backgroundImage: `url('/src/assets/ncc_pic13.jpeg')` }}>
+      <div className="auth-overlay"></div>
       {isLoading && <Loader overlay message="Registering..." />}
-      <div className="glass-card auth-box">
-        <h2>Participant Registration</h2>
-        {error && <p style={{color: 'var(--danger-red)', marginBottom: '1rem'}}>{error}</p>}
+      
+      <div className="auth-card enroll-theme">
+        <h2>🛡️ New Enrollment</h2>
+        <p className="subtitle">Create your account for the NCC Selection Process</p>
+        
+        {error && <p style={{color: '#ff6b6b', marginBottom: '1rem', textAlign: 'center', background: 'rgba(255,0,0,0.1)', padding: '0.5rem', borderRadius: '4px'}}>{error}</p>}
+        
         <form onSubmit={handleSubmit}>
-          <div className="input-group">
+          <div className="form-group">
             <label>Full Name</label>
-            <input type="text" name="name" required onChange={handleChange} />
+            <input type="text" name="name" required onChange={handleChange} placeholder="Enter your full name" />
           </div>
-          <div className="input-group">
-            <label>Department</label>
-            <input type="text" name="department" required onChange={handleChange} />
-          </div>
-          <div className="input-group">
-            <label>Date of Birth</label>
-            <input type="date" name="dob" required onChange={handleChange} />
-          </div>
-          <div className="input-group">
-            <label>Admission No</label>
-            <input type="text" name="admissionNo" required onChange={handleChange} />
-          </div>
-          <div className="input-group">
-            <label>Email ID</label>
-            <input type="email" name="email" required onChange={handleChange} />
-            {emailWarning && <span style={{color: 'var(--warning-amber)', fontSize: '0.8rem', marginTop: '0.2rem'}}>{emailWarning}</span>}
-          </div>
-          <div className="input-group">
-            <label>Student Contact No</label>
-            <input type="tel" name="contactNo" required onChange={handleChange} />
-          </div>
-          <div className="input-group">
-            <label>Parent Contact No</label>
-            <input type="tel" name="parentContactNo" onChange={handleChange} placeholder="+91 xxxxxxxxxx" />
-          </div>
-          <div className="input-group">
-            <label>Password</label>
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-              <input 
-                type={showPassword ? "text" : "password"} 
-                name="password" 
-                style={{ width: '100%', paddingRight: '40px' }}
-                required 
-                onChange={handleChange} 
-              />
-              <span 
-                onClick={() => setShowPassword(!showPassword)}
-                style={{ position: 'absolute', right: '10px', cursor: 'pointer', fontSize: '1.2rem', userSelect: 'none' }}
-              >
-                {showPassword ? '👁️' : '🙈'}
-              </span>
+          
+          <div className="auth-row">
+            <div className="form-group">
+              <label>Department</label>
+              <input type="text" name="department" required onChange={handleChange} placeholder="e.g. CSE" />
+            </div>
+            <div className="form-group">
+              <label>Date of Birth</label>
+              <input type="date" name="dob" required onChange={handleChange} style={{colorScheme: 'dark'}} />
             </div>
           </div>
-          <div className="input-group" style={{ flexDirection: 'row', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '1.5rem' }}>
-            <input type="checkbox" required style={{ marginTop: '0.3rem', width: 'auto' }} />
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+
+          <div className="auth-row">
+            <div className="form-group">
+              <label>Admission No</label>
+              <input type="text" name="admissionNo" required onChange={handleChange} placeholder="e.g. 2024-..." />
+            </div>
+            <div className="form-group">
+              <label>Student Contact No</label>
+              <input type="tel" name="contactNo" required onChange={handleChange} placeholder="10-digit number" />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label>Email ID</label>
+            <input type="email" name="email" required onChange={handleChange} placeholder="Your email address" />
+            {emailWarning && <span style={{color: 'var(--warning-amber)', fontSize: '0.8rem', marginTop: '0.3rem', display: 'block'}}>{emailWarning}</span>}
+          </div>
+
+          <div className="auth-row">
+            <div className="form-group">
+              <label>Parent Contact No</label>
+              <input type="tel" name="parentContactNo" onChange={handleChange} placeholder="Optional" />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  name="password" 
+                  style={{ width: '100%', paddingRight: '40px' }}
+                  required 
+                  onChange={handleChange} 
+                  placeholder="Min. 6 chars"
+                />
+                <span 
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: '10px', cursor: 'pointer', fontSize: '1.2rem', userSelect: 'none' }}
+                >
+                  {showPassword ? '👁️' : '🙈'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', marginTop: '0.5rem' }}>
+            <input type="checkbox" required style={{ marginTop: '0.3rem', cursor: 'pointer' }} />
+            <label style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', lineHeight: '1.4', fontWeight: 'normal' }}>
               I declare that I am a legitimate student of Assam University and all information provided is true. Any false information will lead to immediate disqualification from the NCC selection process.
             </label>
           </div>
-          <button type="submit" className="btn btn-primary" style={{width: '100%'}}>Register</button>
+          
+          <button type="submit" className="btn-submit">Register</button>
         </form>
-        <p style={{marginTop: '1rem', textAlign: 'center'}}>
-          Already registered? <Link to="/login" style={{color: 'var(--accent-green)'}}>Login here</Link>
-        </p>
+        
+        <div className="auth-footer">
+          Already registered? <Link to="/login">Login here</Link>
+        </div>
       </div>
     </div>
   );

@@ -38,13 +38,13 @@ const RankLogin = () => {
   };
 
   return (
-    <div className="login-container">
+    <div className="auth-wrapper" style={{ backgroundImage: `url('/src/assets/ncc_pic13.jpeg')` }}>
+      <div className="auth-overlay"></div>
       <BroadcastBanner pageType="landing" />
-      <div className="form-card" style={{ maxWidth: '400px', margin: '4rem auto' }}>
-        <div className="form-header">
-          <h2 style={{ color: '#87CEEB', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>🎖️ Rank Selection Portal</h2>
-          <p>Login to access your Rank Dashboard</p>
-        </div>
+      
+      <div className="auth-card rank-theme">
+        <h2>🎖️ Rank Selection Portal</h2>
+        <p className="subtitle">Login to access your Rank Dashboard</p>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -73,31 +73,20 @@ const RankLogin = () => {
 
           <button 
             type="submit" 
-            className="btn" 
-            style={{ 
-              width: '100%', 
-              backgroundColor: '#87CEEB', 
-              color: 'var(--primary-navy)', 
-              fontWeight: 'bold', 
-              marginTop: '1rem',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '0.5rem'
-            }}
+            className="btn-submit" 
             disabled={loading}
           >
             {loading ? <Loader2 className="spinner" size={20} /> : 'Login to Portal'}
           </button>
         </form>
 
-        <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.9rem' }}>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            Not registered yet? <Link to="/rank-register" style={{ color: '#87CEEB', fontWeight: 'bold' }}>Register Here</Link>
-          </p>
-          <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
-            Looking for New Enrollment? <Link to="/login" style={{ color: 'var(--secondary-gold)', fontWeight: 'bold' }}>Go to Enrollment Hub</Link>
-          </p>
+        <div className="auth-footer" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div>
+            Not registered yet? <Link to="/rank-register">Register Here</Link>
+          </div>
+          <div>
+            <Link to="/login" style={{ fontSize: '0.85rem', opacity: 0.8, color: 'rgba(255,255,255,0.7)', marginLeft: 0 }}>Switch to New Enrollment Portal</Link>
+          </div>
         </div>
       </div>
     </div>

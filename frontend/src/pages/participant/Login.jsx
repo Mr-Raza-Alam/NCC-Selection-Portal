@@ -30,17 +30,23 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-wrapper" style={{ backgroundImage: `url('/src/assets/ncc_pic13.jpeg')` }}>
+      <div className="auth-overlay"></div>
       {isLoading && <Loader overlay message="Logging in..." />}
-      <div className="glass-card auth-box">
-        <h2>Participant Login</h2>
-        {error && <p style={{color: 'var(--danger-red)', marginBottom: '1rem'}}>{error}</p>}
+      
+      <div className="auth-card enroll-theme">
+        <h2>🛡️ Participant Login</h2>
+        <p className="subtitle">Enter your credentials to access the 1st-Year Portal</p>
+        
+        {error && <p style={{color: '#ff6b6b', marginBottom: '1rem', textAlign: 'center', background: 'rgba(255,0,0,0.1)', padding: '0.5rem', borderRadius: '4px'}}>{error}</p>}
+        
         <form onSubmit={handleSubmit}>
-          <div className="input-group">
+          <div className="form-group">
             <label>Chest No (Code)</label>
             <input type="number" name="code" required onChange={handleChange} placeholder="e.g. 128" />
           </div>
-          <div className="input-group">
+          
+          <div className="form-group">
             <label>Password</label>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <input 
@@ -49,6 +55,7 @@ const Login = () => {
                 style={{ width: '100%', paddingRight: '40px' }}
                 required 
                 onChange={handleChange} 
+                placeholder="Enter password"
               />
               <span 
                 onClick={() => setShowPassword(!showPassword)}
@@ -57,15 +64,17 @@ const Login = () => {
                 {showPassword ? '👁️' : '🙈'}
               </span>
             </div>
-            <div style={{ textAlign: 'right', marginTop: '0.25rem' }}>
-              <Link to="/forgot-password" style={{ fontSize: '0.85rem', color: 'var(--accent-green)' }}>Forgot Password?</Link>
+            <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
+              <Link to="/forgot-password" style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>Forgot Password?</Link>
             </div>
           </div>
-          <button type="submit" className="btn btn-primary" style={{width: '100%'}}>Login</button>
+          
+          <button type="submit" className="btn-submit">Login</button>
         </form>
-        <p style={{marginTop: '1rem', textAlign: 'center'}}>
-          New participant? <Link to="/register" style={{color: 'var(--accent-green)'}}>Register here</Link>
-        </p>
+        
+        <div className="auth-footer">
+          New participant? <Link to="/register">Register here</Link>
+        </div>
       </div>
     </div>
   );

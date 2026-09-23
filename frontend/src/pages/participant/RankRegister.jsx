@@ -48,84 +48,69 @@ const RankRegister = () => {
   };
 
   return (
-    <div className="login-container" style={{ padding: '2rem 1rem' }}>
+    <div className="auth-wrapper" style={{ backgroundImage: `url('/src/assets/ncc_pic13.jpeg')` }}>
+      <div className="auth-overlay"></div>
       <BroadcastBanner pageType="landing" />
-      <div className="form-card" style={{ maxWidth: '500px', margin: '2rem auto' }}>
-        <div className="form-header">
-          <h2 style={{ color: '#87CEEB', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>🎖️ Rank Candidate Verification</h2>
-          <p>Please verify your details and set a password to access the Rank Portal.</p>
-        </div>
+      
+      <div className="auth-card rank-theme">
+        <h2>🎖️ Rank Verification</h2>
+        <p className="subtitle">Verify your details to access the Rank Portal</p>
 
         <form onSubmit={handleSubmit}>
-          <div className="form-row">
-            <div className="form-group" style={{ flex: 1 }}>
-              <label>Full Name (As per official records)</label>
-              <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-            </div>
+          <div className="form-group">
+            <label>Full Name (As per official records)</label>
+            <input type="text" name="name" value={formData.name} onChange={handleChange} required placeholder="Enter full name" />
           </div>
           
-          <div className="form-row">
-            <div className="form-group" style={{ flex: 1 }}>
+          <div className="auth-row">
+            <div className="form-group">
               <label>Regimental Number</label>
-              <input type="text" name="regimentalNo" value={formData.regimentalNo} onChange={handleChange} required placeholder="e.g. AS2025SDIA..." />
+              <input type="text" name="regimentalNo" value={formData.regimentalNo} onChange={handleChange} required placeholder="AS2025SDIA..." />
             </div>
-            <div className="form-group" style={{ flex: 1 }}>
+            <div className="form-group">
               <label>Department</label>
-              <input type="text" name="department" value={formData.department} onChange={handleChange} required />
+              <input type="text" name="department" value={formData.department} onChange={handleChange} required placeholder="e.g. CSE" />
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group" style={{ flex: 1 }}>
+          <div className="auth-row">
+            <div className="form-group">
               <label>Semester</label>
-              <input type="text" name="semester" value={formData.semester} onChange={handleChange} required placeholder="e.g. CSE, 3rd Sem" />
+              <input type="text" name="semester" value={formData.semester} onChange={handleChange} required placeholder="e.g. 3rd Sem" />
             </div>
-            <div className="form-group" style={{ flex: 1 }}>
+            <div className="form-group">
               <label>Mobile Number</label>
-              <input type="tel" name="mobileNo" value={formData.mobileNo} onChange={handleChange} required />
+              <input type="tel" name="mobileNo" value={formData.mobileNo} onChange={handleChange} required placeholder="10-digit number" />
             </div>
           </div>
 
           <div className="form-group">
             <label>Email ID</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+            <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="Institutional Email" />
           </div>
 
-          <div className="form-row">
-            <div className="form-group" style={{ flex: 1 }}>
+          <div className="auth-row">
+            <div className="form-group">
               <label>Set Password</label>
-              <input type="password" name="password" value={formData.password} onChange={handleChange} required minLength="6" />
+              <input type="password" name="password" value={formData.password} onChange={handleChange} required minLength="6" placeholder="Min. 6 characters" />
             </div>
-            <div className="form-group" style={{ flex: 1 }}>
+            <div className="form-group">
               <label>Confirm Password</label>
-              <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
+              <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required placeholder="Retype password" />
             </div>
           </div>
 
           <button 
             type="submit" 
-            className="btn" 
-            style={{ 
-              width: '100%', 
-              backgroundColor: '#87CEEB', 
-              color: 'var(--primary-navy)', 
-              fontWeight: 'bold', 
-              marginTop: '1rem',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '0.5rem'
-            }}
+            className="btn-submit" 
             disabled={loading}
           >
             {loading ? <Loader2 className="spinner" size={20} /> : 'Verify & Register'}
           </button>
         </form>
 
-        <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.9rem' }}>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            Already verified? <Link to="/rank-login" style={{ color: '#87CEEB', fontWeight: 'bold' }}>Login Here</Link>
-          </p>
+        <div className="auth-footer">
+          Already verified? <Link to="/rank-login">Login Here</Link>
         </div>
       </div>
     </div>
