@@ -9,6 +9,13 @@ const AdminLayout = () => {
   const features = JSON.parse(localStorage.getItem('features') || '[]');
   const name = localStorage.getItem('adminName');
   const [profileOpen, setProfileOpen] = useState(false);
+  const [adminMode, setAdminMode] = useState(localStorage.getItem('adminMode') || 'enrollment');
+
+  const handleModeSwitch = (mode) => {
+    setAdminMode(mode);
+    localStorage.setItem('adminMode', mode);
+    navigate('/admin/dashboard');
+  };
 
   const hasFeature = (f) => features.includes(f);
 
@@ -17,8 +24,8 @@ const AdminLayout = () => {
     navigate('/admin/login');
   };
 
-  const menuItems = [
-    { title: 'Selection Process', isHeader: true },
+  const enrollmentMenuItems = [
+    { title: 'Selection Process (Enrollment)', isHeader: true },
     { name: 'Round 1 (Physical)', path: '/admin/r1', feature: ['R1_SETUP', 'R1_SCORE'] },
     { name: 'Round 2 (Written)', path: '/admin/r2', feature: ['R2_START', 'R2_ATTENDANCE'] },
     { name: 'Round 3 (Interview)', path: '/admin/r3', feature: ['R3_SCORE', 'R3_VERIFY'] },
@@ -30,6 +37,23 @@ const AdminLayout = () => {
     { title: 'System', isHeader: true, role: 'lead_admin' },
     { name: 'Role Management', path: '/admin/roles', role: 'lead_admin' }
   ];
+
+  const rankMenuItems = [
+    { title: 'Rank Process (2nd Year)', isHeader: true },
+    { name: 'Upload Cadets', path: '/admin/rank/upload', role: 'lead_admin' },
+    { name: 'Round 1 (Physical)', path: '/admin/rank/r1', feature: ['R1_SETUP', 'R1_SCORE'] },
+    { name: 'Round 2 (Written)', path: '/admin/rank/r2', feature: ['R2_START', 'R2_ATTENDANCE'] },
+    { name: 'Round 3 (Interview)', path: '/admin/rank/r3', feature: ['R3_SCORE', 'R3_VERIFY'] },
+    { title: 'Records', isHeader: true },
+    { name: 'Cadet Record', path: '/admin/rank/students', feature: ['STUDENT_TABLE'] },
+    { name: 'Master Table', path: '/admin/rank/master', feature: ['MASTER_TABLE', 'R3_VERIFY'] },
+    { name: 'Test Management', path: '/admin/rank/test-management', feature: ['TEST_MANAGEMENT'] },
+    { name: 'Settings', path: '/admin/rank/settings', feature: ['SETTINGS'] },
+    { title: 'System', isHeader: true, role: 'lead_admin' },
+    { name: 'Role Management', path: '/admin/roles', role: 'lead_admin' }
+  ];
+
+  const menuItems = adminMode === 'enrollment' ? enrollmentMenuItems : rankMenuItems;
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -52,6 +76,43 @@ const AdminLayout = () => {
               ✕
             </button>
           </div>
+          
+          {/* Context Switcher */}
+          <div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.05)' }}>
+            <button 
+              style={{
+                flex: 1, 
+                padding: '0.8rem 0', 
+                border: 'none', 
+                background: adminMode === 'enrollment' ? 'var(--secondary-gold)' : 'transparent',
+                color: adminMode === 'enrollment' ? 'white' : 'var(--text-secondary)',
+                fontWeight: adminMode === 'enrollment' ? 'bold' : 'normal',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                fontSize: '0.85rem'
+              }}
+              onClick={() => handleModeSwitch('enrollment')}
+            >
+              🛡️ Enrollment
+            </button>
+            <button 
+              style={{
+                flex: 1, 
+                padding: '0.8rem 0', 
+                border: 'none', 
+                background: adminMode === 'rank' ? '#87CEEB' : 'transparent',
+                color: adminMode === 'rank' ? 'var(--primary-navy)' : 'var(--text-secondary)',
+                fontWeight: adminMode === 'rank' ? 'bold' : 'normal',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                fontSize: '0.85rem'
+              }}
+              onClick={() => handleModeSwitch('rank')}
+            >
+              🎖️ Rank
+            </button>
+          </div>
+
           <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 0' }}>
             {menuItems.map((item, idx) => {
               let canSee = true;

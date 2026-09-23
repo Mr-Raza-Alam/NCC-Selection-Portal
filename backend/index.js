@@ -11,6 +11,8 @@ const participantRoutes = require('./routes/participantRoutes');
 const testConfigRoutes = require('./routes/testConfig');
 const questionsRoutes = require('./routes/questions');
 const settingsRoutes = require('./routes/settings');
+const rankAuthRoutes = require('./routes/rankAuthRoutes');
+const rankAdminRoutes = require('./routes/rankAdminRoutes');
 
 // Connect Database
 connectDB();
@@ -26,6 +28,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/test', testRoutes);
 app.use('/api/participants', participantRoutes);
+app.use('/api/rank-auth', rankAuthRoutes);
+app.use('/api/rank-admin', rankAdminRoutes);
 
 // New Routes
 app.use('/api/admin/test-config', testConfigRoutes);

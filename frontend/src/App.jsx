@@ -22,7 +22,12 @@ import MasterTable from './pages/admin/MasterTable';
 import RoleManagement from './pages/admin/RoleManagement';
 import TestManagement from './pages/admin/TestManagement';
 import SettingsPage from './pages/admin/SettingsPage';
+import RankUpload from './pages/admin/RankUpload';
 import LandingPage from './pages/participant/LandingPage';
+import SelectionHub from './pages/participant/SelectionHub';
+import RankLogin from './pages/participant/RankLogin';
+import RankRegister from './pages/participant/RankRegister';
+import RankDashboard from './pages/participant/RankDashboard';
 import Navbar from './components/Navbar';
 import AdminLayout from './components/AdminLayout';
 
@@ -44,6 +49,18 @@ const PrivateRoute = ({ children, role }) => {
 };
 
 import StudentTable from './pages/admin/StudentTable';
+import RankRound1Home from './pages/admin/RankRound1Home';
+import RankRound1Setup from './pages/admin/RankRound1Setup';
+import RankRound1Entry from './pages/admin/RankRound1Entry';
+import RankRound2Home from './pages/admin/RankRound2Home';
+import RankR2Attendance from './pages/admin/RankR2Attendance';
+import RankRound2Entry from './pages/admin/RankRound2Entry';
+import RankRound3Home from './pages/admin/RankRound3Home';
+import RankRound3Entry from './pages/admin/RankRound3Entry';
+import RankRound3Verify from './pages/admin/RankRound3Verify';
+import RankMasterTable from './pages/admin/RankMasterTable';
+import RankStudentTable from './pages/admin/RankStudentTable';
+
 
 // Wrapper to conditionally render participant Navbar
 const AppContent = () => {
@@ -58,12 +75,19 @@ const AppContent = () => {
       <div className={!isAdminRoute ? 'container' : ''}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/selection-hub" element={<SelectionHub />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/rank-login" element={<RankLogin />} />
+          <Route path="/rank-register" element={<RankRegister />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           
           <Route path="/dashboard" element={
             <PrivateRoute role="participant"><Dashboard /></PrivateRoute>
+          } />
+
+          <Route path="/rank-dashboard" element={
+            <PrivateRoute role="rank_candidate"><RankDashboard /></PrivateRoute>
           } />
 
           <Route path="/test-instructions" element={
@@ -93,6 +117,19 @@ const AppContent = () => {
             <Route path="roles" element={<RoleManagement />} />
             <Route path="test-management" element={<TestManagement />} />
             <Route path="settings" element={<SettingsPage />} />
+            <Route path="rank/upload" element={<RankUpload />} />
+            <Route path="rank/r1" element={<RankRound1Home />} />
+            <Route path="rank/r1/setup" element={<RankRound1Setup />} />
+            <Route path="rank/r1/entry" element={<RankRound1Entry />} />
+            <Route path="rank/r2" element={<RankRound2Home />} />
+            <Route path="rank/r2/attendance" element={<RankR2Attendance />} />
+            <Route path="rank/r2/entry" element={<RankRound2Entry />} />
+            <Route path="rank/r3" element={<RankRound3Home />} />
+            <Route path="rank/r3/entry" element={<RankRound3Entry />} />
+            <Route path="rank/r3/verify" element={<RankRound3Verify />} />
+            <Route path="rank/master" element={<RankMasterTable />} />
+            <Route path="rank/students" element={<RankStudentTable />} />
+
           </Route>
         </Routes>
       </div>

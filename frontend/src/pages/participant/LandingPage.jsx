@@ -93,9 +93,9 @@ const LandingPage = () => {
           <button 
             className="btn btn-primary" 
             style={{ fontSize: '1.2rem', padding: '1rem' }}
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/selection-hub')}
           >
-            Student Login
+            Selection Hub
           </button>
           
           <button 
@@ -113,7 +113,7 @@ const LandingPage = () => {
             onMouseOver={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; }}
             onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
           >
-            Admin Login
+            Admin Hub
           </button>
         </div>
       </div>
@@ -168,7 +168,7 @@ const LandingPage = () => {
             📞 Phone: +91 7004891854
           </p>
           <p style={{ margin: 0, fontWeight: '500' }}>
-            ✉️ Email: alam.raza23.27@gmail.com
+            ✉️ Email: raza.alam@aus.ac.in
           </p>
         </div>
       </footer>
