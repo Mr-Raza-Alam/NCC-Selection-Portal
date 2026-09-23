@@ -126,18 +126,13 @@
   transform: none;
 }
 
-.auth-card.enroll-theme .btn-submit {
-  background: var(--primary-navy, #0D2137);
-  color: white;
-}
-.auth-card.enroll-theme .btn-submit:hover {
-  background: #061324;
-}
-
+.auth-card.enroll-theme .btn-submit,
 .auth-card.rank-theme .btn-submit {
   background: #007BFF;
   color: white;
 }
+
+.auth-card.enroll-theme .btn-submit:hover,
 .auth-card.rank-theme .btn-submit:hover {
   background: #0056b3;
 }
@@ -163,5 +158,7 @@
   text-decoration: underline;
 }
 
-.auth-card.enroll-theme .auth-footer a { color: var(--secondary-gold); }
-.auth-card.rank-theme .auth-footer a { color: #007BFF; }
+.auth-card.enroll-theme .auth-footer a,
+.auth-card.rank-theme .auth-footer a { 
+  color: #007BFF; 
+}
