@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../utils/api';
 import Loader from '../../components/Loader';
+import nccHero from '../../assets/ncc_pic13.jpeg';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ const Register = () => {
   };
 
   return (
-    <div className="auth-wrapper" style={{ backgroundImage: `url('/src/assets/ncc_pic13.jpeg')` }}>
+    <div className="auth-wrapper" style={{ backgroundImage: `url(${nccHero})` }}>
       <div className="auth-overlay"></div>
       {isLoading && <Loader overlay message="Registering..." />}
 
@@ -66,7 +67,7 @@ const Register = () => {
             </div>
             <div className="form-group">
               <label>Date of Birth</label>
-              <input type="date" name="dob" required onChange={handleChange} style={{ colorScheme: 'dark' }} />
+              <input type="date" name="dob" required onChange={handleChange} />
             </div>
           </div>
 
@@ -115,7 +116,7 @@ const Register = () => {
 
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', marginTop: '0.5rem' }}>
             <input type="checkbox" required style={{ marginTop: '0.3rem', cursor: 'pointer' }} />
-            <label style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', lineHeight: '1.4', fontWeight: 'normal' }}>
+            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary, #666)', lineHeight: '1.4', fontWeight: 'normal' }}>
               I declare that I am a legitimate student of Assam University and all information provided is true. Any false information will lead to immediate disqualification from the NCC selection process.
             </label>
           </div>

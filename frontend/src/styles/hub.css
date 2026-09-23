@@ -2,14 +2,14 @@
 
 .hub-hero-section {
   position: relative;
-  min-height: 100vh;
+  min-height: 85vh; /* Reduced height of the background image section */
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   padding: 2rem;
-  padding-bottom: 5rem;
+  padding-top: 25vh; /* Pushed content a little more down */
   background-size: cover;
   background-position: center;
 }
@@ -26,7 +26,7 @@
   z-index: 2;
   width: 100%;
   max-width: 1000px;
-  margin-top: calc(15vh - 1.5rem); /* Push content down but shift heading 1.5rem up */
+  /* Removed margin-top so it naturally sits at the flex-start padding */
 }
 
 .hub-content h1 {
@@ -40,7 +40,7 @@
 
 .hub-content p.hub-subtitle {
   font-size: 1.25rem;
-  margin-bottom: 4rem; /* Shift cards 1rem down */
+  margin-bottom: 3rem; /* Revert to standard margin */
   color: rgba(255, 255, 255, 0.9);
   text-shadow: 0 2px 4px rgba(0,0,0,0.8);
   max-width: 600px;
@@ -50,7 +50,7 @@
 
 .hub-cards-container {
   display: flex;
-  gap: 4rem; /* Increased gap between cards */
+  gap: 5rem; /* Increased gap between cards */
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -62,9 +62,8 @@
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.2);
   border-radius: 16px;
-  padding: 3rem 2rem; /* Make it taller */
-  width: 420px;
-  min-height: 280px; /* Make it extend down */
+  padding: 2rem 2rem; /* Reduced height to normal */
+  width: 380px; /* Slightly narrower to balance the aspect ratio */
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   display: flex;
   flex-direction: column;

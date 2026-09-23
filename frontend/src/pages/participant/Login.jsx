@@ -66,7 +66,7 @@ const Login = () => {
               </span>
             </div>
             <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
-              <Link to="/forgot-password" style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>Forgot Password?</Link>
+              <Link to="/forgot-password" style={{ fontSize: '0.85rem', color: '#007BFF' }}>Forgot Password?</Link>
             </div>
           </div>
           
