@@ -16,6 +16,14 @@ This application provides a seamless, secure, and intuitive platform for both **
 - **Online Examination Module**: Take the written test seamlessly within the allocated time window.
 
 ### For Administrators
+- **Dual-Pipeline Architecture**: The platform operates two completely isolated ecosystems:
+  - **🛡️ New Enrollment**: For 1st-year students applying to join.
+  - **🎖️ Rank Selection**: For 2nd-year cadets participating in the rank promotion cycle.
+- **Admin Context Switcher**: A seamless toggle in the sidebar allowing the Lead Admin to switch between grading 1st-year enrollments and 2nd-year rank promotions, interacting with entirely separate database collections to prevent data bleeding.
+- **Rank Registration & Quotas**: 
+  - Lead Admins upload a pre-verified CSV of 2nd-year cadets (mapping Name, Regimental No, and Buddy No).
+  - 2nd-year cadets verify their identity against this strict list to register and set their password.
+  - CTO Master Table enforces rank quotas via a specialized Dropdown (Cadet, Promoted CPL, Promoted LCPL) replacing the standard checkbox.
 - **Test Management**: Configure test durations, toggle results visibility, and set strict Test Window start/end times (locked to IST).
 - **Question Bank Management**: Easily download a CSV template and upload hundreds of test questions instantly using an optimized in-memory CSV parser.
 - **Student Management**: View all registered students, their basic details, and test status. Download raw student records as a CSV file. Includes the ability for admins to safely edit and correct student profiles.
@@ -100,6 +108,7 @@ npm run dev
 ---
 
 ## 🛡️ Security & Architecture
+- **Parallel Database Ecosystems**: To guarantee zero cross-contamination between yearly batches, the MongoDB database is strictly partitioned (`Student` vs `RankCandidate`, `R1Result` vs `RankR1Result`). Actions taken in the Enrollment portal have zero impact on the Rank portal.
 - **Timezone Safety**: Dates and Test Windows are carefully managed to strictly adhere to Indian Standard Time (IST) preventing UTC drift.
 - **Data Integrity**: Deletion operations employ a sweeping cascading logic across `Student`, `MasterRecord`, `R1Result`, `R2Result`, and `R3Result` collections to prevent orphaned records in the database.
 
