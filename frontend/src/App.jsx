@@ -129,6 +129,8 @@ const AppContent = () => {
             <Route path="rank/r3/verify" element={<RankRound3Verify />} />
             <Route path="rank/master" element={<RankMasterTable />} />
             <Route path="rank/students" element={<RankStudentTable />} />
+            <Route path="rank/test-management" element={<TestManagement />} />
+            <Route path="rank/settings" element={<SettingsPage />} />
 
           </Route>
         </Routes>
