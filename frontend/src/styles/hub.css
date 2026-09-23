@@ -5,12 +5,13 @@
   min-height: 80vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   text-align: center;
   padding: 2rem;
+  padding-bottom: 5rem;
   background-size: cover;
-  background-position: center;
+  background-position: center top;
   background-attachment: fixed;
 }
 
@@ -26,6 +27,7 @@
   z-index: 2;
   width: 100%;
   max-width: 1000px;
+  margin-top: 15vh; /* Push content down */
 }
 
 .hub-content h1 {

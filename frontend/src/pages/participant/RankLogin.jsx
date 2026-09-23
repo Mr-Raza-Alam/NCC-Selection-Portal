@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
 import BroadcastBanner from '../../components/BroadcastBanner';
+import nccHero from '../../assets/ncc_pic13.jpeg';
 
 const RankLogin = () => {
   const [formData, setFormData] = useState({
@@ -38,7 +39,7 @@ const RankLogin = () => {
   };
 
   return (
-    <div className="auth-wrapper" style={{ backgroundImage: `url('/src/assets/ncc_pic13.jpeg')` }}>
+    <div className="auth-wrapper" style={{ backgroundImage: `url(${nccHero})` }}>
       <div className="auth-overlay"></div>
       <BroadcastBanner pageType="landing" />
       

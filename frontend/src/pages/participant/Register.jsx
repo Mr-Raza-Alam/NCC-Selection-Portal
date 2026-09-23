@@ -14,7 +14,7 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
     if (e.target.name === 'email') {
       const email = e.target.value;
       if (email.length > 0 && !/^[a-zA-Z]/.test(email)) {
@@ -46,19 +46,19 @@ const Register = () => {
     <div className="auth-wrapper" style={{ backgroundImage: `url('/src/assets/ncc_pic13.jpeg')` }}>
       <div className="auth-overlay"></div>
       {isLoading && <Loader overlay message="Registering..." />}
-      
+
       <div className="auth-card enroll-theme">
         <h2>🛡️ New Enrollment</h2>
         <p className="subtitle">Create your account for the NCC Selection Process</p>
-        
-        {error && <p style={{color: '#ff6b6b', marginBottom: '1rem', textAlign: 'center', background: 'rgba(255,0,0,0.1)', padding: '0.5rem', borderRadius: '4px'}}>{error}</p>}
-        
+
+        {error && <p style={{ color: '#ff6b6b', marginBottom: '1rem', textAlign: 'center', background: 'rgba(255,0,0,0.1)', padding: '0.5rem', borderRadius: '4px' }}>{error}</p>}
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Full Name</label>
             <input type="text" name="name" required onChange={handleChange} placeholder="Enter your full name" />
           </div>
-          
+
           <div className="auth-row">
             <div className="form-group">
               <label>Department</label>
@@ -66,7 +66,7 @@ const Register = () => {
             </div>
             <div className="form-group">
               <label>Date of Birth</label>
-              <input type="date" name="dob" required onChange={handleChange} style={{colorScheme: 'dark'}} />
+              <input type="date" name="dob" required onChange={handleChange} style={{ colorScheme: 'dark' }} />
             </div>
           </div>
 
@@ -84,7 +84,7 @@ const Register = () => {
           <div className="form-group">
             <label>Email ID</label>
             <input type="email" name="email" required onChange={handleChange} placeholder="Your email address" />
-            {emailWarning && <span style={{color: 'var(--warning-amber)', fontSize: '0.8rem', marginTop: '0.3rem', display: 'block'}}>{emailWarning}</span>}
+            {emailWarning && <span style={{ color: 'var(--warning-amber)', fontSize: '0.8rem', marginTop: '0.3rem', display: 'block' }}>{emailWarning}</span>}
           </div>
 
           <div className="auth-row">
@@ -95,15 +95,15 @@ const Register = () => {
             <div className="form-group">
               <label>Password</label>
               <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <input 
-                  type={showPassword ? "text" : "password"} 
-                  name="password" 
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
                   style={{ width: '100%', paddingRight: '40px' }}
-                  required 
-                  onChange={handleChange} 
+                  required
+                  onChange={handleChange}
                   placeholder="Min. 6 chars"
                 />
-                <span 
+                <span
                   onClick={() => setShowPassword(!showPassword)}
                   style={{ position: 'absolute', right: '10px', cursor: 'pointer', fontSize: '1.2rem', userSelect: 'none' }}
                 >
@@ -119,10 +119,10 @@ const Register = () => {
               I declare that I am a legitimate student of Assam University and all information provided is true. Any false information will lead to immediate disqualification from the NCC selection process.
             </label>
           </div>
-          
+
           <button type="submit" className="btn-submit">Register</button>
         </form>
-        
+
         <div className="auth-footer">
           Already registered? <Link to="/login">Login here</Link>
         </div>

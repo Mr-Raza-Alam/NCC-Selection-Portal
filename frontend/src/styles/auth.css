@@ -25,34 +25,30 @@
   z-index: 2;
   width: 100%;
   max-width: 500px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--bg-white, #ffffff);
   border-radius: 16px;
   padding: 3rem 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  color: white;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  color: var(--text-primary, #1A1A1A);
 }
 
 .auth-card h2 {
-  color: white;
+  color: var(--primary-navy, #0D2137);
   text-align: center;
   margin-bottom: 0.5rem;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
 .auth-card p.subtitle {
   text-align: center;
-  opacity: 0.9;
+  color: var(--text-secondary, #666666);
   margin-bottom: 2rem;
   font-size: 0.95rem;
 }
 
 /* Auth Specific Inputs */
 .auth-card .form-group label {
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 500;
+  color: var(--primary-navy, #0D2137);
+  font-weight: 600;
   margin-bottom: 0.5rem;
   display: block;
   font-size: 0.85rem;
@@ -62,29 +58,29 @@
 .auth-card .form-group select {
   width: 100%;
   padding: 0.8rem 1rem;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  color: white;
+  color: #333;
   font-size: 1rem;
   transition: all 0.3s ease;
   outline: none;
 }
 
 .auth-card .form-group input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: #999;
 }
 
 .auth-card .form-group input:focus, 
 .auth-card .form-group select:focus {
-  background: rgba(0, 0, 0, 0.3);
+  background: #fff;
   border-color: var(--secondary-gold);
-  box-shadow: 0 0 0 2px rgba(197, 160, 40, 0.3);
+  box-shadow: 0 0 0 3px rgba(197, 160, 40, 0.2);
 }
 
 .auth-card.rank-theme .form-group input:focus {
-  border-color: #87CEEB;
-  box-shadow: 0 0 0 2px rgba(135, 206, 235, 0.3);
+  border-color: #007BFF;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
 }
 
 .auth-row {
@@ -131,21 +127,28 @@
 }
 
 .auth-card.enroll-theme .btn-submit {
-  background: var(--secondary-gold);
-  color: var(--primary-navy);
+  background: var(--primary-navy, #0D2137);
+  color: white;
+}
+.auth-card.enroll-theme .btn-submit:hover {
+  background: #061324;
 }
 
 .auth-card.rank-theme .btn-submit {
-  background: #87CEEB;
-  color: var(--primary-navy);
+  background: #007BFF;
+  color: white;
+}
+.auth-card.rank-theme .btn-submit:hover {
+  background: #0056b3;
 }
 
 .auth-footer {
   margin-top: 2rem;
   text-align: center;
   font-size: 0.9rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid #eee;
   padding-top: 1.5rem;
+  color: #666;
 }
 
 .auth-footer a {
@@ -161,4 +164,4 @@
 }
 
 .auth-card.enroll-theme .auth-footer a { color: var(--secondary-gold); }
-.auth-card.rank-theme .auth-footer a { color: #87CEEB; }
+.auth-card.rank-theme .auth-footer a { color: #007BFF; }

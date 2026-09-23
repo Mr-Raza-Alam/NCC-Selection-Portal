@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../utils/api';
 import Loader from '../../components/Loader';
+import nccHero from '../../assets/ncc_pic13.jpeg';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-wrapper" style={{ backgroundImage: `url('/src/assets/ncc_pic13.jpeg')` }}>
+    <div className="auth-wrapper" style={{ backgroundImage: `url(${nccHero})` }}>
       <div className="auth-overlay"></div>
       {isLoading && <Loader overlay message="Logging in..." />}
       
