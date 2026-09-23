@@ -3,20 +3,29 @@ const {
   setupR1, getR1Table, enterR1Score, finalizeR1, setR1Cutoff,
   startR2, markR2Attendance, enterR2Score, finalizeR2, getR2Table, setR2Cutoff,
   startR3, markR3Attendance, enterR3Score, finalizeR3, getR3Table,
-  getMasterTable, updateMasterStatus, publishResults, getDashboardStats,
-  getStudentsList
+  getMasterTable, deleteEliminated, finalizeSelection, publishFinalResults,
+  getAdmins, updateAdminFeatures, getRankSettingsData, wipeAllRankCandidates,
+  deleteRankCandidate, updateRankCandidateProfile, verifyDocs
 } = require('../controllers/rankAdminController');
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const { parse } = require('csv-parse');
 const RankCandidate = require('../models/RankCandidate');
-const { auth, restrictTo } = require('../middleware/authMiddleware');
+const { protectAdmin } = require('../middleware/authMiddleware');
 
 const upload = multer({ storage: multer.memoryStorage() });
 
+// Temporary inline middleware if restrictTo is needed
+const restrictTo = (...roles) => (req, res, next) => {
+  if (!roles.includes(req.admin.role)) {
+    return res.status(403).json({ message: 'You do not have permission to perform this action' });
+  }
+  next();
+};
+
 // Upload Pre-Registered Cadets
-router.post('/upload-cadets', auth, restrictTo('lead_admin'), upload.single('file'), async (req, res) => {
+router.post('/upload-cadets', protectAdmin, restrictTo('lead_admin'), upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
@@ -79,26 +88,31 @@ router.get('/r1/table', getR1Table);
 router.post('/r1/score', enterR1Score);
 router.post('/r1/done', finalizeR1);
 router.post('/r1/cutoff', setR1Cutoff);
+
 router.post('/r2/start', startR2);
 router.post('/r2/attendance', markR2Attendance);
 router.post('/r2/score', enterR2Score);
 router.get('/r2/table', getR2Table);
 router.post('/r2/done', finalizeR2);
 router.post('/r2/cutoff', setR2Cutoff);
+
 router.post('/r3/start', startR3);
 router.get('/r3/table', getR3Table);
 router.post('/r3/score', enterR3Score);
 router.post('/r3/verify', verifyDocs);
 router.post('/r3/done', finalizeR3);
+
 router.get('/master', getMasterTable);
-router.get('/students', getStudentsTable);
-router.put('/students/:id', updateStudentProfile);
-router.delete('/students/all', wipeAllStudents);
-router.delete('/students/:id', deleteStudent);
+router.put('/students/:id', updateRankCandidateProfile);
+router.delete('/students/all', wipeAllRankCandidates);
+router.delete('/students/:id', deleteRankCandidate);
 router.delete('/students/eliminated', deleteEliminated);
+
 router.post('/finalize', finalizeSelection);
 router.post('/publish-results', publishFinalResults);
+
 router.get('/roles', getAdmins);
 router.post('/roles/update', updateAdminFeatures);
-router.get('/settings', getSettingsData);
+router.get('/settings', getRankSettingsData);
+
 module.exports = router;

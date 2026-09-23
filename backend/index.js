@@ -26,7 +26,6 @@ app.use(cors({
   credentials: true,
   optionsSuccessStatus: 200
 }));
-app.options('*', cors());
 app.use(express.json());
 
 // Explicitly handle all OPTIONS requests as a fallback for Vercel Serverless
