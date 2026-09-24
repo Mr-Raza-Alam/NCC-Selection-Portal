@@ -44,14 +44,31 @@ const RankRound1Setup = () => {
     }
   };
 
+  const [settings, setSettings] = useState(null);
+
   React.useEffect(() => {
     api.get('/admin/rank/settings').then(res => {
-      if (res.data.r_r1_entry) {
-        toast.error('Physical Test is running, please focus on your task');
-        navigate('/admin/rank/r1');
-      }
+      setSettings(res.data);
     });
-  }, [navigate]);
+  }, []);
+
+  if (settings?.r_r1_result) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--danger-red)' }}>No Record!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the physical test has been successfully completed. Waiting for next year....!!</p>
+      </div>
+    );
+  }
+
+  if (settings?.r_r1_entry) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--warning-amber)' }}>Action Blocked</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>The Physical Test is currently in progress. You cannot modify activities now.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container">

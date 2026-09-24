@@ -26,8 +26,7 @@ const RankRound3Entry = () => {
       setData(res.data);
       setIsCompleted(settingsRes.data.r_r3_result);
       if (!settingsRes.data.r_r3_entry && !settingsRes.data.r_r3_result) {
-        toast.error('Interview is not yet active.');
-        navigate('/admin/rank/r3');
+        // Interview test not active
       }
     } catch (err) {
       console.error(err);
@@ -72,6 +71,15 @@ const RankRound3Entry = () => {
       (p.department && String(p.department).toLowerCase().includes(term))
     );
   });
+
+  if (isCompleted) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--danger-red)' }}>No Record!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the interview test has been successfully completed. Waiting for next year....!!</p>
+      </div>
+    );
+  }
 
   return (
     <div>

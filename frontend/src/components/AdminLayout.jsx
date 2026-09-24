@@ -25,37 +25,130 @@ const AdminLayout = () => {
   };
 
   const enrollmentMenuItems = [
-    { title: 'Selection Process (Enrollment)', isHeader: true },
-    { name: 'Round 1 (Physical)', path: '/admin/r1', feature: ['R1_SETUP', 'R1_SCORE'] },
-    { name: 'Round 2 (Written)', path: '/admin/r2', feature: ['R2_START', 'R2_ATTENDANCE'] },
-    { name: 'Round 3 (Interview)', path: '/admin/r3', feature: ['R3_SCORE', 'R3_VERIFY'] },
-    { title: 'Records', isHeader: true },
-    { name: 'Student Record', path: '/admin/students', feature: ['STUDENT_TABLE'] },
+    { title: 'Process-Test', isHeader: true },
+    { name: 'Round 1 (Physical)', feature: ['R1_SETUP', 'R1_SCORE'], subItems: [
+        { name: 'Set-Activity', path: '/admin/r1/setup', feature: ['R1_SETUP'] },
+        { name: 'Entry-Table', path: '/admin/r1/entry', feature: ['R1_SCORE'] },
+        { name: 'Result Table', path: '/admin/r1', feature: ['R1_SCORE', 'R1_SETUP'] }
+    ]},
+    { name: 'Round 2 (Written)', feature: ['R2_START', 'R2_ATTENDANCE'], subItems: [
+        { name: 'Entry-Table', path: '/admin/r2/entry', feature: ['R2_START'] },
+        { name: 'Result Table', path: '/admin/r2', feature: ['R2_START'] }
+    ]},
+    { name: 'Round 3 (Interview)', feature: ['R3_SCORE'], subItems: [
+        { name: 'Entry-Table', path: '/admin/r3/entry', feature: ['R3_SCORE'] },
+        { name: 'Result Table', path: '/admin/r3', feature: ['R3_SCORE'] }
+    ]},
+    { name: 'Document Verification', path: '/admin/r3/verify', feature: ['R3_VERIFY'] },
+    
+    { title: 'Record', isHeader: true },
+    { name: 'Student Table', path: '/admin/students', feature: ['STUDENT_TABLE'] },
     { name: 'Master Table', path: '/admin/master', feature: ['MASTER_TABLE', 'R3_VERIFY'] },
+    
+    { title: 'System', isHeader: true },
     { name: 'Test Management', path: '/admin/test-management', feature: ['TEST_MANAGEMENT'] },
-    { name: 'Settings', path: '/admin/settings', feature: ['SETTINGS'] },
-    { title: 'System', isHeader: true, role: 'lead_admin' },
-    { name: 'Role Management', path: '/admin/roles', role: 'lead_admin' }
+    { name: 'Role Management', path: '/admin/roles', role: 'lead_admin' },
+    { name: 'Settings', path: '/admin/settings', feature: ['SETTINGS'] }
   ];
 
   const rankMenuItems = [
-    { title: 'Rank Process (2nd Year)', isHeader: true },
-    { name: 'Upload Cadets', path: '/admin/rank/upload', role: 'lead_admin' },
-    { name: 'Round 1 (Physical)', path: '/admin/rank/r1', feature: ['R1_SETUP', 'R1_SCORE'] },
-    { name: 'Round 2 (Written)', path: '/admin/rank/r2', feature: ['R2_START', 'R2_ATTENDANCE'] },
-    { name: 'Round 3 (Interview)', path: '/admin/rank/r3', feature: ['R3_SCORE', 'R3_VERIFY'] },
-    { title: 'Records', isHeader: true },
-    { name: 'Cadet Record', path: '/admin/rank/students', feature: ['STUDENT_TABLE'] },
-    { name: 'Master Table', path: '/admin/rank/master', feature: ['MASTER_TABLE', 'R3_VERIFY'] },
+    { title: 'Process-Test', isHeader: true },
+    { name: 'Rank Round 1 (Physical)', feature: ['R1_SETUP', 'R1_SCORE'], subItems: [
+        { name: 'Set-Activity', path: '/admin/rank/r1/setup', feature: ['R1_SETUP'] },
+        { name: 'Entry-Table', path: '/admin/rank/r1/entry', feature: ['R1_SCORE'] },
+        { name: 'Result Table', path: '/admin/rank/r1', feature: ['R1_SCORE', 'R1_SETUP'] }
+    ]},
+    { name: 'Rank Round 2 (Written)', feature: ['R2_START', 'R2_ATTENDANCE'], subItems: [
+        { name: 'Entry-Table', path: '/admin/rank/r2/entry', feature: ['R2_START'] },
+        { name: 'Result Table', path: '/admin/rank/r2', feature: ['R2_START'] }
+    ]},
+    { name: 'Rank Round 3 (Interview)', feature: ['R3_SCORE'], subItems: [
+        { name: 'Entry-Table', path: '/admin/rank/r3/entry', feature: ['R3_SCORE'] },
+        { name: 'Result Table', path: '/admin/rank/r3', feature: ['R3_SCORE'] }
+    ]},
+    
+    { title: 'Record', isHeader: true },
+    { name: 'Rank Upload / Cadets Table', path: '/admin/rank/students', feature: ['STUDENT_TABLE'] },
+    { name: 'Rank Master Table', path: '/admin/rank/master', feature: ['MASTER_TABLE'] },
+    
+    { title: 'System', isHeader: true },
     { name: 'Test Management', path: '/admin/rank/test-management', feature: ['TEST_MANAGEMENT'] },
-    { name: 'Settings', path: '/admin/rank/settings', feature: ['SETTINGS'] },
-    { title: 'System', isHeader: true, role: 'lead_admin' },
-    { name: 'Role Management', path: '/admin/roles', role: 'lead_admin' }
+    { name: 'Role Management', path: '/admin/roles', role: 'lead_admin' },
+    { name: 'Settings', path: '/admin/rank/settings', feature: ['SETTINGS'] }
   ];
 
   const menuItems = adminMode === 'enrollment' ? enrollmentMenuItems : rankMenuItems;
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [expandedMenus, setExpandedMenus] = useState({});
+
+  const toggleExpand = (menuName) => {
+    setExpandedMenus(prev => ({ ...prev, [menuName]: !prev[menuName] }));
+  };
+
+  const renderMenuItem = (item, idx) => {
+    let canSee = true;
+    if (role === 'lead_admin') {
+      canSee = true;
+    } else if (item.role && item.role !== role) {
+      canSee = false;
+    } else if (item.feature) {
+      canSee = item.feature.some(f => hasFeature(f));
+    }
+
+    if (!canSee) return null;
+
+    if (item.isHeader) {
+      return <div key={'header-'+idx} style={{ padding: '1.2rem 1.5rem 0.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 'bold' }}>{item.title}</div>;
+    }
+
+    if (item.subItems) {
+      const isExpanded = expandedMenus[item.name];
+      return (
+        <div key={item.name}>
+          <div
+            onClick={() => toggleExpand(item.name)}
+            style={{
+              padding: '0.75rem 1.5rem',
+              cursor: 'pointer',
+              fontWeight: '600',
+              color: 'var(--primary-navy)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            {item.name}
+            <span>{isExpanded ? '▼' : '▶'}</span>
+          </div>
+          {isExpanded && (
+            <div style={{ background: 'rgba(0,0,0,0.02)' }}>
+              {item.subItems.map(sub => renderMenuItem(sub, sub.name))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const isActive = location.pathname === item.path;
+    return (
+      <div
+        key={item.path || idx}
+        onClick={() => { navigate(item.path); setSidebarOpen(false); }}
+        style={{
+          padding: '0.75rem 1.5rem',
+          cursor: 'pointer',
+          background: isActive ? 'var(--primary-navy)' : 'transparent',
+          borderRight: isActive ? '3px solid var(--secondary-gold)' : 'none',
+          color: isActive ? 'white' : 'inherit',
+          paddingLeft: item.path && item.path.split('/').length > 3 ? '2.5rem' : '1.5rem', // Indent subItems
+          transition: 'all 0.2s'
+        }}
+      >
+        {item.name}
+      </div>
+    );
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
@@ -114,40 +207,7 @@ const AdminLayout = () => {
           </div>
 
           <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 0' }}>
-            {menuItems.map((item, idx) => {
-              let canSee = true;
-              if (role === 'lead_admin') {
-                canSee = true;
-              } else if (item.role && item.role !== role) {
-                canSee = false;
-              } else if (item.feature) {
-                canSee = item.feature.some(f => hasFeature(f));
-              }
-
-              if (!canSee) return null;
-
-              if (item.isHeader) {
-                return <div key={idx} style={{ padding: '1rem 1.5rem 0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>{item.title}</div>;
-              }
-
-              const isActive = location.pathname.startsWith(item.path);
-              return (
-                <div
-                  key={item.path}
-                  onClick={() => { navigate(item.path); setSidebarOpen(false); }}
-                  style={{
-                    padding: '0.75rem 1.5rem',
-                    cursor: 'pointer',
-                    background: isActive ? 'var(--primary-navy)' : 'transparent',
-                    borderRight: isActive ? '3px solid var(--secondary-gold)' : 'none',
-                    color: isActive ? 'white' : 'inherit',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  {item.name}
-                </div>
-              );
-            })}
+            {menuItems.map((item, idx) => renderMenuItem(item, idx))}
           </div>
         </div>
 

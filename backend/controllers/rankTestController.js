@@ -1,18 +1,18 @@
 const Question = require('../models/Question');
-const Student = require('../models/Student');
-const R2Result = require('../models/R2Result');
-const Settings = require('../models/Settings');
+const RankCandidate = require('../models/RankCandidate');
+const RankR2Result = require('../models/RankR2Result');
+const RankSettings = require('../models/RankSettings');
 const TestConfig = require('../models/TestConfig');
-const MasterRecord = require('../models/MasterRecord');
+const RankMasterRecord = require('../models/RankMasterRecord');
 
 exports.getQuestions = async (req, res) => {
   try {
-    const settings = await Settings.findOne();
-    if (!settings || !settings.r2Active) {
-      return res.status(403).json({ message: 'Round 2 is not active' });
+    const settings = await RankSettings.findOne();
+    if (!settings || !settings.r_r2_entry) {
+      return res.status(403).json({ message: 'Written Test is not active' });
     }
 
-    const config = await TestConfig.findOne({ testType: 'new_enrollment' });
+    const config = await TestConfig.findOne({ testType: 'rank_selection' });
     if (config && config.windowStart && config.windowEnd) {
       const now = new Date();
       const start = new Date(config.windowStart);
@@ -24,17 +24,17 @@ exports.getQuestions = async (req, res) => {
       }
     }
 
-    const student = await Student.findById(req.user.id);
-    if (student.status !== 'r1_qualified') {
-      return res.status(403).json({ message: 'Not qualified for Round 2' });
+    const student = await RankCandidate.findById(req.user.id);
+    if (student.status !== 'r_r1_qualified') {
+      return res.status(403).json({ message: 'Not qualified for Written Test' });
     }
     
-    let r2Result = await R2Result.findOne({ studentId: student._id });
+    let r2Result = await RankR2Result.findOne({ candidateId: student._id });
     if (r2Result && r2Result.completed) {
       return res.status(403).json({ message: 'Test already completed' });
     }
 
-    const questions = await Question.find({ testType: 'new_enrollment' }).select('-correctAnswer');
+    const questions = await Question.find({ testType: 'rank_selection' }).select('-correctAnswer');
     res.json(questions);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -43,14 +43,14 @@ exports.getQuestions = async (req, res) => {
 
 exports.startTest = async (req, res) => {
   try {
-    let r2Result = await R2Result.findOne({ studentId: req.user.id });
+    let r2Result = await RankR2Result.findOne({ candidateId: req.user.id });
     
     if (!r2Result) {
-      r2Result = await R2Result.create({ studentId: req.user.id });
+      r2Result = await RankR2Result.create({ candidateId: req.user.id });
     }
 
     if (!r2Result.testStartTime) {
-      const config = await TestConfig.findOne({ testType: 'new_enrollment' });
+      const config = await TestConfig.findOne({ testType: 'rank_selection' });
       const duration = config && config.timerMinutes ? config.timerMinutes : 30;
 
       r2Result.testStartTime = new Date();
@@ -70,8 +70,8 @@ exports.startTest = async (req, res) => {
 exports.saveProgress = async (req, res) => {
   try {
     const { answers } = req.body; 
-    await R2Result.findOneAndUpdate(
-      { studentId: req.user.id },
+    await RankR2Result.findOneAndUpdate(
+      { candidateId: req.user.id },
       { answers }
     );
     res.json({ message: 'Progress saved' });
@@ -83,13 +83,13 @@ exports.saveProgress = async (req, res) => {
 exports.submitTest = async (req, res) => {
   try {
     const { answersMap } = req.body; 
-    let r2Result = await R2Result.findOne({ studentId: req.user.id });
+    let r2Result = await RankR2Result.findOne({ candidateId: req.user.id });
     
     if (r2Result && r2Result.completed) {
       return res.status(400).json({ message: 'Test already submitted' });
     }
 
-    const allQuestions = await Question.find({ testType: 'new_enrollment' });
+    const allQuestions = await Question.find({ testType: 'rank_selection' });
     let score = 0;
     
     const answersArray = [];
@@ -104,7 +104,7 @@ exports.submitTest = async (req, res) => {
     }
     
     if (!r2Result) {
-       r2Result = await R2Result.create({ studentId: req.user.id });
+       r2Result = await RankR2Result.create({ candidateId: req.user.id });
     }
 
     r2Result.answers = answersArray;
@@ -112,10 +112,10 @@ exports.submitTest = async (req, res) => {
     r2Result.completed = true;
     await r2Result.save();
     
-    const record = await MasterRecord.findOne({ studentId: req.user.id });
+    const record = await RankMasterRecord.findOne({ candidateId: req.user.id });
     if (record) {
-      record.r2 = score;
-      record.total = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0) + (record.hs || 0) + (record.aCert || 0) + (record.other || 0);
+      record.r2Score = score;
+      record.totalScore = (record.r1Score || 0) + (record.r2Score || 0) + (record.r3Score || 0) + (record.aCertScore || 0) + (record.bCertScore || 0);
       await record.save();
     }
     

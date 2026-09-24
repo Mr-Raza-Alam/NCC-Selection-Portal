@@ -28,8 +28,7 @@ const RankRound2Entry = () => {
       setData(res.data);
       setIsCompleted(settingsRes.data.r_r2_result);
       if (!settingsRes.data.r_r2_entry && !settingsRes.data.r_r2_result) {
-        toast.error('Written Test is not yet active.');
-        navigate('/admin/rank/r2');
+        // Written test not active
       }
     } catch (err) {
       console.error(err);
@@ -76,6 +75,15 @@ const RankRound2Entry = () => {
       (p.department && String(p.department).toLowerCase().includes(term))
     );
   });
+
+  if (isCompleted) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--danger-red)' }}>No Record!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the written test has been successfully completed. Waiting for next year....!!</p>
+      </div>
+    );
+  }
 
   return (
     <div>

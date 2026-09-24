@@ -86,6 +86,15 @@ const Round1Entry = () => {
     );
   });
 
+  if (isCompleted) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--danger-red)' }}>No Record!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the physical test has been successfully completed. Waiting for next year....!!</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       {processingMsg && <Loader overlay message={processingMsg} />}

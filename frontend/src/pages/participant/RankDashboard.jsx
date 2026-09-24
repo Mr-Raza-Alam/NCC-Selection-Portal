@@ -94,23 +94,48 @@ const RankDashboard = () => {
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', justifyContent: 'center', marginTop: isSelected ? '1rem' : '2rem' }}>
         
-        {/* Buddy Code Card */}
-        <div className="glass-card" style={{ flex: '1 1 250px', padding: '2rem', border: isSelected ? '2px solid #FFD700' : 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <h1 style={{ fontSize: '4rem', color: '#87CEEB', margin: 0 }}>{profile.buddyNo}</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Your Buddy Number</p>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '0.25rem' }}>Remember this during Physical Test</p>
+        {/* Cadet Profile Card */}
+        <div className="glass-card" style={{ flex: '1 1 300px', padding: '0', overflow: 'hidden', border: isSelected ? '2px solid #FFD700' : '1px solid var(--border-color)', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: isSelected ? '#FFD700' : '#87CEEB', color: isSelected ? 'black' : 'var(--primary-navy)', padding: '1rem', fontWeight: 'bold' }}>
+            <h3 style={{ margin: 0 }}>Cadet Profile</h3>
+          </div>
+          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <h1 style={{ fontSize: '4rem', color: isSelected ? '#FFD700' : '#87CEEB', margin: 0, textShadow: isSelected ? '0 2px 10px rgba(255,215,0,0.3)' : 'none' }}>
+              {profile.buddyNo}
+            </h1>
+            <p style={{ color: 'var(--text-secondary)', fontWeight: 'bold' }}>Buddy No.</p>
+            
+            <div style={{ width: '100%', marginTop: '1.5rem', textAlign: 'left', fontSize: '0.9rem' }}>
+              <p style={{ margin: '0.5rem 0' }}><strong style={{ color: 'var(--text-secondary)' }}>Name:</strong> {profile.name}</p>
+              <p style={{ margin: '0.5rem 0' }}><strong style={{ color: 'var(--text-secondary)' }}>Regimental No:</strong> {profile.regimentalNo}</p>
+              <p style={{ margin: '0.5rem 0' }}><strong style={{ color: 'var(--text-secondary)' }}>Current Rank:</strong> <span style={{ fontWeight: 'bold', color: 'var(--accent-green)' }}>{profile.status === 'promoted_cpl' ? 'Corporal (CPL)' : profile.status === 'promoted_lcpl' ? 'Lance Corporal (LCPL)' : 'Cadet'}</span></p>
+              <p style={{ margin: '0.5rem 0' }}><strong style={{ color: 'var(--text-secondary)' }}>Department:</strong> {profile.department}</p>
+            </div>
+          </div>
         </div>
 
-        {/* My Details Card */}
-        <div className="glass-card" style={{ flex: '1 1 250px', padding: '2rem', textAlign: 'left' }}>
-          <h3 style={{ marginTop: 0, color: '#87CEEB', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '1.5rem' }}>My Details</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.9rem' }}>
-            <div><strong style={{ color: 'var(--text-secondary)' }}>Name</strong><br/>{profile.name}</div>
-            <div><strong style={{ color: 'var(--text-secondary)' }}>Department</strong><br/>{profile.department}</div>
-            <div><strong style={{ color: 'var(--text-secondary)' }}>Semester</strong><br/>{profile.semester}</div>
-            <div><strong style={{ color: 'var(--text-secondary)' }}>Regimental No</strong><br/>{profile.regimentalNo}</div>
-            <div><strong style={{ color: 'var(--text-secondary)' }}>Email</strong><br/>{profile.email}</div>
-            <div><strong style={{ color: 'var(--text-secondary)' }}>Mobile No</strong><br/>{profile.mobileNo}</div>
+        {/* Dynamic Instructions & Syllabus */}
+        <div style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div className="glass-card" style={{ padding: '1.5rem', textAlign: 'left', borderLeft: '4px solid #87CEEB' }}>
+            <h3 style={{ marginTop: 0, color: 'var(--primary-navy)' }}>Rank Syllabus & Instructions</h3>
+            {profile.status === 'active' && (
+              <p style={{ color: 'var(--text-primary)' }}>Welcome to the Rank Selection process. Your first step is the Physical Test. Bring your full uniform and report to the ground.</p>
+            )}
+            {profile.status === 'r_r1_qualified' && !profile.r2Completed && (
+              <p style={{ color: 'var(--text-primary)' }}>You have cleared the Physical Test. Next up is the Written Test.</p>
+            )}
+            {['cadet', 'absent'].includes(profile.status) && (
+              <p style={{ color: 'var(--danger-red)' }}>You did not qualify for promotion this year. Keep your spirits high and prepare for the next opportunity!</p>
+            )}
+            
+            <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', margin: '1rem 0' }} />
+            <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-secondary)' }}>Written Test Topics (R2)</h4>
+            <ul style={{ margin: 0, paddingLeft: '1.2rem', color: 'var(--text-primary)', fontSize: '0.9rem' }}>
+              <li>Drill & Weapon Training</li>
+              <li>Map Reading & Field Craft</li>
+              <li>NCC Organization & History</li>
+              <li>National Integration & Awareness</li>
+            </ul>
           </div>
         </div>
 

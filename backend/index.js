@@ -47,6 +47,7 @@ app.use('/api/test', testRoutes);
 app.use('/api/participants', participantRoutes);
 app.use('/api/rank-auth', rankAuthRoutes);
 app.use('/api/rank-admin', rankAdminRoutes);
+app.use('/api/rank-test', require('./routes/rankTestRoutes'));
 
 // New Routes
 app.use('/api/admin/test-config', testConfigRoutes);

@@ -74,30 +74,60 @@ const Dashboard = () => {
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', justifyContent: 'center', marginTop: profile.status === 'selected' ? '1rem' : '2rem' }}>
         
-        {/* Code Card */}
-        <div className="glass-card" style={{ flex: '1 1 250px', padding: '2rem', border: profile.status === 'selected' ? '2px solid var(--accent-green)' : 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <h1 style={{ fontSize: '4rem', color: 'var(--accent-green)', margin: 0 }}>{profile.code}</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Your Chest Number</p>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '0.25rem' }}>Remember this during Physical Test</p>
+        {/* Digital ID Card */}
+        <div className="glass-card" style={{ flex: '1 1 300px', padding: '0', overflow: 'hidden', border: profile.status === 'selected' ? '2px solid var(--accent-green)' : '1px solid var(--border-color)', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: profile.status === 'selected' ? 'var(--accent-green)' : 'var(--primary-navy)', color: 'white', padding: '1rem' }}>
+            <h3 style={{ margin: 0 }}>Digital ID Card</h3>
+          </div>
+          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <h1 style={{ fontSize: '4rem', color: profile.status === 'selected' ? 'var(--accent-green)' : 'var(--primary-navy)', margin: 0 }}>{profile.code}</h1>
+            <p style={{ color: 'var(--text-secondary)', fontWeight: 'bold' }}>Chest No.</p>
+            <div style={{ width: '100%', marginTop: '1.5rem', textAlign: 'left', fontSize: '0.9rem' }}>
+              <p style={{ margin: '0.5rem 0' }}><strong style={{ color: 'var(--text-secondary)' }}>Name:</strong> {profile.name}</p>
+              <p style={{ margin: '0.5rem 0' }}><strong style={{ color: 'var(--text-secondary)' }}>Admission No:</strong> {profile.admissionNo}</p>
+              <p style={{ margin: '0.5rem 0' }}><strong style={{ color: 'var(--text-secondary)' }}>Department:</strong> {profile.department}</p>
+            </div>
+          </div>
         </div>
 
-        {/* My Details Card */}
-        <div className="glass-card" style={{ flex: '1 1 250px', padding: '2rem', textAlign: 'left' }}>
-          <h3 style={{ marginTop: 0, color: 'var(--primary-navy)', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '1.5rem' }}>My Details</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.9rem' }}>
-            <div><strong style={{ color: 'var(--text-secondary)' }}>Name</strong><br/>{profile.name}</div>
-            <div><strong style={{ color: 'var(--text-secondary)' }}>Department</strong><br/>{profile.department}</div>
-            <div><strong style={{ color: 'var(--text-secondary)' }}>DOB</strong><br/>{profile.dob ? new Date(profile.dob).toLocaleDateString('en-GB') : 'N/A'}</div>
-            <div><strong style={{ color: 'var(--text-secondary)' }}>Admission No</strong><br/>{profile.admissionNo}</div>
-            <div><strong style={{ color: 'var(--text-secondary)' }}>Email</strong><br/>{profile.email}</div>
-            <div><strong style={{ color: 'var(--text-secondary)' }}>Contact No</strong><br/>{profile.contactNo}</div>
+        {/* Dynamic Next Steps & Instructions */}
+        <div style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div className="glass-card" style={{ padding: '1.5rem', textAlign: 'left', borderLeft: '4px solid var(--secondary-gold)' }}>
+            <h3 style={{ marginTop: 0, color: 'var(--primary-navy)' }}>Next Steps & Instructions</h3>
+            {profile.status === 'active' && (
+              <p style={{ color: 'var(--text-primary)' }}>Welcome! Your next step is the Physical Test. Bring your ID card, wear sports attire, and report to the ground at the scheduled time.</p>
+            )}
+            {profile.status === 'r1_qualified' && !profile.r2Completed && (
+              <p style={{ color: 'var(--text-primary)' }}>Congratulations on clearing the Physical Test! Prepare for the Written Test. Ensure you have a stable internet connection if taking it online, or bring a black pen if offline.</p>
+            )}
+            {profile.status === 'r2_qualified' && (
+              <p style={{ color: 'var(--text-primary)' }}>Great job! You are qualified for the Interview round. Please wait at the designated holding area until your Chest No. is called.</p>
+            )}
+            {profile.status === 'r3_qualified' && (
+              <p style={{ color: 'var(--text-primary)' }}>Interview completed! Please proceed to Document Verification and present your original documents (HS marksheet, A-Cert, etc.) to the verification desk.</p>
+            )}
+            {profile.status === 'selected' && (
+              <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>All steps completed. You are officially selected!</p>
+            )}
+            {profile.status === 'eliminated' && (
+              <p style={{ color: 'var(--danger-red)' }}>Unfortunately, you did not meet the cutoff for the current round. Thank you for your participation, and we encourage you to try again next year.</p>
+            )}
+            {profile.status === 'absent' && (
+              <p style={{ color: 'var(--danger-red)' }}>You were marked absent. You are disqualified from this year's enrollment.</p>
+            )}
+          </div>
+
+          <div className="glass-card" style={{ padding: '1.5rem', textAlign: 'left' }}>
+            <h3 style={{ marginTop: 0, color: 'var(--primary-navy)' }}>Help & Support</h3>
+            <p style={{ color: 'var(--text-secondary)', margin: '0.25rem 0' }}>For any technical issues or queries, contact the admin desk.</p>
+            <p style={{ color: 'var(--text-secondary)', margin: '0.25rem 0' }}>Email: <a href="mailto:support@ncc.example.com">support@ncc.example.com</a></p>
           </div>
         </div>
 
       </div>
 
       {/* Complete Profile Card */}
-      {profile.parentContactNo === '' && (
+      {profile.parentContactNo === '' && profile.status !== 'eliminated' && profile.status !== 'absent' && (
         <div className="glass-card" style={{ maxWidth: '600px', margin: '2rem auto', padding: '2rem', border: '2px solid var(--warning-amber)' }}>
           <h3 style={{ color: 'var(--warning-amber)', marginTop: 0 }}>⚠️ Complete Your Profile</h3>
           <p style={{ color: 'var(--text-secondary)' }}>Please provide your parent's contact number to complete your profile.</p>

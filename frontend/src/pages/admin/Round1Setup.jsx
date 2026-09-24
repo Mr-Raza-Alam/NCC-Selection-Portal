@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
@@ -7,6 +7,19 @@ const Round1Setup = () => {
   const navigate = useNavigate();
   const [activities, setActivities] = useState([{ activityName: '', totalMarks: 10 }]);
   const [showModal, setShowModal] = useState(false);
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/admin/settings');
+        setSettings(res.data);
+      } catch (err) {
+        console.error("Failed to fetch settings", err);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const totalMarks = activities.reduce((sum, act) => sum + (Number(act.totalMarks) || 0), 0);
 
@@ -43,6 +56,24 @@ const Round1Setup = () => {
       toast.error('Failed to setup R1');
     }
   };
+
+  if (settings?.r1Completed) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--danger-red)' }}>No Record!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the physical test has been successfully completed. Waiting for next year....!!</p>
+      </div>
+    );
+  }
+
+  if (settings?.r1Entry) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--warning-amber)' }}>Action Blocked</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>The Physical Test is currently in progress. You cannot modify activities now.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container">

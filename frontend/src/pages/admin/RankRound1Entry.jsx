@@ -28,8 +28,7 @@ const RankRound1Entry = () => {
       setData(res.data);
       setIsCompleted(settingsRes.data.r_r1_result);
       if (!settingsRes.data.r_r1_entry && !settingsRes.data.r_r1_result) {
-        toast.error('Physical Test is not yet active.');
-        navigate('/admin/rank/r1');
+        // Physical test not started
       }
     } catch (err) {
       console.error(err);
@@ -89,6 +88,17 @@ const RankRound1Entry = () => {
       (p.buddyNo && String(p.buddyNo).toLowerCase().includes(term))
     );
   });
+
+  if (isCompleted) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--danger-red)' }}>No Record!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the physical test has been successfully completed. Waiting for next year....!!</p>
+      </div>
+    );
+  }
+
+  // Need to know if entry is active. We didn't save r_r1_entry to state, so let's do that.
 
   return (
     <div>
