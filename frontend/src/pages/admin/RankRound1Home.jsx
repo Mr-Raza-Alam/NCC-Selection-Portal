@@ -22,31 +22,31 @@ const RankRound1Home = () => {
 
   if (!settings) return <Loader />;
 
-  const isCompleted = settings.r1Completed;
-  const isSetup = settings.r1SetupComplete;
+  const r1_entry = settings.r_r1_entry;
+  const r1_result = settings.r_r1_result;
 
   return (
     <div>
-      <h2 style={{ marginBottom: '2rem' }}>Round 1: Physical Test</h2>
+      <h2 style={{ marginBottom: '2rem' }}>Physical Test (Rank Selection)</h2>
       
-      {!isSetup ? (
+      {!r1_entry && !r1_result ? (
         <div className="glass-card" style={{ maxWidth: '400px' }}>
           <h3>Initial Setup</h3>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Configure activities and max marks before starting.</p>
-          <button className="btn btn-primary" onClick={() => navigate('/admin/r1/setup')}>Set-Up R1 Config</button>
+          <button className="btn btn-primary" onClick={() => navigate('/admin/rank/r1/setup')}>Set-Up R1 Config</button>
         </div>
-      ) : !isCompleted ? (
+      ) : r1_entry && !r1_result ? (
         <div className="glass-card" style={{ maxWidth: '400px', borderColor: 'var(--warning-amber)' }}>
-          <h3 style={{ color: 'var(--warning-amber)' }}>Round 1 Active</h3>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>R1 Setup is complete. You can now enter scores and mark attendance.</p>
-          <button className="btn btn-primary" onClick={() => navigate('/admin/r1/entry')}>Go to Entry Table</button>
+          <h3 style={{ color: 'var(--warning-amber)' }}>Physical Test Active</h3>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Physical Test has started. You can now enter scores and mark attendance.</p>
+          <button className="btn btn-primary" onClick={() => navigate('/admin/rank/r1/entry')}>Go to Entry Table</button>
         </div>
       ) : (
         <div className="glass-card" style={{ maxWidth: '400px', borderColor: 'var(--accent-green)' }}>
-          <h3 style={{ color: 'var(--accent-green)' }}>R1_Result ✓</h3>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Round 1 has been completed and cutoffs are applied.</p>
+          <h3 style={{ color: 'var(--accent-green)' }}>Physical Test Completed ✓</h3>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Physical Test has been completed and cutoffs are applied.</p>
           <div style={{ display: 'flex', gap: '1rem' }}>
-            <button className="btn btn-outline" onClick={() => navigate('/admin/r1/entry')}>View Results</button>
+            <button className="btn btn-outline" onClick={() => navigate('/admin/rank/r1/entry')}>View Results</button>
           </div>
         </div>
       )}

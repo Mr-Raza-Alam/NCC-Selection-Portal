@@ -7,48 +7,78 @@ const RankRound2Home = () => {
   const navigate = useNavigate();
   const [settings, setSettings] = useState(null);
 
+  const [showConfirm, setShowConfirm] = useState(false);
+
   useEffect(() => {
     fetchSettings();
   }, []);
 
   const fetchSettings = async () => {
     try {
-      const res = await api.get('/admin/settings');
+      const res = await api.get('/admin/rank/settings');
       setSettings(res.data);
     } catch (err) {
       console.error(err);
     }
   };
 
+  const handleStartR2 = async () => {
+    try {
+      await api.post('/admin/rank/r2/start');
+      toast.success('Written Test Entry Activated');
+      fetchSettings();
+      setShowConfirm(false);
+      navigate('/admin/rank/r2/entry');
+    } catch (err) {
+      toast.error('Failed to start Written Test');
+    }
+  };
+
   if (!settings) return <Loader />;
 
-  const isCompleted = settings.r2Completed;
-  const isActive = settings.r2Active;
-  const isR1Completed = settings.r1Completed;
+  const r2_entry = settings.r_r2_entry;
+  const r2_result = settings.r_r2_result;
+  const r1_result = settings.r_r1_result;
 
   return (
     <div>
-      <h2 style={{ marginBottom: '2rem' }}>Round 2: Written Test</h2>
+      <h2 style={{ marginBottom: '2rem' }}>Written Test (Rank Selection)</h2>
       
-      {!isR1Completed ? (
+      {!r1_result ? (
         <div className="glass-card" style={{ maxWidth: '400px', borderColor: 'var(--danger-red)' }}>
-          <h3 style={{ color: 'var(--danger-red)' }}>Round 1 Incomplete</h3>
-          <p style={{ color: 'var(--text-secondary)' }}>You must finalize Round 1 (Apply Cutoff) before you can start Round 2.</p>
+          <h3 style={{ color: 'var(--danger-red)' }}>Physical Test Incomplete</h3>
+          <p style={{ color: 'var(--text-secondary)' }}>You must finalize the Physical Test before you can start the Written Test phase.</p>
         </div>
-      ) : (!isActive && !isCompleted) ? (
+      ) : (!r2_entry && !r2_result) ? (
         <div className="glass-card" style={{ maxWidth: '400px' }}>
           <h3>Initial Setup</h3>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Configure R2 attendance and start the test.</p>
-          <button className="btn btn-primary" onClick={() => navigate('/admin/r2/attendance')}>Set-Up R2 Config</button>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Configure R2 attendance and activate the Written Test entry table.</p>
+          <button className="btn btn-primary" onClick={() => setShowConfirm(true)}>Activate Written Test</button>
         </div>
       ) : (
         <div className="glass-card" style={{ maxWidth: '400px', borderColor: 'var(--accent-green)' }}>
-          <h3 style={{ color: 'var(--accent-green)' }}>R2_Result (Live Table) ✓</h3>
+          <h3 style={{ color: 'var(--accent-green)' }}>Written Test Active ✓</h3>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-            {isCompleted ? 'Round 2 has been completed and cutoffs are applied.' : 'Round 2 Test is currently ACTIVE. Students are taking the test.'}
+            {r2_result ? 'Written Test has been completed and cutoffs are applied.' : 'Written Test is currently ACTIVE.'}
           </p>
           <div style={{ display: 'flex', gap: '1rem' }}>
-            <button className="btn btn-outline" onClick={() => navigate('/admin/r2/entry')}>View Results</button>
+            <button className="btn btn-outline" onClick={() => navigate('/admin/rank/r2/entry')}>View Table</button>
+          </div>
+        </div>
+      )}
+
+      {showConfirm && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+        }}>
+          <div className="glass-card" style={{ width: '90%', maxWidth: '400px', padding: '2rem' }}>
+            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Confirm</h3>
+            <p style={{ marginBottom: '2rem' }}>Has the Physical Test been completely finalized and finished on ground?</p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+              <button className="btn btn-outline" onClick={() => setShowConfirm(false)}>No, Cancel</button>
+              <button className="btn btn-primary" onClick={handleStartR2}>Yes, Start Written Test Phase</button>
+            </div>
           </div>
         </div>
       )}

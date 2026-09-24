@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
 
@@ -6,9 +7,13 @@ const TestManagement = () => {
   const [config, setConfig] = useState({ timerMinutes: 30, windowStart: '', windowEnd: '', resultsVisibility: false });
   const [overview, setOverview] = useState({ r2Active: false, totalStudents: 0, attemptedStudents: 0 });
 
+  const location = useLocation();
+  const isRankSelection = location.pathname.includes('/rank/');
+  const testType = isRankSelection ? 'rank_selection' : 'new_enrollment';
+
   useEffect(() => {
     fetchConfig();
-  }, []);
+  }, [testType]);
 
   const toLocalISOString = (dateStr) => {
     if (!dateStr) return '';
@@ -19,7 +24,7 @@ const TestManagement = () => {
 
   const fetchConfig = async () => {
     try {
-      const res = await api.get('/admin/test-config');
+      const res = await api.get(`/admin/test-config?type=${testType}`);
       const fetchedConfig = res.data.config;
       setConfig({
         ...fetchedConfig,
@@ -45,7 +50,7 @@ const TestManagement = () => {
         payload.windowEnd += '+05:30';
       }
 
-      await api.post('/admin/test-config', payload);
+      await api.post(`/admin/test-config?type=${testType}`, payload);
       toast.success('Test Configuration Saved');
       fetchConfig();
     } catch (err) {
@@ -57,7 +62,7 @@ const TestManagement = () => {
     const updated = { ...config, windowStart: '', windowEnd: '' };
     setConfig(updated);
     try {
-      await api.post('/admin/test-config', updated);
+      await api.post(`/admin/test-config?type=${testType}`, updated);
       toast.success('Test Window Cleared');
       fetchConfig();
     } catch (err) {
@@ -84,7 +89,7 @@ const TestManagement = () => {
     formData.append('file', file);
 
     try {
-      const res = await api.post('/admin/questions/upload', formData, {
+      const res = await api.post(`/admin/questions/upload?type=${testType}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       toast.success(`${res.data.message} (${res.data.count} questions)`);
@@ -106,7 +111,9 @@ const TestManagement = () => {
 
   return (
     <div className="container" style={{ padding: '2rem' }}>
-      <h2 style={{ color: '#1a365d', marginBottom: '1.5rem' }}>Test Management</h2>
+      <h2 style={{ color: '#1a365d', marginBottom: '1.5rem' }}>
+        Test Management {isRankSelection ? '(Rank Selection)' : '(New Enrollment)'}
+      </h2>
 
       {/* Status Overview */}
       <div className="card" style={{ padding: '1rem', marginBottom: '2rem', backgroundColor: '#ebf8ff', border: '1px solid #bee3f8', borderRadius: '8px' }}>

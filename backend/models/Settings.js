@@ -10,6 +10,16 @@ const settingsSchema = new mongoose.Schema({
   r2Completed: { type: Boolean, default: false },
   r3Active: { type: Boolean, default: false },
   r3Completed: { type: Boolean, default: false },
+  // Rank Selection State Variables
+  r_r1_entry: { type: Boolean, default: false },
+  r_r1_result: { type: Boolean, default: false },
+  r_r2_entry: { type: Boolean, default: false },
+  r_r2_result: { type: Boolean, default: false },
+  r_r3_entry: { type: Boolean, default: false },
+  r_r3_result: { type: Boolean, default: false },
+  rank_r1Cutoff: { type: Number, default: null },
+  rank_r2Cutoff: { type: Number, default: null },
+  rank_r3Cutoff: { type: Number, default: null },
   broadcastMessage: { type: String, default: '' },
   broadcastTarget: { type: String, enum: ['none', 'landing', 'dashboard', 'both'], default: 'none' }
 });

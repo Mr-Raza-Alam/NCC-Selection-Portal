@@ -122,8 +122,11 @@ const RankDashboard = () => {
         <div className="glass-card" style={{ width: '100%', maxWidth: '400px', opacity: (profile.status === 'absent' && !profile.r2Completed) ? 0.5 : 1 }}>
           <h3>Round 1 (Physical Test)</h3>
           {profile.status === 'active' && <p>Test in progress...</p>}
-          {(['r1_qualified', 'r2_qualified', 'r3_qualified', 'promoted_cpl', 'promoted_lcpl', 'cadet'].includes(profile.status)) && (
-            <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>R1-Qualified ✓ (Score: {profile.r1Score ?? '-'})</p>
+          {(['r_r1_qualified', 'r_r2_qualified', 'r_r3_qualified', 'promoted_cpl', 'promoted_lcpl'].includes(profile.status)) && (
+            <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>Physical Test Qualified ✓ (Score: {profile.r1Score ?? '-'})</p>
+          )}
+          {profile.status === 'cadet' && profile.r1Completed && profile.r1Score !== null && (
+            <p style={{ color: 'var(--warning-amber)', fontWeight: 'bold' }}>Physical Test Concluded (Score: {profile.r1Score ?? '-'})</p>
           )}
           {profile.status === 'absent' && !profile.r2Completed && <p style={{ color: 'var(--danger-red)' }}>Absent in R1</p>}
         </div>
@@ -136,7 +139,7 @@ const RankDashboard = () => {
           <h3>Round 2 (Written Test)</h3>
           {profile.status === 'active' && <p>Waiting for R1 Results...</p>}
           
-          {profile.status === 'r1_qualified' && !profile.r2Completed && (
+          {profile.status === 'r_r1_qualified' && !profile.r2Completed && (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
               {testStatus === 'before' && (
                 <div style={{ padding: '1rem 2rem', background: 'var(--surface-grey)', borderRadius: '8px', border: '1px solid var(--border-color)', animation: 'pulse 2s infinite' }}>
@@ -155,12 +158,15 @@ const RankDashboard = () => {
             </div>
           )}
           
-          {profile.status === 'r1_qualified' && profile.r2Completed && (
+          {profile.status === 'r_r1_qualified' && profile.r2Completed && (
             <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>Test Submitted! Waiting for results...</p>
           )}
 
-          {(['r2_qualified', 'r3_qualified', 'promoted_cpl', 'promoted_lcpl', 'cadet'].includes(profile.status)) && (
-            <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>R2-Qualified ✓ (Score: {profile.r2Score ?? '-'})</p>
+          {(['r_r2_qualified', 'r_r3_qualified', 'promoted_cpl', 'promoted_lcpl'].includes(profile.status)) && (
+            <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>Written Test Qualified ✓ (Score: {profile.r2Score ?? '-'})</p>
+          )}
+          {profile.status === 'cadet' && profile.r2Completed && profile.r2Score !== null && (
+            <p style={{ color: 'var(--warning-amber)', fontWeight: 'bold' }}>Written Test Concluded (Score: {profile.r2Score ?? '-'})</p>
           )}
           
           {profile.status === 'absent' && profile.r2Completed && !profile.r3Completed && <p style={{ color: 'var(--danger-red)' }}>Absent in R2</p>}
@@ -172,20 +178,25 @@ const RankDashboard = () => {
         {/* Round 3 Indicator */}
         <div className="glass-card" style={{ width: '100%', maxWidth: '400px', opacity: (profile.status === 'absent' && profile.r3Completed) ? 0.5 : 1 }}>
           <h3>Round 3 (Interview)</h3>
-          {['active', 'r1_qualified'].includes(profile.status) && <p>Waiting for R2 Results...</p>}
+          {['active', 'r_r1_qualified'].includes(profile.status) && <p>Waiting for R2 Results...</p>}
           
-          {profile.status === 'r2_qualified' && (
+          {profile.status === 'r_r2_qualified' && (
             <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>Start-R3 (Proceed to Interview Desk)</p>
           )}
           
-          {['r3_qualified', 'promoted_cpl', 'promoted_lcpl', 'cadet'].includes(profile.status) && (
+          {['r_r3_qualified', 'promoted_cpl', 'promoted_lcpl'].includes(profile.status) && (
             <div>
-              <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>R3-Completed ✓ (Score: {profile.r3Score ?? '-'})</p>
-              {profile.status === 'r3_qualified' && (
+              <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>Interview Completed ✓ (Score: {profile.r3Score ?? '-'})</p>
+              {profile.status === 'r_r3_qualified' && (
                 <p style={{ color: 'var(--warning-amber)', fontWeight: 'bold', fontSize: '0.9rem', marginTop: '0.5rem' }}>
                   Waiting for CTO Sir's Final Rank Declaration.
                 </p>
               )}
+            </div>
+          )}
+          {profile.status === 'cadet' && profile.r3Completed && profile.r3Score !== null && (
+            <div>
+              <p style={{ color: 'var(--warning-amber)', fontWeight: 'bold' }}>Interview Completed (Score: {profile.r3Score ?? '-'})</p>
             </div>
           )}
           

@@ -29,7 +29,7 @@ exports.setupR1 = async (req, res) => {
     );
     
     let settings = await getRankSettings();
-    settings.r1SetupComplete = true;
+    settings.r_r1_entry = true;
     await settings.save();
     
     res.json({ message: 'R1 Setup Complete', activities: newActivities });
@@ -114,7 +114,7 @@ exports.finalizeR1 = async (req, res) => {
     }
     
     const settings = await getRankSettings();
-    settings.r1Completed = true;
+    settings.r_r1_result = true;
     await settings.save();
     
     res.json({ message: 'R1 Finalized and synced to Master Table' });
@@ -127,7 +127,7 @@ exports.setR1Cutoff = async (req, res) => {
   try {
     const { cutoff } = req.body;
     const settings = await getRankSettings();
-    settings.r1Cutoff = cutoff;
+    settings.r_r1Cutoff = cutoff;
     await settings.save();
     
     // Calculate cutoffs based on actual R1 results
@@ -145,21 +145,14 @@ exports.setR1Cutoff = async (req, res) => {
     
     // Update statuses
     await RankCandidate.updateMany(
-      { _id: { $in: qualifiedIds }, status: 'active' },
-      { $set: { status: 'r1_qualified' } }
+      { _id: { $in: qualifiedIds }, status: 'cadet' },
+      { $set: { status: 'r_r1_qualified' } }
     );
     
-    await RankCandidate.updateMany(
-      { _id: { $nin: qualifiedIds }, status: 'active' },
-      { $set: { status: 'eliminated' } }
-    );
+      // We DO NOT eliminate candidates in rank selection. They remain 'cadet' if not qualified
+      // So no update to 'eliminated' is needed.
     
-    await RankMasterRecord.updateMany(
-      { candidateId: { $nin: qualifiedIds } },
-      { $set: { status: 'eliminated' } }
-    );
-    
-    res.json({ message: 'R1 Cutoff applied. Non-qualifiers eliminated.' });
+    res.json({ message: 'R1 Cutoff applied. Unqualified candidates remain Cadets.' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -172,8 +165,7 @@ exports.setR1Cutoff = async (req, res) => {
 exports.startR2 = async (req, res) => {
   try {
     const settings = await getRankSettings();
-    settings.currentRound = 2;
-    settings.r2Active = true;
+    settings.r_r2_entry = true;
     await settings.save();
     res.json({ message: 'Round 2 Started' });
   } catch (error) {
@@ -228,7 +220,7 @@ exports.getR2Table = async (req, res) => {
     // Fetch candidates who are currently r1_qualified OR who already have an R2 score
     const candidates = await RankCandidate.find({
       $or: [
-        { status: 'r1_qualified' },
+        { status: 'r_r1_qualified' },
         { _id: { $in: r2RankCandidateIds } }
       ]
     }).select('name department status');
@@ -257,7 +249,7 @@ exports.finalizeR2 = async (req, res) => {
     }
     
     const settings = await getRankSettings();
-    settings.r2Completed = true;
+    settings.r_r2_result = true;
     await settings.save();
 
     res.json({ message: 'R2 Finalized and synced to Master Table' });
@@ -270,7 +262,7 @@ exports.setR2Cutoff = async (req, res) => {
   try {
     const { cutoff } = req.body;
     const settings = await getRankSettings();
-    settings.r2Cutoff = cutoff;
+    settings.r_r2Cutoff = cutoff;
     await settings.save();
     
     // Calculate cutoffs based on actual R2 results
@@ -287,21 +279,19 @@ exports.setR2Cutoff = async (req, res) => {
     });
     
     await RankCandidate.updateMany(
-      { _id: { $in: qualifiedIds }, status: 'r1_qualified' },
-      { $set: { status: 'r2_qualified' } }
+      { _id: { $in: qualifiedIds }, status: 'r_r1_qualified' },
+      { $set: { status: 'r_r2_qualified' } }
     );
     
+    // Unqualified revert back to cadet
     await RankCandidate.updateMany(
-      { _id: { $nin: qualifiedIds }, status: 'r1_qualified' },
-      { $set: { status: 'eliminated' } }
+      { _id: { $nin: qualifiedIds }, status: 'r_r1_qualified' },
+      { $set: { status: 'cadet' } }
     );
     
-    await RankMasterRecord.updateMany(
-      { candidateId: { $nin: qualifiedIds }, status: { $ne: 'eliminated' } },
-      { $set: { status: 'eliminated' } }
-    );
+    // No master record 'eliminated' update needed
     
-    res.json({ message: 'R2 Cutoff applied. Non-qualifiers eliminated.' });
+    res.json({ message: 'R2 Cutoff applied. Unqualified candidates remain Cadets.' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -314,8 +304,7 @@ exports.setR2Cutoff = async (req, res) => {
 exports.startR3 = async (req, res) => {
   try {
     const settings = await getRankSettings();
-    settings.currentRound = 3;
-    settings.r3Active = true;
+    settings.r_r3_entry = true;
     await settings.save();
     res.json({ message: 'Round 3 Started' });
   } catch (error) {
@@ -331,7 +320,7 @@ exports.getR3Table = async (req, res) => {
     // Fetch candidates who are currently r2_qualified OR who already have an R3 score
     const candidates = await RankCandidate.find({
       $or: [
-        { status: 'r2_qualified' },
+        { status: 'r_r2_qualified' },
         { _id: { $in: r3RankCandidateIds } }
       ]
     }).select('name department status');
@@ -412,13 +401,13 @@ exports.finalizeR3 = async (req, res) => {
     
     // Upgrade R2 qualified to R3 qualified automatically
     await RankCandidate.updateMany(
-      { status: 'r2_qualified' },
-      { $set: { status: 'r3_qualified' } }
+      { status: 'r_r2_qualified' },
+      { $set: { status: 'r_r3_qualified' } }
     );
 
     // Mark R3 as completed in settings
     const settings = await getRankSettings();
-    settings.r3Completed = true;
+    settings.r_r3_result = true;
     await settings.save();
 
     res.json({ message: 'Round 3 Finalized, totals calculated' });

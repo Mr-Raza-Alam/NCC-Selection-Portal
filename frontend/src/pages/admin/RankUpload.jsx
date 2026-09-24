@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { toast } from 'react-hot-toast';
 import { Loader2, Upload } from 'lucide-react';
 
@@ -22,10 +22,9 @@ const RankUpload = () => {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('/api/rank-admin/upload-cadets', formData, {
+      const response = await api.post('/rank-admin/upload-cadets', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'multipart/form-data'
         }
       });
       toast.success(response.data.message || `Successfully uploaded ${response.data.count} cadets`);

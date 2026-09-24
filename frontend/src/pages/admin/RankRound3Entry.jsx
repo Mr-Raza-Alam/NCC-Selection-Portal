@@ -20,11 +20,15 @@ const RankRound3Entry = () => {
   const fetchData = async () => {
     try {
       const [res, settingsRes] = await Promise.all([
-        api.get('/admin/r3/table'),
-        api.get('/admin/settings')
+        api.get('/admin/rank/r3/table'),
+        api.get('/admin/rank/settings')
       ]);
       setData(res.data);
-      setIsCompleted(settingsRes.data.r3Completed);
+      setIsCompleted(settingsRes.data.r_r3_result);
+      if (!settingsRes.data.r_r3_entry && !settingsRes.data.r_r3_result) {
+        toast.error('Interview is not yet active.');
+        navigate('/admin/rank/r3');
+      }
     } catch (err) {
       console.error(err);
     }
@@ -32,8 +36,8 @@ const RankRound3Entry = () => {
 
   const handleScoreChange = async (id, value) => {
     try {
-      await api.post('/admin/r3/score', {
-        studentId: id,
+      await api.post('/admin/rank/r3/score', {
+        candidateId: id,
         r3Score: Number(value)
       });
       fetchData();
@@ -43,10 +47,10 @@ const RankRound3Entry = () => {
   };
 
   const handleDone = async () => {
-    setProcessingMsg('Finalizing Round 3 (Ass.1)...');
+    setProcessingMsg('Finalizing Interview Phase...');
     try {
-      await api.post('/admin/r3/done');
-      toast.success('Round 3 Finalized! You are now viewing the locked results.');
+      await api.post('/admin/rank/r3/done');
+      toast.success('Interview Phase Finalized! You are now viewing the locked results.');
       setShowDoneModal(false);
       fetchData();
     } catch (err) {
@@ -73,7 +77,7 @@ const RankRound3Entry = () => {
     <div>
       {processingMsg && <Loader overlay message={processingMsg} />}
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-        <h2 style={{ margin: 0 }}>{isCompleted ? "Round 3 Results (Locked)" : "Round 3: Interview Desk (Ass.1)"}</h2>
+        <h2 style={{ margin: 0 }}>{isCompleted ? "Interview Results (Locked)" : "Interview Desk"}</h2>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem', marginRight: '0.5rem' }}>
@@ -108,7 +112,7 @@ const RankRound3Entry = () => {
           </thead>
           <tbody>
             {filteredStudents.map(p => {
-              const r3 = data.r3Scores.find(s => String(s.studentId) === String(p._id) || (s.studentId && s.studentId._id && String(s.studentId._id) === String(p._id)));
+              const r3 = data.r3Scores.find(s => String(s.candidateId) === String(p._id) || (s.candidateId && s.candidateId._id && String(s.candidateId._id) === String(p._id)));
               const isPresent = r3 ? r3.attendance : true;
               return (
               <tr key={p._id}>
@@ -120,7 +124,7 @@ const RankRound3Entry = () => {
                     disabled={isCompleted} 
                     onChange={async (e) => {
                       const val = e.target.value;
-                      await api.post('/admin/r3/score', { studentId: p._id, attendance: val });
+                      await api.post('/admin/rank/r3/score', { candidateId: p._id, attendance: val });
                       fetchData();
                     }}
                     style={{ padding: '0.25rem', background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)' }}
@@ -153,9 +157,9 @@ const RankRound3Entry = () => {
           backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
         }}>
           <div className="glass-card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
-            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Finalize Round 3 & Generate Merit List</h3>
+            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Finalize Interview Phase</h3>
             <p style={{ color: 'var(--text-primary)', marginBottom: '2rem', fontWeight: 'bold' }}>
-              Are you sure you want to finalize Round 3? This action will calculate the grand total across all rounds and generate the final Master Merit List. This action is irreversible.
+              Are you sure you want to finalize the Interview Phase? This action will calculate the grand total across all tests and generate the final Master Record. This action is irreversible.
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
               <button className="btn btn-outline" onClick={() => setShowDoneModal(false)}>Cancel</button>

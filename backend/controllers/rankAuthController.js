@@ -100,13 +100,13 @@ exports.getRankProfile = async (req, res) => {
       r1Score: r1 ? r1.totalScore : null,
       r2Score: r2 ? r2.totalScore : null,
       r3Score: r3 ? r3.r3Score : null,
-      r1Completed: settings ? settings.r1Completed : false,
-      r2Completed: settings ? settings.r2Completed : false,
-      r3Completed: settings ? settings.r3Completed : false,
+      r1Completed: settings ? settings.r_r1_result : false,
+      r2Completed: settings ? settings.r_r2_result : false,
+      r3Completed: settings ? settings.r_r3_result : false,
     };
     
     // We should also get the RankSettings for testWindow (if rank has one, or use main config)
-    const testConfig = await require('../models/TestConfig').findOne();
+    const testConfig = await require('../models/TestConfig').findOne({ testType: 'rank_selection' });
     if (testConfig) {
        profileData.testWindowStart = testConfig.windowStart;
        profileData.testWindowEnd = testConfig.windowEnd;

@@ -22,11 +22,15 @@ const RankRound1Entry = () => {
   const fetchData = async () => {
     try {
       const [res, settingsRes] = await Promise.all([
-        api.get('/admin/r1/table'),
-        api.get('/admin/settings')
+        api.get('/admin/rank/r1/table'),
+        api.get('/admin/rank/settings')
       ]);
       setData(res.data);
-      setIsCompleted(settingsRes.data.r1Completed);
+      setIsCompleted(settingsRes.data.r_r1_result);
+      if (!settingsRes.data.r_r1_entry && !settingsRes.data.r_r1_result) {
+        toast.error('Physical Test is not yet active.');
+        navigate('/admin/rank/r1');
+      }
     } catch (err) {
       console.error(err);
     }
@@ -34,8 +38,8 @@ const RankRound1Entry = () => {
 
   const handleScoreChange = async (studentId, activityId, activityName, value) => {
     try {
-      await api.post('/admin/r1/score', {
-        studentId,
+      await api.post('/admin/rank/r1/score', {
+        candidateId: studentId,
         activityId,
         activityName,
         score: value
@@ -49,8 +53,8 @@ const RankRound1Entry = () => {
   const handleApplyCutoff = async () => {
     setProcessingMsg('Applying Cutoff...');
     try {
-      await api.post('/admin/r1/cutoff', { cutoff: Number(cutoff) });
-      toast.success('Cutoff applied. Non-qualifiers removed from active list.');
+      await api.post('/admin/rank/r1/cutoff', { cutoff: Number(cutoff) });
+      toast.success('Cutoff applied. Unqualified candidates will remain Cadets.');
       setShowCutoffModal(false);
       fetchData();
     } catch (err) {
@@ -63,8 +67,8 @@ const RankRound1Entry = () => {
   const handleDone = async () => {
     setProcessingMsg('Finalizing Round 1...');
     try {
-      await api.post('/admin/r1/done');
-      toast.success('Round 1 Finalized! You are now viewing the locked results.');
+      await api.post('/admin/rank/r1/done');
+      toast.success('Physical Test Finalized! You are now viewing the locked results.');
       setShowDoneModal(false);
       fetchData(); // Refresh the table
     } catch (err) {
@@ -90,7 +94,7 @@ const RankRound1Entry = () => {
     <div>
       {processingMsg && <Loader overlay message={processingMsg} />}
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-        <h2 style={{ margin: 0 }}>{isCompleted ? "Round 1 Results (Locked)" : "Round 1 Score Entry"}</h2>
+        <h2 style={{ margin: 0 }}>{isCompleted ? "Physical Test Results (Locked)" : "Physical Test Score Entry"}</h2>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem', marginRight: '0.5rem' }}>
@@ -139,7 +143,7 @@ const RankRound1Entry = () => {
           </thead>
           <tbody>
             {filteredStudents.map(p => {
-              const pScores = data.r1Scores.find(s => String(s.studentId) === String(p._id) || (s.studentId?._id && String(s.studentId._id) === String(p._id)));
+              const pScores = data.r1Scores.find(s => String(s.candidateId) === String(p._id) || (s.candidateId?._id && String(s.candidateId._id) === String(p._id)));
               const isPresent = pScores ? pScores.attendance : '';
               return (
                 <tr key={p._id}>
@@ -151,7 +155,7 @@ const RankRound1Entry = () => {
                       disabled={isCompleted} 
                       onChange={async (e) => {
                         const val = e.target.value;
-                        await api.post('/admin/r1/score', { studentId: p._id, attendance: val });
+                        await api.post('/admin/rank/r1/score', { candidateId: p._id, attendance: val });
                         fetchData();
                       }}
                       style={{ padding: '0.25rem', background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)' }}
@@ -190,7 +194,7 @@ const RankRound1Entry = () => {
         }}>
           <div className="glass-card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
             <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Apply Cutoff?</h3>
-            <p style={{ marginBottom: '1rem' }}>This will eliminate non-qualifiers from the active list.</p>
+            <p style={{ marginBottom: '1rem' }}>This will mark candidates below the cutoff. Unqualified candidates will remain Cadets.</p>
             <p style={{ color: 'var(--warning-amber)', marginBottom: '2rem', fontWeight: 'bold' }}>
               Note: You must hit the 'Done' button after applying the cutoff to finalize the round.
             </p>
@@ -208,9 +212,9 @@ const RankRound1Entry = () => {
           backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
         }}>
           <div className="glass-card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
-            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Finalize Round 1</h3>
+            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Finalize Physical Test</h3>
             <p style={{ color: 'var(--text-primary)', marginBottom: '2rem', fontWeight: 'bold' }}>
-              Are you sure you want to finalize Round 1? This will calculate the final totals for this round. Make sure all scores and cutoffs have been correctly applied.
+              Are you sure you want to finalize the Physical Test? This will calculate the final totals for this round. Make sure all scores and cutoffs have been correctly applied.
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
               <button className="btn btn-outline" onClick={() => setShowDoneModal(false)}>Cancel</button>

@@ -22,11 +22,15 @@ const RankRound2Entry = () => {
   const fetchData = async () => {
     try {
       const [res, settingsRes] = await Promise.all([
-        api.get('/admin/r2/table'),
-        api.get('/admin/settings')
+        api.get('/admin/rank/r2/table'),
+        api.get('/admin/rank/settings')
       ]);
       setData(res.data);
-      setIsCompleted(settingsRes.data.r2Completed);
+      setIsCompleted(settingsRes.data.r_r2_result);
+      if (!settingsRes.data.r_r2_entry && !settingsRes.data.r_r2_result) {
+        toast.error('Written Test is not yet active.');
+        navigate('/admin/rank/r2');
+      }
     } catch (err) {
       console.error(err);
     }
@@ -35,8 +39,8 @@ const RankRound2Entry = () => {
   const handleApplyCutoff = async () => {
     setProcessingMsg('Applying Cutoff...');
     try {
-      await api.post('/admin/r2/cutoff', { cutoff: Number(cutoff) });
-      toast.success('Cutoff applied. Non-qualifiers removed from active list.');
+      await api.post('/admin/rank/r2/cutoff', { cutoff: Number(cutoff) });
+      toast.success('Cutoff applied. Unqualified candidates will remain Cadets.');
       setShowCutoffModal(false);
       fetchData();
     } catch (err) {
@@ -49,8 +53,8 @@ const RankRound2Entry = () => {
   const handleDone = async () => {
     setProcessingMsg('Finalizing Round 2...');
     try {
-      await api.post('/admin/r2/done');
-      toast.success('Round 2 Finalized! You are now viewing the locked results.');
+      await api.post('/admin/rank/r2/done');
+      toast.success('Written Test Finalized! You are now viewing the locked results.');
       setShowDoneModal(false);
       fetchData();
     } catch (err) {
@@ -77,7 +81,7 @@ const RankRound2Entry = () => {
     <div>
       {processingMsg && <Loader overlay message={processingMsg} />}
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-        <h2 style={{ margin: 0 }}>{isCompleted ? "Round 2 Results (Locked)" : "Round 2 Results (Written Test)"}</h2>
+        <h2 style={{ margin: 0 }}>{isCompleted ? "Written Test Results (Locked)" : "Written Test Results"}</h2>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem', marginRight: '0.5rem' }}>
@@ -123,7 +127,7 @@ const RankRound2Entry = () => {
           </thead>
           <tbody>
             {filteredStudents.map(p => {
-              const r2Score = data.r2Scores.find(s => String(s.studentId) === String(p._id) || (s.studentId && s.studentId._id && String(s.studentId._id) === String(p._id)));
+              const r2Score = data.r2Scores.find(s => String(s.candidateId) === String(p._id) || (s.candidateId && s.candidateId._id && String(s.candidateId._id) === String(p._id)));
               const isPresent = r2Score ? r2Score.attendance : true;
               return (
                 <tr key={p._id}>
@@ -135,7 +139,7 @@ const RankRound2Entry = () => {
                       disabled={isCompleted} 
                       onChange={async (e) => {
                         const val = e.target.value;
-                        await api.post('/admin/r2/attendance', { studentId: p._id, attendance: val });
+                        await api.post('/admin/rank/r2/attendance', { candidateId: p._id, attendance: val });
                         fetchData();
                       }}
                       style={{ padding: '0.25rem', background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)' }}
@@ -153,7 +157,7 @@ const RankRound2Entry = () => {
                         const score = e.target.value;
                         if(score === '') return;
                         try {
-                          await api.post('/admin/r2/score', { studentId: p._id, score: Number(score) });
+                          await api.post('/admin/rank/r2/score', { candidateId: p._id, score: Number(score) });
                           toast.success(`Score updated for ${p.name}`);
                           fetchData();
                         } catch (err) {
@@ -178,7 +182,7 @@ const RankRound2Entry = () => {
         }}>
           <div className="glass-card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
             <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Apply Cutoff?</h3>
-            <p style={{ marginBottom: '1rem' }}>This will eliminate non-qualifiers from the active list.</p>
+            <p style={{ marginBottom: '1rem' }}>This will mark candidates below the cutoff. Unqualified candidates will remain Cadets.</p>
             <p style={{ color: 'var(--warning-amber)', marginBottom: '2rem', fontWeight: 'bold' }}>
               Note: You must hit the 'Done' button after applying the cutoff to finalize the round.
             </p>
@@ -196,9 +200,9 @@ const RankRound2Entry = () => {
           backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
         }}>
           <div className="glass-card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
-            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Finalize Round 2</h3>
+            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Finalize Written Test</h3>
             <p style={{ color: 'var(--text-primary)', marginBottom: '2rem', fontWeight: 'bold' }}>
-              Are you sure you want to finalize Round 2? This will sync all written test scores to the Master Record. Make sure you have applied the cutoff first.
+              Are you sure you want to finalize the Written Test? This will sync all written test scores to the Master Record. Make sure you have applied the cutoff first.
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
               <button className="btn btn-outline" onClick={() => setShowDoneModal(false)}>Cancel</button>

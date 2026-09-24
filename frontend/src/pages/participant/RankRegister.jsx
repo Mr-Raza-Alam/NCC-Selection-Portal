@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../utils/api';
 import { toast } from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
 import BroadcastBanner from '../../components/BroadcastBanner';
@@ -34,7 +34,7 @@ const RankRegister = () => {
     
     setLoading(true);
     try {
-      const response = await axios.post('/api/rank-auth/register', formData);
+      const response = await api.post('/rank-auth/register', formData);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role', 'rank_candidate');
       localStorage.setItem('regimentalNo', formData.regimentalNo);

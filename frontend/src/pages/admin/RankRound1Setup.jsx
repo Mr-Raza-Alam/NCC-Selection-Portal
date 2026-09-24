@@ -36,13 +36,22 @@ const RankRound1Setup = () => {
 
   const handleConfirmSubmit = async () => {
     try {
-      await api.post('/admin/r1/setup', { activities });
+      await api.post('/admin/rank/r1/setup', { activities });
       toast.success('R1 Setup Complete');
-      navigate('/admin/r1/entry');
+      navigate('/admin/rank/r1/entry');
     } catch (err) {
       toast.error('Failed to setup R1');
     }
   };
+
+  React.useEffect(() => {
+    api.get('/admin/rank/settings').then(res => {
+      if (res.data.r_r1_entry) {
+        toast.error('Physical Test is running, please focus on your task');
+        navigate('/admin/rank/r1');
+      }
+    });
+  }, [navigate]);
 
   return (
     <div className="container">

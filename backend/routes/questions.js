@@ -11,7 +11,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 // GET /api/admin/questions - Fetch all questions
 router.get('/', async (req, res) => {
   try {
-    const questions = await Question.find().sort({ questionNumber: 1 });
+    const testType = req.query.type || 'new_enrollment';
+    const questions = await Question.find({ testType }).sort({ questionNumber: 1 });
     res.json(questions);
   } catch (err) {
     console.error(err);
@@ -22,13 +23,15 @@ router.get('/', async (req, res) => {
 // POST /api/admin/questions - Add new question
 router.post('/', async (req, res) => {
   try {
+    const testType = req.query.type || 'new_enrollment';
     const { questionNumber, questionText, options, correctAnswer, section } = req.body;
     const newQ = new Question({
       questionNumber,
       questionText,
       options,
       correctAnswer,
-      section
+      section,
+      testType
     });
     await newQ.save();
     res.json({ message: 'Question added successfully', question: newQ });
@@ -71,7 +74,8 @@ router.post('/reset', async (req, res) => {
     const fileData = fs.readFileSync(originalDataPath, 'utf-8');
     const parsedData = JSON.parse(fileData);
 
-    await Question.deleteMany({}); // Clear existing
+    const testType = req.query.type || 'new_enrollment';
+    await Question.deleteMany({ testType }); // Clear existing for this type
 
     const optionMap = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
     const formattedQuestions = parsedData.questions.map(q => ({
@@ -79,7 +83,8 @@ router.post('/reset', async (req, res) => {
       questionText: q.question,
       options: [q.options.A, q.options.B, q.options.C, q.options.D],
       correctAnswer: optionMap[q.correct_answer] !== undefined ? optionMap[q.correct_answer] : 0,
-      section: q.section
+      section: q.section,
+      testType
     }));
 
     await Question.insertMany(formattedQuestions);
@@ -97,6 +102,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
+    const testType = req.query.type || 'new_enrollment';
     const csvData = req.file.buffer.toString('utf-8');
     
     parse(csvData, { columns: true, skip_empty_lines: true, trim: true }, async (err, records) => {
@@ -113,11 +119,12 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             questionText: q.QuestionText,
             options: options,
             correctAnswer: correctMap[q.CorrectAnswer] !== undefined ? correctMap[q.CorrectAnswer] : 0,
-            section: q.Section || 'General'
+            section: q.Section || 'General',
+            testType
           };
         });
 
-        await Question.deleteMany({});
+        await Question.deleteMany({ testType });
         await Question.insertMany(formattedQuestions);
 
         res.json({ message: 'Questions uploaded successfully', count: formattedQuestions.length });
