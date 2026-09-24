@@ -89,14 +89,6 @@ const RankRound1Entry = () => {
     );
   });
 
-  if (isCompleted) {
-    return (
-      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
-        <h2 style={{ color: 'var(--danger-red)' }}>No Record!</h2>
-        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the physical test has been successfully completed. Waiting for next year....!!</p>
-      </div>
-    );
-  }
 
   // Need to know if entry is active. We didn't save r_r1_entry to state, so let's do that.
 
