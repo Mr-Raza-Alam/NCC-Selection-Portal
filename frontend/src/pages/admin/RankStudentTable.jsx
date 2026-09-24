@@ -29,7 +29,7 @@ const RankRankStudentTable = () => {
 
   const saveEdit = async () => {
     try {
-      await api.put(`/admin/students/${editModal.student._id}`, editModal.student);
+      await api.put(`/rank-admin/students/${editModal.student._id}`, editModal.student);
       toast.success('Student updated successfully');
       setEditModal({ isOpen: false, student: null });
       fetchStudents();
@@ -44,7 +44,7 @@ const RankRankStudentTable = () => {
 
   const fetchStudents = async () => {
     try {
-      const res = await api.get('/admin/students');
+      const res = await api.get('/rank-admin/students');
       setStudents(res.data);
     } catch (err) {
       console.error(err);
@@ -60,10 +60,10 @@ const RankRankStudentTable = () => {
           toast.error('You must type WIPE ALL to confirm.');
           return;
         }
-        await api.delete('/admin/students/all');
+        await api.delete('/rank-admin/students/all');
         toast.success('All records wiped successfully.');
       } else if (modalConfig.type === 'single') {
-        await api.delete(`/admin/students/${modalConfig.targetId}`);
+        await api.delete(`/rank-admin/students/${modalConfig.targetId}`);
         toast.success('Student deleted successfully.');
       }
       setModalConfig({ isOpen: false, type: '', targetId: null, confirmText: '' });
@@ -128,6 +128,30 @@ const RankRankStudentTable = () => {
           <button className="btn btn-outline" onClick={handleExportCSV}>
             Export CSV
           </button>
+          <label className="btn btn-outline" style={{ cursor: 'pointer', margin: 0 }}>
+            Upload CSV
+            <input 
+              type="file" 
+              accept=".csv" 
+              style={{ display: 'none' }} 
+              onChange={async (e) => {
+                if (!e.target.files[0]) return;
+                const formData = new FormData();
+                formData.append('file', e.target.files[0]);
+                try {
+                  setLoading(true);
+                  await api.post('/rank-admin/upload-cadets', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                  });
+                  toast.success('Cadets uploaded successfully!');
+                  fetchStudents();
+                } catch (err) {
+                  toast.error('Failed to upload cadets');
+                  setLoading(false);
+                }
+              }}
+            />
+          </label>
           <button 
             className="btn btn-danger" 
             onClick={() => setModalConfig({ isOpen: true, type: 'wipe_all', confirmText: 'WARNING: This will permanently delete ALL Cadet Records and their test scores. Type "WIPE ALL" below to confirm.' })}

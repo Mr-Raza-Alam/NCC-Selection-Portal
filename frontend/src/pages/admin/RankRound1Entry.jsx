@@ -22,8 +22,8 @@ const RankRound1Entry = () => {
   const fetchData = async () => {
     try {
       const [res, settingsRes] = await Promise.all([
-        api.get('/admin/rank/r1/table'),
-        api.get('/admin/rank/settings')
+        api.get('/rank-admin/r1/table'),
+        api.get('/rank-admin/settings')
       ]);
       setData(res.data);
       setIsCompleted(settingsRes.data.r_r1_result);
@@ -37,7 +37,7 @@ const RankRound1Entry = () => {
 
   const handleScoreChange = async (studentId, activityId, activityName, value) => {
     try {
-      await api.post('/admin/rank/r1/score', {
+      await api.post('/rank-admin/r1/score', {
         candidateId: studentId,
         activityId,
         activityName,
@@ -52,7 +52,7 @@ const RankRound1Entry = () => {
   const handleApplyCutoff = async () => {
     setProcessingMsg('Applying Cutoff...');
     try {
-      await api.post('/admin/rank/r1/cutoff', { cutoff: Number(cutoff) });
+      await api.post('/rank-admin/r1/cutoff', { cutoff: Number(cutoff) });
       toast.success('Cutoff applied. Unqualified candidates will remain Cadets.');
       setShowCutoffModal(false);
       fetchData();
@@ -66,7 +66,7 @@ const RankRound1Entry = () => {
   const handleDone = async () => {
     setProcessingMsg('Finalizing Round 1...');
     try {
-      await api.post('/admin/rank/r1/done');
+      await api.post('/rank-admin/r1/done');
       toast.success('Physical Test Finalized! You are now viewing the locked results.');
       setShowDoneModal(false);
       fetchData(); // Refresh the table
@@ -80,7 +80,7 @@ const RankRound1Entry = () => {
 
   if (!data) return <Loader />;
 
-  const filteredStudents = data.students.filter(p => {
+  const filteredStudents = data.candidates.filter(p => {
     if (!searchTerm) return true;
     const term = String(searchTerm).toLowerCase();
     return (
@@ -100,6 +100,15 @@ const RankRound1Entry = () => {
 
   // Need to know if entry is active. We didn't save r_r1_entry to state, so let's do that.
 
+  if (data.candidates.length === 0) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--danger-red)' }}>No Record found</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>No 2nd-year cadets are currently eligible or registered for this round.</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       {processingMsg && <Loader overlay message={processingMsg} />}
@@ -108,7 +117,7 @@ const RankRound1Entry = () => {
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem', marginRight: '0.5rem' }}>
-            Showing: {filteredStudents.length} / {data.students.length}
+            Showing: {filteredStudents.length} / {data.candidates.length}
           </div>
           <input 
             type="text" 
@@ -165,7 +174,7 @@ const RankRound1Entry = () => {
                       disabled={isCompleted} 
                       onChange={async (e) => {
                         const val = e.target.value;
-                        await api.post('/admin/rank/r1/score', { candidateId: p._id, attendance: val });
+                        await api.post('/rank-admin/r1/score', { candidateId: p._id, attendance: val });
                         fetchData();
                       }}
                       style={{ padding: '0.25rem', background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)' }}

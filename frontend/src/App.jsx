@@ -117,11 +117,14 @@ const AppContent = () => {
             <Route path="r1" element={<Round1Home />} />
             <Route path="r1/setup" element={<Round1Setup />} />
             <Route path="r1/entry" element={<Round1Entry />} />
+            <Route path="r1/result" element={<Round1Entry />} />
             <Route path="r2" element={<Round2Home />} />
             <Route path="r2/attendance" element={<R2Attendance />} />
             <Route path="r2/entry" element={<Round2Entry />} />
+            <Route path="r2/result" element={<Round2Entry />} />
             <Route path="r3" element={<Round3Home />} />
             <Route path="r3/entry" element={<Round3Entry />} />
+            <Route path="r3/result" element={<Round3Entry />} />
             <Route path="r3/verify" element={<Round3Verify />} />
             <Route path="master" element={<MasterTable />} />
             <Route path="roles" element={<RoleManagement />} />
@@ -131,11 +134,16 @@ const AppContent = () => {
             <Route path="rank/r1" element={<RankRound1Home />} />
             <Route path="rank/r1/setup" element={<RankRound1Setup />} />
             <Route path="rank/r1/entry" element={<RankRound1Entry />} />
+            <Route path="rank/r1/result" element={<RankRound1Entry />} />
+            
             <Route path="rank/r2" element={<RankRound2Home />} />
             <Route path="rank/r2/attendance" element={<RankR2Attendance />} />
             <Route path="rank/r2/entry" element={<RankRound2Entry />} />
+            <Route path="rank/r2/result" element={<RankRound2Entry />} />
+            
             <Route path="rank/r3" element={<RankRound3Home />} />
             <Route path="rank/r3/entry" element={<RankRound3Entry />} />
+            <Route path="rank/r3/result" element={<RankRound3Entry />} />
             <Route path="rank/r3/verify" element={<RankRound3Verify />} />
             <Route path="rank/master" element={<RankMasterTable />} />
             <Route path="rank/students" element={<RankStudentTable />} />

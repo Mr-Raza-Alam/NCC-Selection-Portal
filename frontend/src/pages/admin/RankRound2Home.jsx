@@ -15,7 +15,7 @@ const RankRound2Home = () => {
 
   const fetchSettings = async () => {
     try {
-      const res = await api.get('/admin/rank/settings');
+      const res = await api.get('/rank-admin/settings');
       setSettings(res.data);
     } catch (err) {
       console.error(err);
@@ -24,7 +24,7 @@ const RankRound2Home = () => {
 
   const handleStartR2 = async () => {
     try {
-      await api.post('/admin/rank/r2/start');
+      await api.post('/rank-admin/r2/start');
       toast.success('Written Test Entry Activated');
       fetchSettings();
       setShowConfirm(false);

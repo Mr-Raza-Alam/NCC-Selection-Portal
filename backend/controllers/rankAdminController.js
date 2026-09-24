@@ -86,7 +86,7 @@ exports.enterR1Score = async (req, res) => {
     const record = await RankMasterRecord.findOne({ candidateId });
     if (record) {
       record.r1 = r1Result.totalScore;
-      record.total = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0) + (record.hs || 0) + (record.aCert || 0) + (record.other || 0);
+      record.total = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0);
       await record.save();
     }
     
@@ -109,7 +109,7 @@ exports.finalizeR1 = async (req, res) => {
     
     const masters = await RankMasterRecord.find();
     for (let m of masters) {
-      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0) + (m.hs || 0) + (m.aCert || 0) + (m.other || 0);
+      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0);
       await RankMasterRecord.updateOne({ _id: m._id }, { $set: { total } });
     }
     
@@ -202,7 +202,7 @@ exports.enterR2Score = async (req, res) => {
     const record = await RankMasterRecord.findOne({ candidateId });
     if (record) {
       record.r2 = score;
-      record.total = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0) + (record.hs || 0) + (record.aCert || 0) + (record.other || 0);
+      record.total = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0);
       await record.save();
     }
 
@@ -244,7 +244,7 @@ exports.finalizeR2 = async (req, res) => {
     
     const masters = await RankMasterRecord.find();
     for (let m of masters) {
-      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0) + (m.hs || 0) + (m.aCert || 0) + (m.other || 0);
+      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0);
       await RankMasterRecord.updateOne({ _id: m._id }, { $set: { total } });
     }
     
@@ -349,7 +349,7 @@ exports.enterR3Score = async (req, res) => {
       const record = await RankMasterRecord.findOne({ candidateId });
       if (record) {
         record.r3 = r3Score;
-        record.total = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0) + (record.hs || 0) + (record.aCert || 0) + (record.other || 0);
+        record.total = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0);
         await record.save();
       }
     }
@@ -395,7 +395,7 @@ exports.finalizeR3 = async (req, res) => {
     // 2. Auto-calculate total for all master records
     const masters = await RankMasterRecord.find();
     for (let m of masters) {
-      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0) + (m.hs || 0) + (m.aCert || 0) + (m.other || 0);
+      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0);
       await RankMasterRecord.updateOne({ _id: m._id }, { $set: { total } });
     }
     
@@ -418,7 +418,7 @@ exports.finalizeR3 = async (req, res) => {
 
 exports.getMasterTable = async (req, res) => {
   try {
-    const masters = await RankMasterRecord.find().populate('candidateId', 'status code department');
+    const masters = await RankMasterRecord.find().populate('candidateId', 'status buddyNo department name');
     res.json(masters);
   } catch (error) {
     res.status(500).json({ message: error.message });

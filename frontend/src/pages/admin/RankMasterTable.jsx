@@ -22,7 +22,7 @@ const RankMasterTable = () => {
 
   const fetchData = async () => {
     try {
-      const res = await api.get('/admin/master');
+      const res = await api.get('/rank-admin/master');
       setMasters(res.data);
       setLoading(false);
     } catch (err) {
@@ -31,9 +31,9 @@ const RankMasterTable = () => {
     }
   };
 
-  const handleSelection = async (studentId, status) => {
+  const handleSelection = async (candidateId, status) => {
     try {
-      await api.post('/rank-admin/finalize', { studentId, status });
+      await api.post('/rank-admin/finalize', { studentId: candidateId, status });
       fetchData();
     } catch (err) {
       console.error(err);
@@ -41,26 +41,10 @@ const RankMasterTable = () => {
     }
   };
 
-  const handleDocUpdate = async (studentId, field, value) => {
-    try {
-      const master = masters.find(m => m.studentId._id === studentId);
-      const payload = {
-        studentId,
-        hs: field === 'hs' ? Number(value) : master.hs,
-        aCert: field === 'aCert' ? Number(value) : master.aCert,
-        other: field === 'other' ? Number(value) : master.other
-      };
-      await api.post('/admin/r3/verify', payload);
-      fetchData();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const handleDeleteEliminated = async () => {
     if (!window.confirm("Are you sure you want to permanently delete all eliminated records?")) return;
     try {
-      const res = await api.delete('/admin/students/eliminated');
+      const res = await api.delete('/rank-admin/students/eliminated');
       toast.success(res.data.message);
       fetchData();
     } catch (err) {
@@ -82,7 +66,7 @@ const RankMasterTable = () => {
       const term = String(searchTerm).toLowerCase();
       return (
         (m.name && String(m.name).toLowerCase().includes(term)) ||
-        (m.studentId?.buddyNo && String(m.studentId.buddyNo).toLowerCase().includes(term)) ||
+        (m.candidateId?.buddyNo && String(m.candidateId.buddyNo).toLowerCase().includes(term)) ||
         (m.status && String(m.status).toLowerCase().includes(term))
       );
     });
@@ -103,17 +87,14 @@ const RankMasterTable = () => {
   };
 
   const handleExportCSV = () => {
-    const headers = ['Name', 'Code', 'Age', 'R1', 'R2', 'R3', 'HS', 'A-Cert', 'Sports', 'Total', 'Status'];
+    const headers = ['Name', 'Code', 'Department', 'R1', 'R2', 'R3', 'Total', 'Status'];
     const rows = getSortedData().map(m => [
       m.name,
-      m.studentId?.buddyNo || '',
-      m.age,
+      m.candidateId?.buddyNo || '',
+      m.department || '',
       m.r1 ?? 0,
       m.r2 ?? 0,
       m.r3 ?? 0,
-      m.hs ?? 0,
-      m.aCert ?? 0,
-      m.other ?? 0,
       m.total ?? 0,
       m.status
     ]);
@@ -156,15 +137,12 @@ const RankMasterTable = () => {
         </div>
 
         <div className="action-bar" style={{ margin: 0 }}>
-          {['assistant1', 'assistant2'].includes(role) && canVerify && (
-            <button className="btn btn-primary" onClick={() => toast.success('Document Entry Finalized!')}>Entry Done</button>
-          )}
           {['lead_admin', 'cto'].includes(role) && (
             <button className="btn btn-primary" onClick={async () => {
               if (!window.confirm("Publish Final Results? This will mark all unselected students as eliminated.")) return;
               setIsProcessing(true);
               try {
-                const res = await api.post('/admin/publish-results');
+                const res = await api.post('/rank-admin/publish-results');
                 toast.success(res.data.message);
                 fetchData();
               } catch (err) { toast.error('Failed to publish results'); }
@@ -187,7 +165,7 @@ const RankMasterTable = () => {
           <button className="btn btn-primary" onClick={async () => {
             if (!cutoff) { toast.error('Enter a cutoff score'); return; }
             try {
-              const res = await api.post('/admin/r1/cutoff', { cutoffScore: Number(cutoff) });
+              const res = await api.post('/rank-admin/r1/cutoff', { cutoffScore: Number(cutoff) });
               toast.success(res.data.message || 'Cutoff Applied!');
               fetchData();
             } catch (err) { toast.error('Failed to apply cutoff'); }
@@ -201,13 +179,10 @@ const RankMasterTable = () => {
             <tr>
               <th>Name</th>
               <th>Code</th>
-              <th onClick={() => sortData('age')} style={{ cursor: 'pointer' }}>Age {sortConfig.key === 'age' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</th>
+              <th>Department</th>
               <th>R1</th>
               <th>R2</th>
               <th>R3</th>
-              <th>HS</th>
-              <th>A-Cert</th>
-              <th>Other</th>
               <th onClick={() => sortData('total')} style={{ cursor: 'pointer' }}>Total {sortConfig.key === 'total' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</th>
               <th>Status</th>
               {(role === 'cto' || role === 'lead_admin') && (
@@ -222,28 +197,11 @@ const RankMasterTable = () => {
                 opacity: (m.status === 'eliminated' || m.status === 'Eliminated') ? 0.5 : 1
               }}>
                 <td style={{ fontWeight: 'bold' }}>{m.name}</td>
-                <td style={{ color: 'var(--accent-green)' }}>{m.studentId?.buddyNo}</td>
-                <td>{m.age}</td>
+                <td style={{ color: 'var(--accent-green)' }}>{m.candidateId?.buddyNo}</td>
+                <td>{m.department}</td>
                 <td>{m.r1 ?? '-'}</td>
                 <td>{m.r2 ?? '-'}</td>
                 <td>{m.r3 ?? '-'}</td>
-                
-                {/* Editable Docs for Ass.2 */}
-                <td>
-                  {canVerify && m.status !== 'eliminated' ? (
-                    <input type="number" defaultValue={m.hs} onBlur={(e) => handleDocUpdate(m.studentId._id, 'hs', e.target.value)} style={{ width: '50px', background: 'transparent', color: 'inherit', border: '1px solid var(--border-color)' }} />
-                  ) : m.hs ?? '-'}
-                </td>
-                <td>
-                  {canVerify && m.status !== 'eliminated' ? (
-                    <input type="number" defaultValue={m.aCert} onBlur={(e) => handleDocUpdate(m.studentId._id, 'aCert', e.target.value)} style={{ width: '50px', background: 'transparent', color: 'inherit', border: '1px solid var(--border-color)' }} />
-                  ) : m.aCert ?? '-'}
-                </td>
-                <td>
-                  {canVerify && m.status !== 'eliminated' ? (
-                    <input type="number" defaultValue={m.other} onBlur={(e) => handleDocUpdate(m.studentId._id, 'other', e.target.value)} style={{ width: '50px', background: 'transparent', color: 'inherit', border: '1px solid var(--border-color)' }} />
-                  ) : m.other ?? '-'}
-                </td>
                 
                 <td style={{ fontWeight: 'bold', color: 'var(--accent-green)', fontSize: '1.2rem' }}>{m.total}</td>
                 
@@ -260,7 +218,7 @@ const RankMasterTable = () => {
                     ) : (
                       <select 
                         value={['promoted_cpl', 'promoted_lcpl'].includes(m.status) ? m.status : 'cadet'}
-                        onChange={(e) => handleSelection(m.studentId._id, e.target.value)}
+                        onChange={(e) => handleSelection(m.candidateId._id, e.target.value)}
                         style={{
                           padding: '0.4rem',
                           borderRadius: '4px',

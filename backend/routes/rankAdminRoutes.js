@@ -5,7 +5,7 @@ const {
   startR3, markR3Attendance, enterR3Score, finalizeR3, getR3Table,
   getMasterTable, deleteEliminated, finalizeSelection, publishFinalResults,
   getAdmins, updateAdminFeatures, getRankSettingsData, wipeAllRankCandidates,
-  deleteRankCandidate, updateRankCandidateProfile, verifyDocs
+  deleteRankCandidate, updateRankCandidateProfile, verifyDocs, getRankCandidatesTable
 } = require('../controllers/rankAdminController');
 const express = require('express');
 const router = express.Router();
@@ -103,6 +103,7 @@ router.post('/r3/verify', verifyDocs);
 router.post('/r3/done', finalizeR3);
 
 router.get('/master', getMasterTable);
+router.get('/students', getRankCandidatesTable);
 router.put('/students/:id', updateRankCandidateProfile);
 router.delete('/students/all', wipeAllRankCandidates);
 router.delete('/students/:id', deleteRankCandidate);

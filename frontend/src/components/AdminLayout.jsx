@@ -29,15 +29,15 @@ const AdminLayout = () => {
     { name: 'Round 1 (Physical)', feature: ['R1_SETUP', 'R1_SCORE'], subItems: [
         { name: 'Set-Activity', path: '/admin/r1/setup', feature: ['R1_SETUP'] },
         { name: 'Entry-Table', path: '/admin/r1/entry', feature: ['R1_SCORE'] },
-        { name: 'Result Table', path: '/admin/r1', feature: ['R1_SCORE', 'R1_SETUP'] }
+        { name: 'Result Table', path: '/admin/r1/result', feature: ['R1_SCORE', 'R1_SETUP'] }
     ]},
     { name: 'Round 2 (Written)', feature: ['R2_START', 'R2_ATTENDANCE'], subItems: [
         { name: 'Entry-Table', path: '/admin/r2/entry', feature: ['R2_START'] },
-        { name: 'Result Table', path: '/admin/r2', feature: ['R2_START'] }
+        { name: 'Result Table', path: '/admin/r2/result', feature: ['R2_START'] }
     ]},
     { name: 'Round 3 (Interview)', feature: ['R3_SCORE'], subItems: [
         { name: 'Entry-Table', path: '/admin/r3/entry', feature: ['R3_SCORE'] },
-        { name: 'Result Table', path: '/admin/r3', feature: ['R3_SCORE'] }
+        { name: 'Result Table', path: '/admin/r3/result', feature: ['R3_SCORE'] }
     ]},
     { name: 'Document Verification', path: '/admin/r3/verify', feature: ['R3_VERIFY'] },
     
@@ -53,22 +53,22 @@ const AdminLayout = () => {
 
   const rankMenuItems = [
     { title: 'Process-Test', isHeader: true },
-    { name: 'Rank Round 1 (Physical)', feature: ['R1_SETUP', 'R1_SCORE'], subItems: [
+    { name: 'Physical-Test', feature: ['R1_SETUP', 'R1_SCORE'], subItems: [
         { name: 'Set-Activity', path: '/admin/rank/r1/setup', feature: ['R1_SETUP'] },
         { name: 'Entry-Table', path: '/admin/rank/r1/entry', feature: ['R1_SCORE'] },
-        { name: 'Result Table', path: '/admin/rank/r1', feature: ['R1_SCORE', 'R1_SETUP'] }
+        { name: 'Result Table', path: '/admin/rank/r1/result', feature: ['R1_SCORE', 'R1_SETUP'] }
     ]},
-    { name: 'Rank Round 2 (Written)', feature: ['R2_START', 'R2_ATTENDANCE'], subItems: [
+    { name: 'Written-Test', feature: ['R2_START', 'R2_ATTENDANCE'], subItems: [
         { name: 'Entry-Table', path: '/admin/rank/r2/entry', feature: ['R2_START'] },
-        { name: 'Result Table', path: '/admin/rank/r2', feature: ['R2_START'] }
+        { name: 'Result Table', path: '/admin/rank/r2/result', feature: ['R2_START'] }
     ]},
-    { name: 'Rank Round 3 (Interview)', feature: ['R3_SCORE'], subItems: [
+    { name: 'Interview', feature: ['R3_SCORE'], subItems: [
         { name: 'Entry-Table', path: '/admin/rank/r3/entry', feature: ['R3_SCORE'] },
-        { name: 'Result Table', path: '/admin/rank/r3', feature: ['R3_SCORE'] }
+        { name: 'Result Table', path: '/admin/rank/r3/result', feature: ['R3_SCORE'] }
     ]},
     
     { title: 'Record', isHeader: true },
-    { name: 'Rank Upload / Cadets Table', path: '/admin/rank/students', feature: ['STUDENT_TABLE'] },
+    { name: 'Cadets Record', path: '/admin/rank/students', feature: ['STUDENT_TABLE'] },
     { name: 'Rank Master Table', path: '/admin/rank/master', feature: ['MASTER_TABLE'] },
     
     { title: 'System', isHeader: true },

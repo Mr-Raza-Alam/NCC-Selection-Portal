@@ -36,7 +36,7 @@ const RankRound1Setup = () => {
 
   const handleConfirmSubmit = async () => {
     try {
-      await api.post('/admin/rank/r1/setup', { activities });
+      await api.post('/rank-admin/r1/setup', { activities });
       toast.success('R1 Setup Complete');
       navigate('/admin/rank/r1/entry');
     } catch (err) {
@@ -47,7 +47,7 @@ const RankRound1Setup = () => {
   const [settings, setSettings] = useState(null);
 
   React.useEffect(() => {
-    api.get('/admin/rank/settings').then(res => {
+    api.get('/rank-admin/settings').then(res => {
       setSettings(res.data);
     });
   }, []);

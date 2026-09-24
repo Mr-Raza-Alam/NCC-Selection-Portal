@@ -16,7 +16,7 @@ const RankRound3Home = () => {
 
   const fetchSettings = async () => {
     try {
-      const res = await api.get('/admin/rank/settings');
+      const res = await api.get('/rank-admin/settings');
       setSettings(res.data);
     } catch (err) {
       console.error(err);
@@ -26,7 +26,7 @@ const RankRound3Home = () => {
   const handleStartR3 = async () => {
     setIsProcessing(true);
     try {
-      await api.post('/admin/rank/r3/start');
+      await api.post('/rank-admin/r3/start');
       fetchSettings();
       setShowConfirm(false);
       navigate('/admin/rank/r3/entry');
