@@ -106,7 +106,7 @@ const RankRound2Entry = () => {
           </div>
           <input 
             type="text" 
-            placeholder="Search Name, Code, Dept..." 
+            placeholder="Search Name, B_Code, Dept..." 
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && setSearchTerm(searchInput)}

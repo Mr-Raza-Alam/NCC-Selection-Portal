@@ -121,7 +121,7 @@ const RankRound1Entry = () => {
           </div>
           <input 
             type="text" 
-            placeholder="Search Name or Code..." 
+            placeholder="Search Name or B_Code..." 
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && setSearchTerm(searchInput)}
@@ -151,7 +151,7 @@ const RankRound1Entry = () => {
         <table>
           <thead>
             <tr>
-              <th>Code</th>
+              <th>B_Code</th>
               <th>Name</th>
               <th>Attendance (P/A)</th>
               {data.activities.map(act => (

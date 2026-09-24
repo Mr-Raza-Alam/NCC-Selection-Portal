@@ -87,7 +87,7 @@ const RankMasterTable = () => {
   };
 
   const handleExportCSV = () => {
-    const headers = ['Name', 'Code', 'Department', 'R1', 'R2', 'R3', 'Total', 'Status'];
+    const headers = ['Name', 'B_Code', 'Department', 'R1', 'R2', 'R3', 'Total', 'Status'];
     const rows = getSortedData().map(m => [
       m.name,
       m.candidateId?.buddyNo || '',
@@ -178,7 +178,7 @@ const RankMasterTable = () => {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Code</th>
+              <th>B_Code</th>
               <th>Department</th>
               <th>R1</th>
               <th>R2</th>

@@ -10,6 +10,7 @@ const Round3Verify = () => {
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isDocVerCompleted, setIsDocVerCompleted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -25,6 +26,7 @@ const Round3Verify = () => {
       const qualified = res.data.filter(m => m.studentId.status === 'r2_qualified' || m.studentId.status === 'r3_qualified');
       setMasters(qualified);
       setIsCompleted(settingsRes.data.r3Completed);
+      setIsDocVerCompleted(settingsRes.data.isDocVerCompleted);
     } catch (err) {
       console.error(err);
     }
@@ -70,6 +72,15 @@ const Round3Verify = () => {
       String(code).toLowerCase().includes(term)
     );
   });
+
+  if (isDocVerCompleted) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--accent-green)' }}>Verification has been successfully done!!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the new batch has been enrolled, their documents are already verified.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container">

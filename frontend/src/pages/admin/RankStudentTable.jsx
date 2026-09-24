@@ -76,7 +76,7 @@ const RankRankStudentTable = () => {
   };
 
   const handleExportCSV = () => {
-    const headers = ['Reg Code', 'Name', 'Department', 'DOB', 'Regimental No', 'Contact No', 'Parent Contact', 'Email', 'Status'];
+    const headers = ['B_Code', 'Name', 'Department', 'DOB', 'Regimental No', 'Contact No', 'Parent Contact', 'Email', 'Status'];
     const rows = students.map(s => [
       s.buddyNo || '',
       s.name || '',
@@ -100,6 +100,39 @@ const RankRankStudentTable = () => {
   };
 
   if (loading) return <Loader />;
+
+  if (students.length === 0) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--danger-red)' }}>No Record Found!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', marginBottom: '2rem' }}>The 2nd year cadets record has not been uploaded yet.</p>
+        <label className="btn btn-primary" style={{ cursor: 'pointer', padding: '1rem 2rem', fontSize: '1.1rem' }}>
+          Upload Cadets CSV
+          <input 
+            type="file" 
+            accept=".csv" 
+            style={{ display: 'none' }} 
+            onChange={async (e) => {
+              if (!e.target.files[0]) return;
+              const formData = new FormData();
+              formData.append('file', e.target.files[0]);
+              try {
+                setLoading(true);
+                await api.post('/rank-admin/upload-cadets', formData, {
+                  headers: { 'Content-Type': 'multipart/form-data' }
+                });
+                toast.success('Cadets uploaded successfully!');
+                fetchStudents();
+              } catch (err) {
+                toast.error('Failed to upload cadets');
+                setLoading(false);
+              }
+            }}
+          />
+        </label>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -165,7 +198,7 @@ const RankRankStudentTable = () => {
         <table>
           <thead>
             <tr>
-              <th>Reg Code</th>
+              <th>B_Code</th>
               <th>Name</th>
               <th>Department</th>
               <th>DOB</th>
