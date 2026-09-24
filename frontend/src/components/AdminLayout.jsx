@@ -25,30 +25,17 @@ const AdminLayout = () => {
   };
 
   const enrollmentMenuItems = [
-    { title: 'Process-Test', isHeader: true },
-    { name: 'Round 1 (Physical)', feature: ['R1_SETUP', 'R1_SCORE'], subItems: [
-        { name: 'Set-Activity', path: '/admin/r1/setup', feature: ['R1_SETUP'] },
-        { name: 'Entry-Table', path: '/admin/r1/entry', feature: ['R1_SCORE'] },
-        { name: 'Result Table', path: '/admin/r1/result', feature: ['R1_SCORE', 'R1_SETUP'] }
-    ]},
-    { name: 'Round 2 (Written)', feature: ['R2_START', 'R2_ATTENDANCE'], subItems: [
-        { name: 'Entry-Table', path: '/admin/r2/entry', feature: ['R2_START'] },
-        { name: 'Result Table', path: '/admin/r2/result', feature: ['R2_START'] }
-    ]},
-    { name: 'Round 3 (Interview)', feature: ['R3_SCORE'], subItems: [
-        { name: 'Entry-Table', path: '/admin/r3/entry', feature: ['R3_SCORE'] },
-        { name: 'Result Table', path: '/admin/r3/result', feature: ['R3_SCORE'] }
-    ]},
-    { name: 'Document Verification', path: '/admin/r3/verify', feature: ['R3_VERIFY'] },
-    
-    { title: 'Record', isHeader: true },
-    { name: 'Student Table', path: '/admin/students', feature: ['STUDENT_TABLE'] },
+    { title: 'Selection Process (Enrollment)', isHeader: true },
+    { name: 'Round 1 (Physical)', path: '/admin/r1', feature: ['R1_SETUP', 'R1_SCORE'] },
+    { name: 'Round 2 (Written)', path: '/admin/r2', feature: ['R2_START', 'R2_ATTENDANCE'] },
+    { name: 'Round 3 (Interview)', path: '/admin/r3', feature: ['R3_SCORE', 'R3_VERIFY'] },
+    { title: 'Records', isHeader: true },
+    { name: 'Student Record', path: '/admin/students', feature: ['STUDENT_TABLE'] },
     { name: 'Master Table', path: '/admin/master', feature: ['MASTER_TABLE', 'R3_VERIFY'] },
-    
-    { title: 'System', isHeader: true },
     { name: 'Test Management', path: '/admin/test-management', feature: ['TEST_MANAGEMENT'] },
-    { name: 'Role Management', path: '/admin/roles', role: 'lead_admin' },
-    { name: 'Settings', path: '/admin/settings', feature: ['SETTINGS'] }
+    { name: 'Settings', path: '/admin/settings', feature: ['SETTINGS'] },
+    { title: 'System', isHeader: true, role: 'lead_admin' },
+    { name: 'Role Management', path: '/admin/roles', role: 'lead_admin' }
   ];
 
   const rankMenuItems = [
