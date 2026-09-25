@@ -62,22 +62,22 @@ const Round3Verify = () => {
     }
   };
 
-  // Gate 1: R3 not completed yet — Doc Verification is locked
-  if (!r3Completed) {
-    return (
-      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
-        <h2 style={{ color: 'var(--warning-amber)' }}>No Record found</h2>
-        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Please complete Round 3 (Interview) first before proceeding to Document Verification.</p>
-      </div>
-    );
-  }
-
-  // Gate 2: Doc Verification already completed — show success
+  // Gate 1: Doc Verification already completed — show success
   if (docVerCompleted) {
     return (
       <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
         <h2 style={{ color: 'var(--accent-green)' }}>Verification has been successfully done!!</h2>
         <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the new batch has been enrolled, their documents are already verified.</p>
+      </div>
+    );
+  }
+
+  // Gate 2: R3 not completed yet — Doc Verification is locked
+  if (!r3Completed) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--warning-amber)' }}>No Record found</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Please complete Round 3 (Interview) first before proceeding to Document Verification.</p>
       </div>
     );
   }

@@ -46,10 +46,10 @@ exports.getR1Table = async (req, res) => {
     // Fetch candidates who are currently active OR who already have an R1 score
     const candidates = await RankCandidate.find({
       $or: [
-        { status: 'active' },
+        { status: 'cadet' },
         { _id: { $in: r1RankCandidateIds } }
       ]
-    }).select('name code department status');
+    }).select('name buddyNo department status');
     
     const activities = await RankR1Activity.find().sort('order');
     

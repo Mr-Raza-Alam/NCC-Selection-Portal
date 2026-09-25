@@ -76,14 +76,13 @@ const RankRankStudentTable = () => {
   };
 
   const handleExportCSV = () => {
-    const headers = ['B_Code', 'Name', 'Department', 'DOB', 'Regimental No', 'Contact No', 'Parent Contact', 'Email', 'Status'];
+    const headers = ['B_Code', 'Name', 'Department', 'Regimental No', 'Mobile No', 'Parent Contact', 'Email', 'Status'];
     const rows = students.map(s => [
       s.buddyNo || '',
       s.name || '',
       s.department || '',
-      new Date(s.dob).toLocaleDateString() || '',
       s.regimentalNo || '',
-      s.contactNo || '',
+      s.mobileNo || '',
       s.parentContactNo || '',
       s.email || '',
       s.status || ''
@@ -201,9 +200,8 @@ const RankRankStudentTable = () => {
               <th>B_Code</th>
               <th>Name</th>
               <th>Department</th>
-              <th>DOB</th>
               <th>Regimental No.</th>
-              <th>Contact No.</th>
+              <th>Mobile No.</th>
               <th>Email</th>
               <th>Status</th>
               <th>Actions</th>
@@ -215,9 +213,8 @@ const RankRankStudentTable = () => {
                 <td style={{ fontWeight: 'bold', color: 'var(--accent-green)' }}>{s.buddyNo}</td>
                 <td>{s.name}</td>
                 <td>{s.department}</td>
-                <td>{new Date(s.dob).toLocaleDateString()}</td>
                 <td>{s.regimentalNo}</td>
-                <td>{s.contactNo}</td>
+                <td>{s.mobileNo}</td>
                 <td>{s.email}</td>
                 <td style={{ textTransform: 'uppercase', fontSize: '0.8rem', color: s.status === 'eliminated' ? 'red' : 'inherit' }}>
                   {s.status.replace('_', ' ')}
@@ -294,16 +291,12 @@ const RankRankStudentTable = () => {
               <input type="text" name="regimentalNo" value={editModal.student.regimentalNo} onChange={handleEditChange} />
             </div>
             <div className="input-group">
-              <label>DOB</label>
-              <input type="date" name="dob" value={new Date(editModal.student.dob).toISOString().split('T')[0]} onChange={handleEditChange} />
-            </div>
-            <div className="input-group">
               <label>Email</label>
               <input type="email" name="email" value={editModal.student.email} onChange={handleEditChange} />
             </div>
             <div className="input-group">
               <label>Student Contact</label>
-              <input type="text" name="contactNo" value={editModal.student.contactNo} onChange={handleEditChange} />
+              <input type="text" name="mobileNo" value={editModal.student.mobileNo} onChange={handleEditChange} />
             </div>
             <div className="input-group">
               <label>Parent Contact</label>
