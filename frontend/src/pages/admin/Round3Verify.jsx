@@ -9,7 +9,8 @@ const Round3Verify = () => {
   const [masters, setMasters] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [isCompleted, setIsCompleted] = useState(false);
+  const [r3Completed, setR3Completed] = useState(false);
+  const [docVerCompleted, setDocVerCompleted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -24,7 +25,8 @@ const Round3Verify = () => {
       ]);
       const qualified = res.data.filter(m => m.studentId.status === 'r2_qualified' || m.studentId.status === 'r3_qualified');
       setMasters(qualified);
-      setIsCompleted(settingsRes.data.r3Completed);
+      setR3Completed(settingsRes.data.r3Completed);
+      setDocVerCompleted(settingsRes.data.docVerCompleted);
     } catch (err) {
       console.error(err);
     }
@@ -50,15 +52,35 @@ const Round3Verify = () => {
   const handleDone = async () => {
     setIsProcessing(true);
     try {
-      await api.post('/admin/r3/done');
-      toast.success('Round 3 Finalized! Totals calculated.');
-      navigate('/admin/master');
+      await api.post('/admin/r3/verify-done');
+      toast.success('Document Verification Finalized! Merit List generated.');
+      fetchData();
     } catch (err) {
-      toast.error('Failed to finalize R3');
+      toast.error('Failed to finalize Document Verification');
     } finally {
       setIsProcessing(false);
     }
   };
+
+  // Gate 1: R3 not completed yet — Doc Verification is locked
+  if (!r3Completed) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--warning-amber)' }}>No Record found</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Please complete Round 3 (Interview) first before proceeding to Document Verification.</p>
+      </div>
+    );
+  }
+
+  // Gate 2: Doc Verification already completed — show success
+  if (docVerCompleted) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--accent-green)' }}>Verification has been successfully done!!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the new batch has been enrolled, their documents are already verified.</p>
+      </div>
+    );
+  }
 
   const filteredMasters = masters.filter(m => {
     if (!searchTerm) return true;
@@ -71,20 +93,11 @@ const Round3Verify = () => {
     );
   });
 
-  if (isCompleted) {
-    return (
-      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
-        <h2 style={{ color: 'var(--accent-green)' }}>Verification has been successfully done!!</h2>
-        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the new batch has been enrolled, their documents are already verified.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="container">
-      {isProcessing && <Loader overlay message="Calculating Master Totals..." />}
+      {isProcessing && <Loader overlay message="Calculating Grand Totals & Generating Merit List..." />}
       <div className="action-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap' }}>
-        <h2 style={{ margin: 0 }}>{isCompleted ? "Round 3 Results (Locked)" : "Round 3: Document Verify (Ass.2)"}</h2>
+        <h2 style={{ margin: 0 }}>Document Verification</h2>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem', marginRight: '0.5rem' }}>
@@ -103,9 +116,7 @@ const Round3Verify = () => {
             <button className="btn btn-outline" onClick={() => { setSearchInput(''); setSearchTerm(''); }}>Clear</button>
           )}
         </div>
-        {!isCompleted && (
-          <button className="btn btn-primary" onClick={handleDone}>Finalize R3 & Calculate Totals</button>
-        )}
+        <button className="btn btn-primary" onClick={handleDone}>Finalize Verification & Generate Merit List</button>
       </div>
       
       <div className="table-wrapper">
@@ -129,7 +140,6 @@ const Round3Verify = () => {
                     type="number" 
                     step="0.1"
                     defaultValue={m.hs ?? ''}
-                    disabled={isCompleted}
                     onBlur={(e) => handleVerify(m.studentId._id, 'hs', e.target.value)}
                     style={{ width: '80px', padding: '0.25rem', background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)' }}
                   />
@@ -137,7 +147,6 @@ const Round3Verify = () => {
                 <td>
                   <select 
                     value={m.aCert || 0}
-                    disabled={isCompleted}
                     onChange={(e) => handleVerify(m.studentId._id, 'aCert', e.target.value)}
                     style={{ background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)', padding: '0.25rem' }}
                   >
@@ -148,7 +157,6 @@ const Round3Verify = () => {
                 <td>
                   <select 
                     value={m.other || 0}
-                    disabled={isCompleted}
                     onChange={(e) => handleVerify(m.studentId._id, 'other', e.target.value)}
                     style={{ background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)', padding: '0.25rem' }}
                   >

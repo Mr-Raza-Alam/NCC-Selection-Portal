@@ -10,6 +10,7 @@ const settingsSchema = new mongoose.Schema({
   r2Completed: { type: Boolean, default: false },
   r3Active: { type: Boolean, default: false },
   r3Completed: { type: Boolean, default: false },
+  docVerCompleted: { type: Boolean, default: false },
   // Rank Selection State Variables
   r_r1_entry: { type: Boolean, default: false },
   r_r1_result: { type: Boolean, default: false },

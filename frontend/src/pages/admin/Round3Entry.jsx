@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
 import Loader from '../../components/Loader';
 
 const Round3Entry = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isResultView = location.pathname.includes('/result');
   const [data, setData] = useState(null);
   const [showDoneModal, setShowDoneModal] = useState(false);
   const [searchInput, setSearchInput] = useState('');
@@ -43,10 +45,10 @@ const Round3Entry = () => {
   };
 
   const handleDone = async () => {
-    setProcessingMsg('Finalizing Round 3 (Ass.1)...');
+    setProcessingMsg('Finalizing Round 3 (Interview)...');
     try {
       await api.post('/admin/r3/done');
-      toast.success('Round 3 Finalized! You are now viewing the locked results.');
+      toast.success('Round 3 Finalized! Proceed to Document Verification.');
       setShowDoneModal(false);
       fetchData();
     } catch (err) {
@@ -59,6 +61,25 @@ const Round3Entry = () => {
 
   if (!data) return <Loader />;
 
+  // Route-aware logic: Entry vs Result
+  if (isResultView && !isCompleted) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--warning-amber)' }}>No Record!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Please finalize Round 3 (Interview) first to view results.</p>
+      </div>
+    );
+  }
+
+  if (!isResultView && isCompleted) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--danger-red)' }}>No Record!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the interview has been successfully completed. Waiting for next year....!!</p>
+      </div>
+    );
+  }
+
   const filteredStudents = data.students.filter(p => {
     if (!searchTerm) return true;
     const term = String(searchTerm).toLowerCase();
@@ -69,13 +90,11 @@ const Round3Entry = () => {
     );
   });
 
-
-
   return (
     <div>
       {processingMsg && <Loader overlay message={processingMsg} />}
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-        <h2 style={{ margin: 0 }}>{isCompleted ? "Round 3 Results (Locked)" : "Round 3: Interview Desk (Ass.1)"}</h2>
+        <h2 style={{ margin: 0 }}>{isCompleted ? "Round 3 Results (Locked)" : "Round 3: Interview Desk"}</h2>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem', marginRight: '0.5rem' }}>
@@ -111,7 +130,6 @@ const Round3Entry = () => {
           <tbody>
             {filteredStudents.map(p => {
               const r3 = data.r3Scores.find(s => String(s.studentId) === String(p._id) || (s.studentId && s.studentId._id && String(s.studentId._id) === String(p._id)));
-              const isPresent = r3 ? r3.attendance : true;
               return (
               <tr key={p._id}>
                 <td>{p.name}</td>
@@ -155,9 +173,9 @@ const Round3Entry = () => {
           backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
         }}>
           <div className="glass-card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
-            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Finalize Round 3 & Generate Merit List</h3>
+            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Finalize Round 3 (Interview)</h3>
             <p style={{ color: 'var(--text-primary)', marginBottom: '2rem', fontWeight: 'bold' }}>
-              Are you sure you want to finalize Round 3? This action will calculate the grand total across all rounds and generate the final Master Merit List. This action is irreversible.
+              Are you sure you want to finalize the Interview phase? After this, proceed to Document Verification to enter bonus marks and generate the final Merit List.
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
               <button className="btn btn-outline" onClick={() => setShowDoneModal(false)}>Cancel</button>

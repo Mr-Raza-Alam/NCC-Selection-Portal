@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
 import Loader from '../../components/Loader';
 
 const Round2Entry = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isResultView = location.pathname.includes('/result');
   const [data, setData] = useState(null);
   const [cutoff, setCutoff] = useState('');
   const [showCutoffModal, setShowCutoffModal] = useState(false);
@@ -63,6 +65,25 @@ const Round2Entry = () => {
 
   if (!data) return <Loader />;
 
+  // Route-aware logic: Entry vs Result
+  if (isResultView && !isCompleted) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--warning-amber)' }}>No Record!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Please finalize Round 2 (Written Test) first to view results.</p>
+      </div>
+    );
+  }
+
+  if (!isResultView && isCompleted) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--danger-red)' }}>No Record!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the written test has been successfully completed. Waiting for next year....!!</p>
+      </div>
+    );
+  }
+
   const filteredStudents = data.students.filter(p => {
     if (!searchTerm) return true;
     const term = String(searchTerm).toLowerCase();
@@ -73,13 +94,11 @@ const Round2Entry = () => {
     );
   });
 
-
-
   return (
     <div>
       {processingMsg && <Loader overlay message={processingMsg} />}
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-        <h2 style={{ margin: 0 }}>{isCompleted ? "Round 2 Results (Locked)" : "Round 2 Results (Written Test)"}</h2>
+        <h2 style={{ margin: 0 }}>{isCompleted ? "Round 2 Results (Locked)" : "Round 2 Score Entry (Written Test)"}</h2>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem', marginRight: '0.5rem' }}>
@@ -126,7 +145,6 @@ const Round2Entry = () => {
           <tbody>
             {filteredStudents.map(p => {
               const r2Score = data.r2Scores.find(s => String(s.studentId) === String(p._id) || (s.studentId && s.studentId._id && String(s.studentId._id) === String(p._id)));
-              const isPresent = r2Score ? r2Score.attendance : true;
               return (
                 <tr key={p._id}>
                   <td style={{ fontWeight: 'bold' }}>{p.name}</td>

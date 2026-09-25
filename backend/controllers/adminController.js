@@ -402,13 +402,6 @@ exports.finalizeR3 = async (req, res) => {
         { r3: r.r3Score }
       );
     }
-
-    // 2. Auto-calculate total for all master records
-    const masters = await MasterRecord.find();
-    for (let m of masters) {
-      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0) + (m.hs || 0) + (m.aCert || 0) + (m.other || 0);
-      await MasterRecord.updateOne({ _id: m._id }, { $set: { total } });
-    }
     
     // Upgrade R2 qualified to R3 qualified automatically
     await Student.updateMany(
@@ -416,12 +409,32 @@ exports.finalizeR3 = async (req, res) => {
       { $set: { status: 'r3_qualified' } }
     );
 
-    // Mark R3 as completed in settings
+    // Mark R3 as completed in settings (but NOT docVer)
     const settings = await getSettings();
     settings.r3Completed = true;
     await settings.save();
 
-    res.json({ message: 'Round 3 Finalized, totals calculated' });
+    res.json({ message: 'Round 3 (Interview) Finalized. Proceed to Document Verification.' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.finalizeDocVer = async (req, res) => {
+  try {
+    // Calculate grand total for all master records including bonus marks
+    const masters = await MasterRecord.find();
+    for (let m of masters) {
+      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0) + (m.hs || 0) + (m.aCert || 0) + (m.other || 0);
+      await MasterRecord.updateOne({ _id: m._id }, { $set: { total } });
+    }
+
+    // Mark Document Verification as completed
+    const settings = await getSettings();
+    settings.docVerCompleted = true;
+    await settings.save();
+
+    res.json({ message: 'Document Verification Finalized. Merit List generated with grand totals.' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

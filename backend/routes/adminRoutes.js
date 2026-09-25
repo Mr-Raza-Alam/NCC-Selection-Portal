@@ -4,7 +4,7 @@ const { protectAdmin } = require('../middleware/authMiddleware');
 const {
   setupR1, getR1Table, enterR1Score, finalizeR1, setR1Cutoff,
   startR2, markR2Attendance, enterR2Score, getR2Table, finalizeR2, setR2Cutoff,
-  startR3, getR3Table, enterR3Score, verifyDocs, finalizeR3,
+  startR3, getR3Table, enterR3Score, verifyDocs, finalizeR3, finalizeDocVer,
   getMasterTable, getStudentsTable, updateStudentProfile, finalizeSelection, deleteEliminated, publishFinalResults, wipeAllStudents, deleteStudent,
   getAdmins, updateAdminFeatures, getSettingsData
 } = require('../controllers/adminController');
@@ -29,6 +29,7 @@ router.get('/r3/table', getR3Table);
 router.post('/r3/score', enterR3Score);
 router.post('/r3/verify', verifyDocs);
 router.post('/r3/done', finalizeR3);
+router.post('/r3/verify-done', finalizeDocVer);
 
 router.get('/master', getMasterTable);
 router.get('/students', getStudentsTable);

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
 import Loader from '../../components/Loader';
 
 const Round1Entry = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isResultView = location.pathname.includes('/result');
   const [data, setData] = useState(null);
   const [cutoff, setCutoff] = useState('');
   const [showCutoffModal, setShowCutoffModal] = useState(false);
@@ -40,7 +42,7 @@ const Round1Entry = () => {
         activityName,
         score: value
       });
-      fetchData(); // refresh totals
+      fetchData();
     } catch (err) {
       console.error(err);
     }
@@ -66,7 +68,7 @@ const Round1Entry = () => {
       await api.post('/admin/r1/done');
       toast.success('Round 1 Finalized! You are now viewing the locked results.');
       setShowDoneModal(false);
-      fetchData(); // Refresh the table
+      fetchData();
     } catch (err) {
       console.error(err);
       toast.error('Error finalizing R1');
@@ -77,6 +79,25 @@ const Round1Entry = () => {
 
   if (!data) return <Loader />;
 
+  // Route-aware logic: Entry vs Result
+  if (isResultView && !isCompleted) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--warning-amber)' }}>No Record!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Please finalize Round 1 (Physical Test) first to view results.</p>
+      </div>
+    );
+  }
+
+  if (!isResultView && isCompleted) {
+    return (
+      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <h2 style={{ color: 'var(--danger-red)' }}>No Record!</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Since the physical test has been successfully completed. Waiting for next year....!!</p>
+      </div>
+    );
+  }
+
   const filteredStudents = data.students.filter(p => {
     if (!searchTerm) return true;
     const term = String(searchTerm).toLowerCase();
@@ -85,7 +106,6 @@ const Round1Entry = () => {
       (p.code && String(p.code).toLowerCase().includes(term))
     );
   });
-
 
   return (
     <div>
@@ -141,7 +161,6 @@ const Round1Entry = () => {
           <tbody>
             {filteredStudents.map(p => {
               const pScores = data.r1Scores.find(s => String(s.studentId) === String(p._id) || (s.studentId?._id && String(s.studentId._id) === String(p._id)));
-              const isPresent = pScores ? pScores.attendance : '';
               return (
                 <tr key={p._id}>
                   <td style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'var(--accent-green)' }}>{p.code}</td>
