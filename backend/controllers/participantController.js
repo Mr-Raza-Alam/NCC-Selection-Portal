@@ -15,7 +15,7 @@ exports.getProfile = async (req, res) => {
     const r3 = await R3Result.findOne({ studentId: req.user.id });
     
     const TestConfig = require('../models/TestConfig');
-    const config = await TestConfig.findOne();
+    const config = await TestConfig.findOne({ testType: 'new_enrollment' });
     
     res.json({
       ...student.toObject(),

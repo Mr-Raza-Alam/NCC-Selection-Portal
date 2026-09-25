@@ -27,13 +27,14 @@ router.get('/', async (req, res) => {
 
     if (testType === 'rank_selection') {
       const RankCandidate = require('../models/RankCandidate');
-      const R2Result = require('../models/R2Result');
+      const RankR2Result = require('../models/RankR2Result');
+      const RankSettings = require('../models/RankSettings');
+      
       totalStudents = await RankCandidate.countDocuments();
-      const r2Scores = await R2Result.find();
-      // Wait, R2Result is shared? We might need to check if the student is RankCandidate.
-      // But for now, we can just say attemptedStudents is the count of R2Result for Rank Candidates.
-      attemptedStudents = await R2Result.countDocuments(); // This might mix them up, but let's just get basic count.
-      r2Active = settings ? settings.r_r2_entry : false;
+      attemptedStudents = await RankR2Result.countDocuments();
+      
+      const rankSettings = await RankSettings.findOne();
+      r2Active = rankSettings ? rankSettings.r_r2_entry : false;
     } else {
       totalStudents = await Student.countDocuments();
       attemptedStudents = await Student.countDocuments({ test_attempted: true });

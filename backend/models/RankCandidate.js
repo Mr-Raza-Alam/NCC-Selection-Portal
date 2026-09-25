@@ -8,6 +8,7 @@ const rankCandidateSchema = new mongoose.Schema({
   buddyNo: { type: String, required: true },
   mobileNo: { type: String, default: '' },
   email: { type: String, default: '' },
+  dob: { type: Date },
   parentContactNo: { type: String, default: '' },
   password: { type: String, default: null }, // Null until they register
   isRegistered: { type: Boolean, default: false }, // True once they set password

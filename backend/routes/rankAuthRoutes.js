@@ -7,5 +7,6 @@ const { protectRankCandidate } = require('../middleware/authMiddleware');
 router.post('/register', registerRankCandidate);
 router.post('/login', loginRankCandidate);
 router.get('/profile', protectRankCandidate, getRankProfile);
+router.post('/complete-profile', protectRankCandidate, require('../controllers/rankAuthController').completeRankProfile);
 
 module.exports = router;

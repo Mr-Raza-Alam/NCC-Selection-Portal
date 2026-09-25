@@ -117,3 +117,23 @@ exports.getRankProfile = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.completeRankProfile = async (req, res) => {
+  try {
+    const { parentContactNo, dob } = req.body;
+    
+    const cadet = await RankCandidate.findByIdAndUpdate(
+      req.user.id,
+      { $set: { parentContactNo, dob } },
+      { new: true }
+    );
+    
+    if (!cadet) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+    
+    res.json({ parentContactNo: cadet.parentContactNo, dob: cadet.dob });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

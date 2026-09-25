@@ -76,11 +76,12 @@ const RankRankStudentTable = () => {
   };
 
   const handleExportCSV = () => {
-    const headers = ['B_Code', 'Name', 'Department', 'Regimental No', 'Mobile No', 'Parent Contact', 'Email', 'Status'];
+    const headers = ['B_Code', 'Name', 'Department', 'DOB', 'Regimental No', 'Mobile No', 'Parent Contact', 'Email', 'Status'];
     const rows = students.map(s => [
       s.buddyNo || '',
       s.name || '',
       s.department || '',
+      s.dob ? new Date(s.dob).toLocaleDateString() : '',
       s.regimentalNo || '',
       s.mobileNo || '',
       s.parentContactNo || '',
@@ -200,6 +201,7 @@ const RankRankStudentTable = () => {
               <th>B_Code</th>
               <th>Name</th>
               <th>Department</th>
+              <th>DOB</th>
               <th>Regimental No.</th>
               <th>Mobile No.</th>
               <th>Email</th>
@@ -213,6 +215,7 @@ const RankRankStudentTable = () => {
                 <td style={{ fontWeight: 'bold', color: 'var(--accent-green)' }}>{s.buddyNo}</td>
                 <td>{s.name}</td>
                 <td>{s.department}</td>
+                <td>{s.dob ? new Date(s.dob).toLocaleDateString() : 'N/A'}</td>
                 <td>{s.regimentalNo}</td>
                 <td>{s.mobileNo}</td>
                 <td>{s.email}</td>
@@ -289,6 +292,10 @@ const RankRankStudentTable = () => {
             <div className="input-group">
               <label>Regimental No.</label>
               <input type="text" name="regimentalNo" value={editModal.student.regimentalNo} onChange={handleEditChange} />
+            </div>
+            <div className="input-group">
+              <label>DOB</label>
+              <input type="date" name="dob" value={editModal.student.dob ? new Date(editModal.student.dob).toISOString().split('T')[0] : ''} onChange={handleEditChange} />
             </div>
             <div className="input-group">
               <label>Email</label>
