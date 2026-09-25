@@ -68,9 +68,29 @@ const Dashboard = () => {
       <div style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 10 }}>
         <button 
           onClick={() => setShowMenu(!showMenu)} 
-          style={{ background: 'var(--primary-navy)', color: 'white', border: 'none', borderRadius: '50%', width: '45px', height: '45px', fontSize: '1.2rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.2)', transition: 'transform 0.2s' }}
-          onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-          onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          style={{ 
+            background: 'linear-gradient(135deg, var(--surface-grey), white)', 
+            color: 'var(--primary-navy)', 
+            border: '2px solid var(--secondary-gold)', 
+            borderRadius: '50%', 
+            width: '60px', 
+            height: '60px', 
+            fontSize: '1.8rem', 
+            cursor: 'pointer', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            boxShadow: '0 4px 15px rgba(0,0,0,0.2)', 
+            transition: 'all 0.3s ease' 
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.3)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+          }}
           title="Menu"
         >
           👤
