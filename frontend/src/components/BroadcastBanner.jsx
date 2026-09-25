@@ -23,7 +23,7 @@ const BroadcastBanner = ({ pageType }) => {
   if (broadcastTarget !== 'both' && broadcastTarget !== pageType) return null;
 
   return (
-    <div className="marquee-container">
+    <div className={`marquee-container ${pageType === 'landing' ? 'marquee-absolute' : ''}`}>
       <div className="marquee-content">
         ⚠️ {broadcastMessage} ⚠️
       </div>
