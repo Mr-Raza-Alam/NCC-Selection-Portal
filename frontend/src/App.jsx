@@ -1,68 +1,80 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Register from './pages/participant/Register';
-import Login from './pages/participant/Login';
-import ForgotPassword from './pages/participant/ForgotPassword';
-import Dashboard from './pages/participant/Dashboard';
-import Test from './pages/participant/Test';
-import TestInstructions from './pages/participant/TestInstructions';
-import RankTest from './pages/participant/RankTest';
-import RankTestInstructions from './pages/participant/RankTestInstructions';
+import Register from './pages/participant/enrollment/Register';
+import Login from './pages/participant/enrollment/Login';
+import ForgotPassword from './pages/participant/enrollment/ForgotPassword';
+import Dashboard from './pages/participant/enrollment/Dashboard';
+import Test from './pages/participant/enrollment/Test';
+import TestInstructions from './pages/participant/enrollment/TestInstructions';
+import RankTest from './pages/participant/rank/RankTest';
+import RankTestInstructions from './pages/participant/rank/RankTestInstructions';
 import { Toaster } from 'react-hot-toast';
 import BroadcastBanner from './components/BroadcastBanner';
-import AdminLogin from './pages/admin/AdminLogin';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import Round1Setup from './pages/admin/Round1Setup';
-import Round1Entry from './pages/admin/Round1Entry';
-import Round1Home from './pages/admin/Round1Home';
-import R2Attendance from './pages/admin/R2Attendance';
-import Round2Entry from './pages/admin/Round2Entry';
-import Round2Home from './pages/admin/Round2Home';
-import Round3Entry from './pages/admin/Round3Entry';
-import Round3Verify from './pages/admin/Round3Verify';
-import Round3Home from './pages/admin/Round3Home';
-import MasterTable from './pages/admin/MasterTable';
-import RoleManagement from './pages/admin/RoleManagement';
-import TestManagement from './pages/admin/TestManagement';
-import SettingsPage from './pages/admin/SettingsPage';
-import RankUpload from './pages/admin/RankUpload';
+import AdminLogin from './pages/admin/shared/AdminLogin';
+import AdminDashboard from './pages/admin/shared/AdminDashboard';
+import Round1Setup from './pages/admin/enrollment/Round1Setup';
+import Round1Entry from './pages/admin/enrollment/Round1Entry';
+import Round1Home from './pages/admin/enrollment/Round1Home';
+import R2Attendance from './pages/admin/enrollment/R2Attendance';
+import Round2Entry from './pages/admin/enrollment/Round2Entry';
+import Round2Home from './pages/admin/enrollment/Round2Home';
+import Round3Entry from './pages/admin/enrollment/Round3Entry';
+import Round3Verify from './pages/admin/enrollment/Round3Verify';
+import Round3Home from './pages/admin/enrollment/Round3Home';
+import MasterTable from './pages/admin/enrollment/MasterTable';
+import RoleManagement from './pages/admin/shared/RoleManagement';
+import TestManagement from './pages/admin/shared/TestManagement';
+import SettingsPage from './pages/admin/shared/SettingsPage';
+import RankUpload from './pages/admin/rank/RankUpload';
 import LandingPage from './pages/participant/LandingPage';
 import SelectionHub from './pages/participant/SelectionHub';
-import RankLogin from './pages/participant/RankLogin';
-import RankRegister from './pages/participant/RankRegister';
-import RankDashboard from './pages/participant/RankDashboard';
+import RankLogin from './pages/participant/rank/RankLogin';
+import RankRegister from './pages/participant/rank/RankRegister';
+import RankDashboard from './pages/participant/rank/RankDashboard';
 import Navbar from './components/Navbar';
 import AdminLayout from './components/AdminLayout';
 
 const PrivateRoute = ({ children, role }) => {
-  const token = localStorage.getItem('token');
-  const userRole = localStorage.getItem('role');
-  
-  if (!token) return <Navigate to={role === 'participant' ? '/login' : '/admin/login'} />;
-  
-  if (role === 'participant' && userRole !== 'participant') {
-    return <Navigate to="/login" />;
+  let token, userRole, loginRoute;
+
+  if (role === 'rank_candidate') {
+    token = localStorage.getItem('r_token');
+    userRole = localStorage.getItem('r_role');
+    loginRoute = '/rank-login';
+  } else if (role === 'participant') {
+    token = localStorage.getItem('e_token');
+    userRole = localStorage.getItem('e_role');
+    loginRoute = '/login';
+  } else {
+    token = localStorage.getItem('token');
+    userRole = localStorage.getItem('role');
+    loginRoute = '/admin/login';
   }
   
+  if (!token) return <Navigate to={loginRoute} />;
+  
+  if (role === 'participant' && userRole !== 'participant') return <Navigate to={loginRoute} />;
+  if (role === 'rank_candidate' && userRole !== 'rank_candidate') return <Navigate to={loginRoute} />;
+  
   if (role === 'admin' && !['cto', 'lead_admin', 'assistant', 'assistant1', 'assistant2'].includes(userRole)) {
-    return <Navigate to="/admin/login" />;
+    return <Navigate to={loginRoute} />;
   }
   
   return children;
 };
 
-import StudentTable from './pages/admin/StudentTable';
-import RankRound1Home from './pages/admin/RankRound1Home';
-import RankRound1Setup from './pages/admin/RankRound1Setup';
-import RankRound1Entry from './pages/admin/RankRound1Entry';
-import RankRound2Home from './pages/admin/RankRound2Home';
-import RankR2Attendance from './pages/admin/RankR2Attendance';
-import RankRound2Entry from './pages/admin/RankRound2Entry';
-import RankRound3Home from './pages/admin/RankRound3Home';
-import RankRound3Entry from './pages/admin/RankRound3Entry';
-import RankRound3Verify from './pages/admin/RankRound3Verify';
-import RankMasterTable from './pages/admin/RankMasterTable';
-import RankStudentTable from './pages/admin/RankStudentTable';
+import StudentTable from './pages/admin/enrollment/StudentTable';
+import RankRound1Home from './pages/admin/rank/RankRound1Home';
+import RankRound1Setup from './pages/admin/rank/RankRound1Setup';
+import RankRound1Entry from './pages/admin/rank/RankRound1Entry';
+import RankRound2Home from './pages/admin/rank/RankRound2Home';
+import RankR2Attendance from './pages/admin/rank/RankR2Attendance';
+import RankRound2Entry from './pages/admin/rank/RankRound2Entry';
+import RankRound3Home from './pages/admin/rank/RankRound3Home';
+import RankRound3Entry from './pages/admin/rank/RankRound3Entry';
+import RankRound3Verify from './pages/admin/rank/RankRound3Verify';
+import RankMasterTable from './pages/admin/rank/RankMasterTable';
+import RankStudentTable from './pages/admin/rank/RankStudentTable';
 
 
 // Wrapper to conditionally render participant Navbar

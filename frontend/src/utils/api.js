@@ -5,7 +5,16 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  let token;
+  
+  if (config.url.includes('/admin') || config.url.includes('/rank-admin')) {
+    token = localStorage.getItem('token');
+  } else if (config.url.includes('/rank-')) {
+    token = localStorage.getItem('r_token');
+  } else {
+    token = localStorage.getItem('e_token');
+  }
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

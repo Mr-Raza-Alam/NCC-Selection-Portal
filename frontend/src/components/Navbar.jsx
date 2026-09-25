@@ -3,14 +3,18 @@ import { useNavigate } from 'react-router-dom';
 
 const Navbar = ({ onMenuClick }) => {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
-  const role = localStorage.getItem('role');
-  const name = localStorage.getItem('username') || localStorage.getItem('name');
-  const code = localStorage.getItem('code');
+  const token = localStorage.getItem('token') || localStorage.getItem('e_token') || localStorage.getItem('r_token');
+  const role = localStorage.getItem('role') || localStorage.getItem('e_role') || localStorage.getItem('r_role');
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate(role === 'participant' ? '/login' : '/admin/login');
+    if (window.location.pathname.includes('/admin')) {
+      navigate('/admin/login');
+    } else if (window.location.pathname.includes('/rank')) {
+      navigate('/rank-login');
+    } else {
+      navigate('/login');
+    }
   };
 
   return (
