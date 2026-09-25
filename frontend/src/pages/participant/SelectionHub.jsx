@@ -1,15 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import nccHero from '../../assets/ncc_pic13.jpeg';
-import BroadcastBanner from '../../components/BroadcastBanner';
 
 const SelectionHub = () => {
   const navigate = useNavigate();
 
   return (
     <div className="landing-container">
-      <BroadcastBanner pageType="landing" />
-      
+            
       <div 
         className="hub-hero-section" 
         style={{ backgroundImage: `url(${nccHero})` }}

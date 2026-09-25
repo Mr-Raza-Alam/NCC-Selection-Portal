@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import api from '../utils/api';
 
-const BroadcastBanner = ({ pageType }) => {
+const BroadcastBanner = () => {
   const [broadcastMessage, setBroadcastMessage] = useState('');
   const [broadcastTarget, setBroadcastTarget] = useState('none');
+  const location = useLocation();
 
   useEffect(() => {
     const fetchBroadcast = async () => {
@@ -20,10 +22,16 @@ const BroadcastBanner = ({ pageType }) => {
   }, []);
 
   if (!broadcastMessage || broadcastTarget === 'none') return null;
+
+  let pageType = 'landing';
+  if (location.pathname.includes('dashboard') || location.pathname.includes('test')) {
+    pageType = 'dashboard';
+  }
+
   if (broadcastTarget !== 'both' && broadcastTarget !== pageType) return null;
 
   return (
-    <div className={`marquee-container ${pageType === 'landing' ? 'marquee-absolute' : ''}`}>
+    <div className="marquee-container">
       <div className="marquee-content">
         ⚠️ {broadcastMessage} ⚠️
       </div>

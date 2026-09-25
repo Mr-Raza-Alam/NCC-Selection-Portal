@@ -490,13 +490,7 @@ td input:focus, td select:focus {
   z-index: 10;
 }
 
-.marquee-absolute {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-}
+
 
 .marquee-content {
   display: inline-block;

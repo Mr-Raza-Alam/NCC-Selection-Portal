@@ -5,7 +5,6 @@ import api from '../../utils/api';
 // Hero Image
 import nccHero from '../../assets/ncc_pic13.jpeg';
 
-import BroadcastBanner from '../../components/BroadcastBanner';
 
 // Glimpse Images (9 total)
 import pic1 from '../../assets/ncc_pic1.jpeg';
@@ -50,8 +49,7 @@ const LandingPage = () => {
 
   return (
     <div className="landing-container">
-      <BroadcastBanner pageType="landing" />
-      {/* Schedule Broadcast Animation */}
+            {/* Schedule Broadcast Animation */}
       {schedule.start && schedule.end && (
         <div className="marquee-container">
           <div className="marquee-content">

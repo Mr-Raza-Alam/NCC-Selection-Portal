@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../utils/api';
 import Loader from '../../components/Loader';
-import BroadcastBanner from '../../components/BroadcastBanner';
 import nccHero from '../../assets/ncc_pic13.jpeg';
 
 const Register = () => {
@@ -47,8 +46,7 @@ const Register = () => {
   return (
     <div className="auth-wrapper" style={{ backgroundImage: `url(${nccHero})` }}>
       <div className="auth-overlay"></div>
-      <BroadcastBanner pageType="landing" />
-      {isLoading && <Loader overlay message="Registering..." />}
+            {isLoading && <Loader overlay message="Registering..." />}
 
       <div className="auth-card enroll-theme">
         <h2>🛡️ New Enrollment</h2>

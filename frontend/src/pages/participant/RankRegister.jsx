@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../../utils/api';
 import { toast } from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
-import BroadcastBanner from '../../components/BroadcastBanner';
 import nccHero from '../../assets/ncc_pic13.jpeg';
 
 const RankRegister = () => {
@@ -51,8 +50,7 @@ const RankRegister = () => {
   return (
     <div className="auth-wrapper" style={{ backgroundImage: `url(${nccHero})` }}>
       <div className="auth-overlay"></div>
-      <BroadcastBanner pageType="landing" />
-      
+            
       <div className="auth-card rank-theme">
         <h2>🎖️ Rank Verification</h2>
         <p className="subtitle">Verify your details to access the Rank Portal</p>

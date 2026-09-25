@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
-import BroadcastBanner from '../../components/BroadcastBanner';
 import Loader from '../../components/Loader';
 
 const RankDashboard = () => {
@@ -66,8 +65,7 @@ const RankDashboard = () => {
 
   return (
     <div className="container" style={{ textAlign: 'center' }}>
-      <BroadcastBanner pageType="dashboard" />
-      <h2>Welcome, {profile.name}</h2>
+            <h2>Welcome, {profile.name}</h2>
       
       {isSelected && (
         <div style={{ background: '#FFD700', color: 'black', padding: '1.5rem', borderRadius: '8px', marginTop: '2rem', marginBottom: '1rem', boxShadow: '0 4px 15px rgba(255,215,0,0.4)' }}>

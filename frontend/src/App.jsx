@@ -9,6 +9,7 @@ import TestInstructions from './pages/participant/TestInstructions';
 import RankTest from './pages/participant/RankTest';
 import RankTestInstructions from './pages/participant/RankTestInstructions';
 import { Toaster } from 'react-hot-toast';
+import BroadcastBanner from './components/BroadcastBanner';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Round1Setup from './pages/admin/Round1Setup';
@@ -74,6 +75,7 @@ const AppContent = () => {
     <>
       <Toaster position="top-right" toastOptions={{ style: { background: 'var(--surface-grey)', color: 'var(--text-primary)' } }} />
       {!isAdminRoute && <Navbar />}
+      {!isAdminRoute && <BroadcastBanner />}
       <div className={!isAdminRoute ? 'container' : ''}>
         <Routes>
           <Route path="/" element={<LandingPage />} />

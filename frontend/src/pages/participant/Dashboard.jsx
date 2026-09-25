@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
-import BroadcastBanner from '../../components/BroadcastBanner';
 import Loader from '../../components/Loader';
 
 const Dashboard = () => {
@@ -62,8 +61,7 @@ const Dashboard = () => {
 
   return (
     <div className="container" style={{ textAlign: 'center' }}>
-      <BroadcastBanner pageType="dashboard" />
-      <h2>Welcome, {profile.name}</h2>
+            <h2>Welcome, {profile.name}</h2>
       
       {profile.status === 'selected' && (
         <div style={{ background: 'var(--accent-green)', color: 'black', padding: '1.5rem', borderRadius: '8px', marginTop: '2rem', marginBottom: '1rem' }}>
