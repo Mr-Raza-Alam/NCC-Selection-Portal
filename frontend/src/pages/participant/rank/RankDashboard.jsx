@@ -146,23 +146,23 @@ const RankDashboard = () => {
               <h3 style={{ color: 'var(--warning-amber)', marginTop: 0 }}>⚠️ Complete Your Profile</h3>
               <p style={{ color: 'var(--text-secondary)' }}>Please provide your Date of Birth and Parent's Contact Number.</p>
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                   <label style={{ width: '120px', textAlign: 'right', fontWeight: 'bold' }}>Date of Birth:</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', textAlign: 'left' }}>
+                   <label style={{ fontWeight: 'bold' }}>Date of Birth:</label>
                    <input 
                      type="date" 
                      id="dobInput"
                      defaultValue={profile.dob ? new Date(profile.dob).toISOString().split('T')[0] : ''}
-                     style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '4px' }}
+                     style={{ width: '100%', padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '4px', background: 'var(--bg-white)', color: 'var(--text-primary)' }}
                    />
                 </div>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                   <label style={{ width: '120px', textAlign: 'right', fontWeight: 'bold' }}>Parent Contact:</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', textAlign: 'left' }}>
+                   <label style={{ fontWeight: 'bold' }}>Parent Contact:</label>
                    <input 
                      type="tel" 
                      id="parentContactInput"
                      placeholder="+91 xxxxxxxxxx" 
                      defaultValue={profile.parentContactNo || ''}
-                     style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '4px' }}
+                     style={{ width: '100%', padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '4px', background: 'var(--bg-white)', color: 'var(--text-primary)' }}
                    />
                 </div>
                 <button className="btn btn-primary" style={{ alignSelf: 'flex-end', padding: '0.75rem 2rem' }} onClick={async () => {
