@@ -7,8 +7,11 @@ exports.registerRankCandidate = async (req, res) => {
   try {
     const { regimentalNo, name, email, mobileNo, semester, password } = req.body;
 
-    // 1. Find the pre-registered cadet uploaded by Lead Admin
-    const cadet = await RankCandidate.findOne({ regimentalNo });
+    // 1. Find the pre-registered cadet uploaded by Lead Admin (case-insensitive & trimmed)
+    const cleanRegNo = regimentalNo.trim();
+    const cadet = await RankCandidate.findOne({ 
+      regimentalNo: new RegExp(`^${cleanRegNo}$`, 'i') 
+    });
 
     if (!cadet) {
       return res.status(400).json({ message: 'No pre-registration record found for this Regimental No. Please contact Admin.' });
@@ -61,7 +64,10 @@ exports.loginRankCandidate = async (req, res) => {
   try {
     const { regimentalNo, password } = req.body;
 
-    const cadet = await RankCandidate.findOne({ regimentalNo });
+    const cleanRegNo = regimentalNo.trim();
+    const cadet = await RankCandidate.findOne({ 
+      regimentalNo: new RegExp(`^${cleanRegNo}$`, 'i') 
+    });
 
     if (!cadet || !cadet.isRegistered) {
         return res.status(401).json({ message: 'Invalid credentials or not registered yet' });

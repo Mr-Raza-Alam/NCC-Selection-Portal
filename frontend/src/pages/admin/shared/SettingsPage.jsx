@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import api from '../../../utils/api';
 import toast from 'react-hot-toast';
 import Loader from '../../../components/Loader';
 
 const SettingsPage = () => {
+  const location = useLocation();
+  const isRank = location.pathname.includes('/rank');
+  const broadcastTypeQuery = isRank ? '?type=rank_selection' : '';
+
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -26,8 +31,13 @@ const SettingsPage = () => {
   const fetchSettings = async () => {
     try {
       const res = await api.get('/admin/settings');
-      setBroadcastMessage(res.data.broadcastMessage || '');
-      setBroadcastTarget(res.data.broadcastTarget || 'none');
+      if (isRank) {
+        setBroadcastMessage(res.data.rank_broadcastMessage || '');
+        setBroadcastTarget(res.data.rank_broadcastTarget || 'none');
+      } else {
+        setBroadcastMessage(res.data.broadcastMessage || '');
+        setBroadcastTarget(res.data.broadcastTarget || 'none');
+      }
     } catch (err) {
       console.error('Failed to load settings');
     }
@@ -94,7 +104,7 @@ const SettingsPage = () => {
 
   const handleBroadcastSubmit = async () => {
     try {
-      await api.post('/admin/settings/broadcast', { broadcastMessage, broadcastTarget });
+      await api.post(`/admin/settings/broadcast${broadcastTypeQuery}`, { broadcastMessage, broadcastTarget });
       toast.success('Broadcast message updated');
       setShowBroadcastModal(false);
     } catch (err) {
@@ -105,7 +115,7 @@ const SettingsPage = () => {
   const handleStopBroadcast = async () => {
     if (!window.confirm("Are you sure you want to stop the active broadcast?")) return;
     try {
-      await api.post('/admin/settings/broadcast', { broadcastMessage: '', broadcastTarget: 'none' });
+      await api.post(`/admin/settings/broadcast${broadcastTypeQuery}`, { broadcastMessage: '', broadcastTarget: 'none' });
       setBroadcastMessage('');
       setBroadcastTarget('none');
       toast.success('Broadcast stopped successfully');

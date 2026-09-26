@@ -187,12 +187,21 @@ router.get('/audit', async (req, res) => {
 router.post('/broadcast', async (req, res) => {
   try {
     const { broadcastMessage, broadcastTarget } = req.body;
+    const { type } = req.query;
+
     let settings = await Settings.findOne();
     if (!settings) {
       settings = new Settings();
     }
-    settings.broadcastMessage = broadcastMessage || '';
-    settings.broadcastTarget = broadcastTarget || 'none';
+    
+    if (type === 'rank_selection') {
+      settings.rank_broadcastMessage = broadcastMessage || '';
+      settings.rank_broadcastTarget = broadcastTarget || 'none';
+    } else {
+      settings.broadcastMessage = broadcastMessage || '';
+      settings.broadcastTarget = broadcastTarget || 'none';
+    }
+    
     await settings.save();
 
     res.json({ message: 'Broadcast message updated successfully', settings });

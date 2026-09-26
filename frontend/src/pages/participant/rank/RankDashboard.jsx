@@ -11,6 +11,7 @@ const RankDashboard = () => {
   const [testStatus, setTestStatus] = useState('unknown');
   const [activeTab, setActiveTab] = useState('overview');
   const [showMenu, setShowMenu] = useState(false);
+  const [bannerDismissed, setBannerDismissed] = useState(false);
 
   useEffect(() => {
     // Need a new route in participantRoutes or rankAuthRoutes to get rank profile
@@ -115,8 +116,9 @@ const RankDashboard = () => {
         Welcome, {profile.status === 'promoted_cpl' ? 'Cpl.' : profile.status === 'promoted_lcpl' ? 'LCpl.' : 'Cdt.'} {profile.name}
       </h2>
       
-      {isSelected && (
-        <div style={{ background: '#FFD700', color: 'black', padding: '1.5rem', borderRadius: '8px', marginTop: '2rem', marginBottom: '1rem', boxShadow: '0 4px 15px rgba(255,215,0,0.4)' }}>
+      {isSelected && !bannerDismissed && (
+        <div style={{ background: '#FFD700', color: 'black', padding: '1.5rem', borderRadius: '8px', marginTop: '2rem', marginBottom: '1rem', boxShadow: '0 4px 15px rgba(255,215,0,0.4)', position: 'relative' }}>
+          <button onClick={() => setBannerDismissed(true)} style={{ position: 'absolute', top: '0.5rem', right: '0.75rem', background: 'transparent', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: 'rgba(0,0,0,0.5)', lineHeight: 1 }} title="Dismiss">✕</button>
           <h2 style={{ margin: 0, marginBottom: '0.5rem' }}>🌟 CONGRATULATIONS! 🌟</h2>
           <p style={{ margin: 0, fontWeight: 'bold', fontSize: '1.2rem' }}>
             You have been {profile.status === 'promoted_cpl' ? 'Promoted to Corporal (CPL)!' : 'Promoted to Lance Corporal (LCPL)!'}
@@ -124,15 +126,17 @@ const RankDashboard = () => {
         </div>
       )}
 
-      {profile.status === 'cadet' && profile.r3Completed && (
-        <div style={{ background: 'var(--surface-grey)', color: 'var(--text-primary)', padding: '1.5rem', borderRadius: '8px', marginTop: '2rem', marginBottom: '1rem' }}>
+      {profile.status === 'cadet' && profile.r3Completed && !bannerDismissed && (
+        <div style={{ background: 'var(--surface-grey)', color: 'var(--text-primary)', padding: '1.5rem', borderRadius: '8px', marginTop: '2rem', marginBottom: '1rem', position: 'relative' }}>
+          <button onClick={() => setBannerDismissed(true)} style={{ position: 'absolute', top: '0.5rem', right: '0.75rem', background: 'transparent', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: 'var(--text-secondary)', lineHeight: 1 }} title="Dismiss">✕</button>
           <h2 style={{ margin: 0, marginBottom: '0.5rem' }}>Rank Selection Concluded</h2>
           <p style={{ margin: 0 }}>Your current rank remains: <strong>Cadet</strong>.</p>
         </div>
       )}
 
-      {profile.status === 'absent' && (
-        <div style={{ background: 'var(--danger-red)', color: 'white', padding: '1.5rem', borderRadius: '8px', marginTop: '2rem', marginBottom: '1rem' }}>
+      {profile.status === 'absent' && !bannerDismissed && (
+        <div style={{ background: 'var(--danger-red)', color: 'white', padding: '1.5rem', borderRadius: '8px', marginTop: '2rem', marginBottom: '1rem', position: 'relative' }}>
+          <button onClick={() => setBannerDismissed(true)} style={{ position: 'absolute', top: '0.5rem', right: '0.75rem', background: 'transparent', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: 'rgba(255,255,255,0.7)', lineHeight: 1 }} title="Dismiss">✕</button>
           <h2 style={{ margin: 0, marginBottom: '0.5rem' }}>Selection Concluded</h2>
           <p style={{ margin: 0 }}>You were Absent. Your current rank remains: <strong>Cadet</strong>.</p>
         </div>
@@ -265,25 +269,62 @@ const RankDashboard = () => {
         </div>
       )}
 
-      {/* PROFILE TAB */}
+      {/* PROFILE TAB — Digital ID Card */}
       {activeTab === 'profile' && (
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
-          <div className="glass-card" style={{ width: '100%', maxWidth: '400px', padding: '0', overflow: 'hidden', border: isSelected ? '2px solid #FFD700' : '1px solid var(--border-color)', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ background: isSelected ? '#FFD700' : '#87CEEB', color: isSelected ? 'black' : 'var(--primary-navy)', padding: '1rem', fontWeight: 'bold' }}>
-              <h3 style={{ margin: 0 }}>Cadet Profile</h3>
-            </div>
-            <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <h1 style={{ fontSize: '4rem', color: isSelected ? '#FFD700' : '#87CEEB', margin: 0, textShadow: isSelected ? '0 2px 10px rgba(255,215,0,0.3)' : 'none' }}>
-                {profile.buddyNo}
-              </h1>
-              <p style={{ color: 'var(--text-secondary)', fontWeight: 'bold' }}>Buddy No.</p>
-              
-              <div style={{ width: '100%', marginTop: '1.5rem', textAlign: 'left', fontSize: '0.9rem' }}>
-                <p style={{ margin: '0.5rem 0' }}><strong style={{ color: 'var(--text-secondary)' }}>Name:</strong> {profile.name}</p>
-                <p style={{ margin: '0.5rem 0' }}><strong style={{ color: 'var(--text-secondary)' }}>Regimental No:</strong> {profile.regimentalNo}</p>
-                <p style={{ margin: '0.5rem 0' }}><strong style={{ color: 'var(--text-secondary)' }}>Current Rank:</strong> <span style={{ fontWeight: 'bold', color: 'var(--accent-green)' }}>{profile.status === 'promoted_cpl' ? 'Corporal (CPL)' : profile.status === 'promoted_lcpl' ? 'Lance Corporal (LCPL)' : 'Cadet'}</span></p>
-                <p style={{ margin: '0.5rem 0' }}><strong style={{ color: 'var(--text-secondary)' }}>Department:</strong> {profile.department}</p>
+          <div className="glass-card" style={{ width: '100%', maxWidth: '420px', padding: '0', overflow: 'hidden', border: isSelected ? '2px solid #FFD700' : '2px solid #87CEEB', display: 'flex', flexDirection: 'column', borderRadius: '12px', boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}>
+            {/* Card Header with Rank Badge */}
+            <div style={{ background: isSelected ? 'linear-gradient(135deg, #FFD700, #FFA500)' : 'linear-gradient(135deg, #87CEEB, #4682B4)', color: isSelected ? 'black' : 'white', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <p style={{ margin: 0, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.8 }}>NCC Digital Identity</p>
+                <h3 style={{ margin: '0.25rem 0 0 0', fontSize: '1.1rem' }}>3 Assam Battalion, NCC</h3>
               </div>
+              <div style={{ background: 'rgba(255,255,255,0.25)', borderRadius: '8px', padding: '0.4rem 0.75rem', fontWeight: 'bold', fontSize: '0.8rem', backdropFilter: 'blur(4px)' }}>
+                {profile.status === 'promoted_cpl' ? '⭐ CPL' : profile.status === 'promoted_lcpl' ? '⭐ LCPL' : '🎖️ CDT'}
+              </div>
+            </div>
+            
+            {/* Card Body */}
+            <div style={{ padding: '1.5rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'var(--bg-white)' }}>
+              {/* Big Buddy Number */}
+              <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: isSelected ? 'linear-gradient(135deg, #FFD700, #FFA500)' : 'linear-gradient(135deg, #87CEEB, #4682B4)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', boxShadow: '0 4px 15px rgba(0,0,0,0.15)' }}>
+                <span style={{ fontSize: '1.8rem', fontWeight: 'bold', color: isSelected ? 'black' : 'white' }}>{profile.buddyNo}</span>
+              </div>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>Buddy No.</p>
+              
+              {/* Rank Title */}
+              <h2 style={{ margin: '1rem 0 0.25rem 0', color: 'var(--primary-navy)', fontSize: '1.4rem' }}>
+                {profile.status === 'promoted_cpl' ? 'Cpl.' : profile.status === 'promoted_lcpl' ? 'LCpl.' : 'Cdt.'} {profile.name}
+              </h2>
+              
+              {/* Details Grid */}
+              <div style={{ width: '100%', marginTop: '1.25rem', borderTop: '1px solid var(--border-color)', paddingTop: '1.25rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.85rem' }}>
+                  <div>
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Regimental No.</p>
+                    <p style={{ margin: '0.2rem 0 0 0', fontWeight: '600', color: 'var(--text-primary)' }}>{profile.regimentalNo}</p>
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Current Rank</p>
+                    <p style={{ margin: '0.2rem 0 0 0', fontWeight: '700', color: isSelected ? '#B8860B' : 'var(--accent-green)' }}>
+                      {profile.status === 'promoted_cpl' ? 'Corporal (CPL)' : profile.status === 'promoted_lcpl' ? 'Lance Corporal (LCPL)' : 'Cadet'}
+                    </p>
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Department</p>
+                    <p style={{ margin: '0.2rem 0 0 0', fontWeight: '600', color: 'var(--text-primary)' }}>{profile.department}</p>
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Semester</p>
+                    <p style={{ margin: '0.2rem 0 0 0', fontWeight: '600', color: 'var(--text-primary)' }}>{profile.semester || '-'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Card Footer */}
+            <div style={{ background: 'var(--surface-grey)', padding: '0.75rem 1.5rem', fontSize: '0.7rem', color: 'var(--text-secondary)', textAlign: 'center', borderTop: '1px solid var(--border-color)' }}>
+              Assam University Silchar • Session 2026-2027
             </div>
           </div>
         </div>

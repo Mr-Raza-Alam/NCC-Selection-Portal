@@ -74,9 +74,15 @@ app.get('/api/public/broadcast', async (req, res) => {
     const Settings = require('./models/Settings');
     const settings = await Settings.findOne();
     if (!settings) {
-      return res.json({ broadcastMessage: '', broadcastTarget: 'none' });
+      return res.json({ 
+        enrollment: { broadcastMessage: '', broadcastTarget: 'none' },
+        rank: { broadcastMessage: '', broadcastTarget: 'none' }
+      });
     }
-    res.json({ broadcastMessage: settings.broadcastMessage, broadcastTarget: settings.broadcastTarget });
+    res.json({ 
+      enrollment: { broadcastMessage: settings.broadcastMessage || '', broadcastTarget: settings.broadcastTarget || 'none' },
+      rank: { broadcastMessage: settings.rank_broadcastMessage || '', broadcastTarget: settings.rank_broadcastTarget || 'none' }
+    });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }

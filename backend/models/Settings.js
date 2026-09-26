@@ -22,7 +22,9 @@ const settingsSchema = new mongoose.Schema({
   rank_r2Cutoff: { type: Number, default: null },
   rank_r3Cutoff: { type: Number, default: null },
   broadcastMessage: { type: String, default: '' },
-  broadcastTarget: { type: String, enum: ['none', 'landing', 'dashboard', 'both'], default: 'none' }
+  broadcastTarget: { type: String, enum: ['none', 'landing', 'dashboard', 'both'], default: 'none' },
+  rank_broadcastMessage: { type: String, default: '' },
+  rank_broadcastTarget: { type: String, enum: ['none', 'landing', 'dashboard', 'both'], default: 'none' }
 });
 
 module.exports = mongoose.model('Settings', settingsSchema);
