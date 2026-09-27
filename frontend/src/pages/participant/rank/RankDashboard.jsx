@@ -29,6 +29,10 @@ const RankDashboard = () => {
 
   useEffect(() => {
     if (profile?.testWindowStart && profile?.testWindowEnd) {
+      if (profile.isTestTimeFinalized === false) {
+        setTestStatus('date_announced');
+        return;
+      }
       const updateTimer = () => {
         const now = new Date();
         const start = new Date(profile.testWindowStart);
@@ -206,6 +210,17 @@ const RankDashboard = () => {
               
               {profile.status === 'r_r1_qualified' && !profile.r2Completed && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
+                  {testStatus === 'date_announced' && (
+                    <div style={{ padding: '1rem 2rem', background: 'var(--surface-grey)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                      <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>📅 Test Date Confirmed:</p>
+                      <h3 style={{ margin: '0.5rem 0', color: 'var(--primary-navy)' }}>
+                        {new Date(profile.testWindowStart).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                      </h3>
+                      <p style={{ margin: 0, color: 'var(--warning-amber)', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                        ⏳ Exact time will be updated here shortly.
+                      </p>
+                    </div>
+                  )}
                   {testStatus === 'before' && (
                     <div style={{ padding: '1rem 2rem', background: 'var(--surface-grey)', borderRadius: '8px', border: '1px solid var(--border-color)', animation: 'pulse 2s infinite' }}>
                       <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Written Test opens in:</p>

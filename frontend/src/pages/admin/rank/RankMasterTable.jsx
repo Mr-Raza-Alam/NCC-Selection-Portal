@@ -41,6 +41,17 @@ const RankMasterTable = () => {
     }
   };
 
+  const handleAttendanceBonusChange = async (candidateId, bonus) => {
+    try {
+      await api.post('/rank-admin/r3/attendance-bonus', { candidateId, bonus: Number(bonus) });
+      toast.success('Attendance Bonus saved');
+      fetchData();
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to save attendance bonus');
+    }
+  };
+
   const handleDeleteEliminated = async () => {
     if (!window.confirm("Are you sure you want to permanently delete all eliminated records?")) return;
     try {
@@ -87,7 +98,7 @@ const RankMasterTable = () => {
   };
 
   const handleExportCSV = () => {
-    const headers = ['Name', 'B_Code', 'Department', 'R1', 'R2', 'R3', 'Total', 'Status'];
+    const headers = ['Name', 'B_Code', 'Department', 'R1', 'R2', 'R3', 'Att. Bonus', 'Total', 'Status'];
     const rows = getSortedData().map(m => [
       m.name,
       m.candidateId?.buddyNo || '',
@@ -95,6 +106,7 @@ const RankMasterTable = () => {
       m.r1 ?? 0,
       m.r2 ?? 0,
       m.r3 ?? 0,
+      m.attendanceBonus ?? 0,
       m.total ?? 0,
       m.status
     ]);
@@ -183,6 +195,7 @@ const RankMasterTable = () => {
               <th>R1</th>
               <th>R2</th>
               <th>R3</th>
+              <th>Att. (5)</th>
               <th onClick={() => sortData('total')} style={{ cursor: 'pointer' }}>Total {sortConfig.key === 'total' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</th>
               <th>Status</th>
               {(role === 'cto' || role === 'lead_admin') && (
@@ -202,6 +215,17 @@ const RankMasterTable = () => {
                 <td>{m.r1 ?? '-'}</td>
                 <td>{m.r2 ?? '-'}</td>
                 <td>{m.r3 ?? '-'}</td>
+                <td>
+                  {['lead_admin', 'cto'].includes(role) ? (
+                    <input 
+                      type="number" 
+                      min="0" max="5" 
+                      defaultValue={m.attendanceBonus ?? 0}
+                      onBlur={(e) => handleAttendanceBonusChange(m.candidateId._id, e.target.value)}
+                      style={{ width: '45px', padding: '0.2rem', textAlign: 'center', border: '1px solid var(--border-color)', borderRadius: '4px' }}
+                    />
+                  ) : (m.attendanceBonus ?? 0)}
+                </td>
                 
                 <td style={{ fontWeight: 'bold', color: 'var(--accent-green)', fontSize: '1.2rem' }}>{m.total}</td>
                 

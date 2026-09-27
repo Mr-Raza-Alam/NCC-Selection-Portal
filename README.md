@@ -24,6 +24,8 @@ This application provides a seamless, secure, and intuitive platform for both **
   - Lead Admins upload a pre-verified CSV of 2nd-year cadets (mapping Name, Regimental No, and Buddy No).
   - 2nd-year cadets verify their identity against this strict list to register and set their password.
   - CTO Master Table enforces rank quotas via a specialized Dropdown (Cadet, Promoted CPL, Promoted LCPL) replacing the standard checkbox.
+  - **Attendance Bonus Integration**: Specifically for the 2nd-year rank selection, CTOs can award up to 5 bonus marks based on parade attendance directly within the R3 Master Table, instantly auto-calculating into the grand total.
+- **Dynamic Test Scheduling (Date First, Time Later)**: Configure the test date early to show a calm "Date Announced" UI on student dashboards, and check "Finalize & Announce Exact Time" a day prior to seamlessly flip their UI into a live countdown timer.
 - **Test Management**: Configure test durations, toggle results visibility, and set strict Test Window start/end times (locked to IST).
 - **Question Bank Management**: Easily download a CSV template and upload hundreds of test questions instantly using an optimized in-memory CSV parser.
 - **Student Management**: View all registered students, their basic details, and test status. Download raw student records as a CSV file. Includes the ability for admins to safely edit and correct student profiles.

@@ -13,6 +13,9 @@ exports.getQuestions = async (req, res) => {
     }
 
     const config = await TestConfig.findOne({ testType: 'rank_selection' });
+    if (config && !config.isTimeFinalized) {
+      return res.status(403).json({ message: 'Exact test time has not been finalized yet.' });
+    }
     if (config && config.windowStart && config.windowEnd) {
       const now = new Date();
       const start = new Date(config.windowStart);

@@ -4,7 +4,7 @@ import api from '../../../utils/api';
 import toast from 'react-hot-toast';
 
 const TestManagement = () => {
-  const [config, setConfig] = useState({ timerMinutes: 30, windowStart: '', windowEnd: '', resultsVisibility: false });
+  const [config, setConfig] = useState({ timerMinutes: 30, windowStart: '', windowEnd: '', isTimeFinalized: false, resultsVisibility: false });
   const [overview, setOverview] = useState({ r2Active: false, totalStudents: 0, attemptedStudents: 0 });
 
   const location = useLocation();
@@ -179,6 +179,19 @@ const TestManagement = () => {
               value={config.windowEnd} 
               onChange={e => setConfig({ ...config, windowEnd: e.target.value })} 
             />
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <input 
+              type="checkbox" 
+              id="isTimeFinalized"
+              checked={config.isTimeFinalized} 
+              onChange={e => setConfig({ ...config, isTimeFinalized: e.target.checked })} 
+              style={{ width: '18px', height: '18px' }}
+            />
+            <label htmlFor="isTimeFinalized" style={{ margin: 0, cursor: 'pointer', color: 'var(--text-primary)', fontWeight: 'bold' }}>
+              Finalize & Announce Exact Time to Candidates
+            </label>
           </div>
 
           <div style={{ display: 'flex', gap: '1rem' }}>

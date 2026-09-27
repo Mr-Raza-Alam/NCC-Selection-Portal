@@ -26,7 +26,8 @@ exports.getProfile = async (req, res) => {
       r3Completed: !!r3,
       r3Score: r3 ? r3.r3Score : null,
       testWindowStart: config ? config.windowStart : null,
-      testWindowEnd: config ? config.windowEnd : null
+      testWindowEnd: config ? config.windowEnd : null,
+      isTestTimeFinalized: config ? config.isTimeFinalized : false
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

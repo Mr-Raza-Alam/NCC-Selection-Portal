@@ -116,6 +116,7 @@ exports.getRankProfile = async (req, res) => {
     if (testConfig) {
        profileData.testWindowStart = testConfig.windowStart;
        profileData.testWindowEnd = testConfig.windowEnd;
+       profileData.isTestTimeFinalized = testConfig.isTimeFinalized;
     }
 
     res.json(profileData);

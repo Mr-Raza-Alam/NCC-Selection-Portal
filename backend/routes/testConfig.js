@@ -59,12 +59,13 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const testType = req.query.type || 'new_enrollment';
-    const { timerMinutes, windowStart, windowEnd, resultsVisibility } = req.body;
+    const { timerMinutes, windowStart, windowEnd, isTimeFinalized, resultsVisibility } = req.body;
     let config = await ensureConfig(testType);
 
     config.timerMinutes = timerMinutes;
     config.windowStart = windowStart || null;
     config.windowEnd = windowEnd || null;
+    config.isTimeFinalized = isTimeFinalized || false;
     config.resultsVisibility = resultsVisibility;
 
     await config.save();
