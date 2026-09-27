@@ -1,6 +1,6 @@
 # NCC Selection Portal (Assam University Silchar)
 
-Welcome to the **NCC Selection Portal**, a comprehensive web application designed to streamline the recruitment and selection process for the National Cadet Corps (NCC) at Assam University Silchar (2026-2027).
+Welcome to the **NCC Selection Portal**, a comprehensive web application designed to streamline the recruitment and selection process for the National Cadet Corps (NCC) at Assam University Silchar.
 
 This application provides a seamless, secure, and intuitive platform for both **Participants (Students)** to register and take their written tests, and **Admins** to manage candidates, test configurations, and selection results.
 
