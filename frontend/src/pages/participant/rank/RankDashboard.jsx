@@ -13,58 +13,43 @@ const RankDashboard = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [bannerDismissed, setBannerDismissed] = useState(false);
 
+  const [r2Data, setR2Data] = useState(null);
+  const [detailedResult, setDetailedResult] = useState(null);
+  const [showResultModal, setShowResultModal] = useState(false);
+
   useEffect(() => {
-    // Need a new route in participantRoutes or rankAuthRoutes to get rank profile
-    // Or just a specific rank profile route. Let's assume we create GET /api/rank-auth/profile
-    const fetchProfile = async () => {
+    const fetchProfileAndStatus = async () => {
       try {
-        const { data } = await api.get('/rank-auth/profile');
-        setProfile(data);
+        const [profileRes, statusRes] = await Promise.all([
+          api.get('/rank-auth/profile'),
+          api.get('/rank-test/status')
+        ]);
+        setProfile(profileRes.data);
+        setR2Data(statusRes.data);
       } catch (err) {
         console.error(err);
       }
     };
-    fetchProfile();
+    fetchProfileAndStatus();
+
+    const interval = setInterval(async () => {
+      try {
+        const { data } = await api.get('/rank-test/status');
+        setR2Data(data);
+      } catch(err){}
+    }, 10000);
+    return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (profile?.testWindowStart && profile?.testWindowEnd) {
-      if (profile.isTestTimeFinalized === false) {
-        setTestStatus('date_announced');
-        return;
-      }
-      const updateTimer = () => {
-        const now = new Date();
-        const start = new Date(profile.testWindowStart);
-        const end = new Date(profile.testWindowEnd);
-
-        if (now < start) {
-          setTestStatus('before');
-          const diff = start - now;
-          const hours = Math.floor(diff / 3600000);
-          const mins = Math.floor((diff % 3600000) / 60000);
-          const secs = Math.floor((diff % 60000) / 1000);
-          if (hours > 24) {
-             setTimeRemaining(`${Math.floor(hours/24)} days left`);
-          } else if (hours > 0) {
-             setTimeRemaining(`${hours}h ${mins}m`);
-          } else {
-             setTimeRemaining(`${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`);
-          }
-        } else if (now >= start && now <= end) {
-          setTestStatus('open');
-        } else {
-          setTestStatus('closed');
-        }
-      };
-      
-      updateTimer();
-      const interval = setInterval(updateTimer, 1000);
-      return () => clearInterval(interval);
-    } else if (profile) {
-      setTestStatus('open');
+  const handleViewResult = async () => {
+    try {
+      const res = await api.get('/rank-test/result');
+      setDetailedResult(res.data);
+      setShowResultModal(true);
+    } catch (err) {
+      console.error(err);
     }
-  }, [profile]);
+  };
 
   if (!profile) return <Loader />;
 
@@ -188,97 +173,101 @@ const RankDashboard = () => {
             </div>
           )}
 
-          <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ marginTop: '2rem', display: 'flex', flexWrap: 'wrap', gap: '3rem', justifyContent: 'center', alignItems: 'flex-start' }}>
             
-            <div className="glass-card" style={{ width: '100%', maxWidth: '400px', opacity: (profile.status === 'absent' && !profile.r2Completed) ? 0.5 : 1 }}>
-              <h3>Round 1 (Physical Test)</h3>
-              {profile.status === 'cadet' && !profile.r1Completed && <p>Test in progress...</p>}
-              {(['r_r1_qualified', 'r_r2_qualified', 'r_r3_qualified', 'promoted_cpl', 'promoted_lcpl'].includes(profile.status)) && (
-                <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>Physical Test Qualified ✓ (Score: {profile.r1Score ?? '-'})</p>
-              )}
-              {profile.status === 'cadet' && profile.r1Completed && profile.r1Score !== null && (
-                <p style={{ color: 'var(--warning-amber)', fontWeight: 'bold' }}>Physical Test Concluded (Score: {profile.r1Score ?? '-'})</p>
-              )}
-              {profile.status === 'absent' && !profile.r2Completed && <p style={{ color: 'var(--danger-red)' }}>Absent in R1</p>}
-            </div>
-
-            <div style={{ fontSize: '2.5rem', color: '#87CEEB', fontWeight: 'bold', margin: '0.5rem 0' }}>↓</div>
-
-            <div className="glass-card" style={{ width: '100%', maxWidth: '400px', opacity: (profile.status === 'absent' && profile.r2Completed && !profile.r3Completed) ? 0.5 : 1 }}>
-              <h3>Round 2 (Written Test)</h3>
-              {profile.status === 'cadet' && !profile.r1Completed && <p>Waiting for R1 Results...</p>}
+            {/* ZONE A: PROMOTION TRACK */}
+            <div style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+              <h2 style={{ color: 'var(--primary-navy)', borderBottom: '2px solid #87CEEB', paddingBottom: '0.5rem' }}>🎖️ Promotion Tracker</h2>
               
-              {profile.status === 'r_r1_qualified' && !profile.r2Completed && (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
-                  {testStatus === 'date_announced' && (
-                    <div style={{ padding: '1rem 2rem', background: 'var(--surface-grey)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                      <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>📅 Test Date Confirmed:</p>
-                      <h3 style={{ margin: '0.5rem 0', color: 'var(--primary-navy)' }}>
-                        {new Date(profile.testWindowStart).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                      </h3>
-                      <p style={{ margin: 0, color: 'var(--warning-amber)', fontSize: '0.85rem', fontWeight: 'bold' }}>
-                        ⏳ Exact time will be updated here shortly.
+              <div className="glass-card" style={{ width: '100%', maxWidth: '400px', opacity: (profile.status === 'absent' && !profile.r3Completed) ? 0.5 : 1 }}>
+                <h3>Round 1 (Physical Test)</h3>
+                {profile.status === 'cadet' && !profile.r1Completed && <p>Test in progress...</p>}
+                {(['r_r1_qualified', 'r_r3_qualified', 'promoted_cpl', 'promoted_lcpl'].includes(profile.status)) && (
+                  <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>Physical Test Qualified ✓ (Score: {profile.r1Score ?? '-'})</p>
+                )}
+                {profile.status === 'cadet' && profile.r1Completed && profile.r1Score !== null && (
+                  <p style={{ color: 'var(--warning-amber)', fontWeight: 'bold' }}>Physical Test Concluded (Score: {profile.r1Score ?? '-'})</p>
+                )}
+                {profile.status === 'absent' && !profile.r3Completed && <p style={{ color: 'var(--danger-red)' }}>Absent in R1</p>}
+              </div>
+
+              <div style={{ fontSize: '2.5rem', color: '#87CEEB', fontWeight: 'bold', margin: '0.25rem 0' }}>↓</div>
+
+              <div className="glass-card" style={{ width: '100%', maxWidth: '400px', opacity: (profile.status === 'absent' && profile.r3Completed) ? 0.5 : 1 }}>
+                <h3>Round 3 (Interview)</h3>
+                {profile.status === 'cadet' && !profile.r1Completed && <p>Waiting for R1 Results...</p>}
+                
+                {profile.status === 'r_r1_qualified' && (
+                  <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>Start-R3 (Proceed to Interview Desk)</p>
+                )}
+                
+                {['r_r3_qualified', 'promoted_cpl', 'promoted_lcpl'].includes(profile.status) && (
+                  <div>
+                    <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>Interview Completed ✓ (Score: {profile.r3Score ?? '-'})</p>
+                    {profile.status === 'r_r3_qualified' && (
+                      <p style={{ color: 'var(--warning-amber)', fontWeight: 'bold', fontSize: '0.9rem', marginTop: '0.5rem' }}>
+                        Waiting for CTO Sir's Final Rank Declaration.
                       </p>
-                    </div>
-                  )}
-                  {testStatus === 'before' && (
-                    <div style={{ padding: '1rem 2rem', background: 'var(--surface-grey)', borderRadius: '8px', border: '1px solid var(--border-color)', animation: 'pulse 2s infinite' }}>
-                      <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Written Test opens in:</p>
-                      <h2 style={{ margin: 0, color: 'var(--primary-navy)', fontFamily: 'monospace', fontSize: '2.5rem' }}>{timeRemaining}</h2>
-                    </div>
-                  )}
-                  {testStatus === 'open' && (
-                    <button className="btn btn-primary" style={{ width: '100%', fontSize: '1.2rem', padding: '1rem', animation: 'fadeIn 1s ease-in' }} onClick={() => navigate('/rank-test-instructions')}>
-                      Start R2 Written Test
-                    </button>
-                  )}
-                  {testStatus === 'closed' && (
-                    <p style={{ color: 'var(--danger-red)', fontWeight: 'bold' }}>Test Window is Closed</p>
-                  )}
-                </div>
-              )}
-              
-              {profile.status === 'r_r1_qualified' && profile.r2Completed && (
-                <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>Test Submitted! Waiting for results...</p>
-              )}
-
-              {(['r_r2_qualified', 'r_r3_qualified', 'promoted_cpl', 'promoted_lcpl'].includes(profile.status)) && (
-                <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>Written Test Qualified ✓ (Score: {profile.r2Score ?? '-'})</p>
-              )}
-              {profile.status === 'cadet' && profile.r2Completed && profile.r2Score !== null && (
-                <p style={{ color: 'var(--warning-amber)', fontWeight: 'bold' }}>Written Test Concluded (Score: {profile.r2Score ?? '-'})</p>
-              )}
-              
-              {profile.status === 'absent' && profile.r2Completed && !profile.r3Completed && <p style={{ color: 'var(--danger-red)' }}>Absent in R2</p>}
+                    )}
+                  </div>
+                )}
+                {profile.status === 'cadet' && profile.r3Completed && profile.r3Score !== null && (
+                  <div>
+                    <p style={{ color: 'var(--warning-amber)', fontWeight: 'bold' }}>Interview Completed (Score: {profile.r3Score ?? '-'})</p>
+                  </div>
+                )}
+                
+                {profile.status === 'absent' && profile.r3Completed && <p style={{ color: 'var(--danger-red)' }}>Absent in R3</p>}
+              </div>
             </div>
 
-            <div style={{ fontSize: '2.5rem', color: '#87CEEB', fontWeight: 'bold', margin: '0.5rem 0' }}>↓</div>
-
-            <div className="glass-card" style={{ width: '100%', maxWidth: '400px', opacity: (profile.status === 'absent' && profile.r3Completed) ? 0.5 : 1 }}>
-              <h3>Round 3 (Interview)</h3>
-              {(['r_r1_qualified'].includes(profile.status) || (profile.status === 'cadet' && !profile.r1Completed)) && <p>Waiting for R2 Results...</p>}
+            {/* ZONE B: KNOWLEDGE HUB (Standalone Written Test) */}
+            <div style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+              <h2 style={{ color: 'var(--primary-navy)', borderBottom: '2px dashed var(--accent-green)', paddingBottom: '0.5rem' }}>📚 Knowledge Hub</h2>
               
-              {profile.status === 'r_r2_qualified' && (
-                <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>Start-R3 (Proceed to Interview Desk)</p>
-              )}
-              
-              {['r_r3_qualified', 'promoted_cpl', 'promoted_lcpl'].includes(profile.status) && (
-                <div>
-                  <p style={{ color: 'var(--accent-green)', fontWeight: 'bold' }}>Interview Completed ✓ (Score: {profile.r3Score ?? '-'})</p>
-                  {profile.status === 'r_r3_qualified' && (
-                    <p style={{ color: 'var(--warning-amber)', fontWeight: 'bold', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-                      Waiting for CTO Sir's Final Rank Declaration.
+              <div className="glass-card" style={{ width: '100%', maxWidth: '400px', border: '1px solid var(--accent-green)' }}>
+                <h3>Regular Written Assessment</h3>
+                
+                {r2Data && !r2Data.result?.completed && !r2Data.settings?.r_r2_active && !r2Data.settings?.r_r2_result && (
+                  <div style={{ padding: '1rem 2rem', background: 'var(--surface-grey)', borderRadius: '8px', border: '1px solid var(--border-color)', width: '100%', marginTop: '1rem' }}>
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>📅 Scheduled Test Date:</p>
+                    <h3 style={{ margin: '0.5rem 0', color: 'var(--primary-navy)' }}>
+                      {r2Data.settings?.r_r2_testDate ? new Date(r2Data.settings.r_r2_testDate).toLocaleDateString() : 'TBA'}
+                    </h3>
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                      Time: {r2Data.settings?.r_r2_testTime || 'TBA'}
                     </p>
-                  )}
-                </div>
-              )}
-              {profile.status === 'cadet' && profile.r3Completed && profile.r3Score !== null && (
-                <div>
-                  <p style={{ color: 'var(--warning-amber)', fontWeight: 'bold' }}>Interview Completed (Score: {profile.r3Score ?? '-'})</p>
-                </div>
-              )}
-              
-              {profile.status === 'absent' && profile.r3Completed && <p style={{ color: 'var(--danger-red)' }}>Absent in R3</p>}
+                    <p style={{ margin: '1rem 0 0 0', color: 'var(--warning-amber)', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                      ⏳ Please wait here. The "Start Test" button will appear automatically when the admin activates the test.
+                    </p>
+                  </div>
+                )}
+                
+                {r2Data && !r2Data.result?.completed && r2Data.settings?.r_r2_active && (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
+                    <button className="btn btn-primary" style={{ width: '100%', fontSize: '1.2rem', padding: '1rem', animation: 'fadeIn 1s ease-in' }} onClick={() => navigate('/participant/rank/test')}>
+                      Start Written Assessment
+                    </button>
+                  </div>
+                )}
+
+                {r2Data && r2Data.result?.completed && !r2Data.settings?.r_r2_result && (
+                  <div style={{ marginTop: '1rem' }}>
+                    <p style={{ color: 'var(--accent-green)', fontWeight: 'bold', fontSize: '1.1rem' }}>Test Submitted ✓</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Waiting for admin to finalize the round to view your results.</p>
+                  </div>
+                )}
+                
+                {r2Data && r2Data.result?.completed && r2Data.settings?.r_r2_result && (
+                  <div style={{ marginTop: '1rem' }}>
+                    <p style={{ color: 'var(--accent-green)', fontWeight: 'bold', fontSize: '1.1rem' }}>Assessment Finalized ✓</p>
+                    <button className="btn btn-outline" style={{ borderColor: 'var(--accent-green)', color: 'var(--accent-green)', borderWidth: '2px', width: '100%', marginTop: '1rem' }} onClick={handleViewResult}>
+                      View Detailed Result
+                    </button>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '1rem' }}>* This score is for continuous learning and does not affect Rank Promotion merit.</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -379,6 +368,90 @@ const RankDashboard = () => {
             <h3 style={{ marginTop: 0, color: 'var(--primary-navy)' }}>Help & Support</h3>
             <p style={{ color: 'var(--text-secondary)', margin: '0.25rem 0' }}>For any technical issues or queries, contact the admin desk.</p>
             <p style={{ color: 'var(--text-secondary)', margin: '0.25rem 0' }}>Email: <a href="mailto:support@ncc.example.com">support@ncc.example.com</a></p>
+          </div>
+        </div>
+      )}
+
+      {/* DETAILED RESULT MODAL */}
+      {showResultModal && detailedResult && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem'
+        }}>
+          <div className="glass-card" style={{ width: '100%', maxWidth: '900px', maxHeight: '85vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ color: 'var(--primary-navy)' }}>Your Knowledge Score: {detailedResult.totalScore}</h3>
+              <button className="btn btn-outline" onClick={() => setShowResultModal(false)}>Close</button>
+            </div>
+            
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Q.No</th>
+                    <th>Question</th>
+                    <th>Your Answer</th>
+                    <th>Correct Answer</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {detailedResult.cadetAnswers.map((ans, idx) => (
+                    <tr key={idx} style={{ backgroundColor: ans.isCorrect ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)' }}>
+                      <td>{idx + 1}</td>
+                      <td>{ans.questionText}</td>
+                      <td>{ans.markedAnswer}</td>
+                      <td style={{ fontWeight: 'bold' }}>{ans.correctAnswer}</td>
+                      <td style={{ fontSize: '1.5rem', textAlign: 'center' }}>
+                        {ans.isCorrect ? '✅' : '❌'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DETAILED RESULT MODAL */}
+      {showResultModal && detailedResult && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem'
+        }}>
+          <div className="glass-card" style={{ width: '100%', maxWidth: '900px', maxHeight: '85vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ color: 'var(--primary-navy)' }}>Your Knowledge Score: {detailedResult.totalScore}</h3>
+              <button className="btn btn-outline" onClick={() => setShowResultModal(false)}>Close</button>
+            </div>
+            
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Q.No</th>
+                    <th>Question</th>
+                    <th>Your Answer</th>
+                    <th>Correct Answer</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {detailedResult.cadetAnswers.map((ans, idx) => (
+                    <tr key={idx} style={{ backgroundColor: ans.isCorrect ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)' }}>
+                      <td>{idx + 1}</td>
+                      <td>{ans.questionText}</td>
+                      <td>{ans.markedAnswer}</td>
+                      <td style={{ fontWeight: 'bold' }}>{ans.correctAnswer}</td>
+                      <td style={{ fontSize: '1.5rem', textAlign: 'center' }}>
+                        {ans.isCorrect ? '✅' : '❌'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

@@ -6,8 +6,7 @@ import ForgotPassword from './pages/participant/enrollment/ForgotPassword';
 import Dashboard from './pages/participant/enrollment/Dashboard';
 import Test from './pages/participant/enrollment/Test';
 import TestInstructions from './pages/participant/enrollment/TestInstructions';
-import RankTest from './pages/participant/rank/RankTest';
-import RankTestInstructions from './pages/participant/rank/RankTestInstructions';
+import RankLiveTest from './pages/participant/rank/RankLiveTest';
 import { Toaster } from 'react-hot-toast';
 import BroadcastBanner from './components/BroadcastBanner';
 import AdminLogin from './pages/admin/shared/AdminLogin';
@@ -114,12 +113,8 @@ const AppContent = () => {
             <PrivateRoute role="participant"><Test /></PrivateRoute>
           } />
           
-          <Route path="/rank-test-instructions" element={
-            <PrivateRoute role="rank_candidate"><RankTestInstructions /></PrivateRoute>
-          } />
-          
-          <Route path="/rank-test" element={
-            <PrivateRoute role="rank_candidate"><RankTest /></PrivateRoute>
+          <Route path="/participant/rank/test" element={
+            <PrivateRoute role="rank_candidate"><RankLiveTest /></PrivateRoute>
           } />
           
           <Route path="/admin/login" element={<AdminLogin />} />

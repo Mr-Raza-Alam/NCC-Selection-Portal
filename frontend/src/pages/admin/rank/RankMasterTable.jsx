@@ -98,13 +98,12 @@ const RankMasterTable = () => {
   };
 
   const handleExportCSV = () => {
-    const headers = ['Name', 'B_Code', 'Department', 'R1', 'R2', 'R3', 'Att. Bonus', 'Total', 'Status'];
+    const headers = ['Name', 'B_Code', 'Department', 'R1', 'R3', 'Att. Bonus', 'Total', 'Status'];
     const rows = getSortedData().map(m => [
       m.name,
       m.candidateId?.buddyNo || '',
       m.department || '',
       m.r1 ?? 0,
-      m.r2 ?? 0,
       m.r3 ?? 0,
       m.attendanceBonus ?? 0,
       m.total ?? 0,
@@ -112,9 +111,9 @@ const RankMasterTable = () => {
     ]);
     
     let csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].map(e => e.join(",")).join("\n");
-    const enbuddyNodUri = enbuddyNoURI(csvContent);
+    const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
-    link.setAttribute("href", enbuddyNodUri);
+    link.setAttribute("href", encodedUri);
     link.setAttribute("download", "master_merit_list.csv");
     document.body.appendChild(link);
     link.click();
@@ -193,7 +192,6 @@ const RankMasterTable = () => {
               <th>B_Code</th>
               <th>Department</th>
               <th>R1</th>
-              <th>R2</th>
               <th>R3</th>
               <th>Att. (5)</th>
               <th onClick={() => sortData('total')} style={{ cursor: 'pointer' }}>Total {sortConfig.key === 'total' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</th>
@@ -213,7 +211,6 @@ const RankMasterTable = () => {
                 <td style={{ color: 'var(--accent-green)' }}>{m.candidateId?.buddyNo}</td>
                 <td>{m.department}</td>
                 <td>{m.r1 ?? '-'}</td>
-                <td>{m.r2 ?? '-'}</td>
                 <td>{m.r3 ?? '-'}</td>
                 <td>
                   {['lead_admin', 'cto'].includes(role) ? (

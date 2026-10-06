@@ -15,7 +15,7 @@ const rankCandidateSchema = new mongoose.Schema({
   // Status matches the enrollment logic, but tailored for Rank
   status: { 
     type: String, 
-    enum: ['cadet', 'r_r1_qualified', 'r_r2_qualified', 'r_r3_qualified', 'promoted_cpl', 'promoted_lcpl', 'absent'],
+    enum: ['cadet', 'r_r1_qualified', 'r_r3_qualified', 'promoted_cpl', 'promoted_lcpl', 'absent'],
     default: 'cadet'
   }
 });

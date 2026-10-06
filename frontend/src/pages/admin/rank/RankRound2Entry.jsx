@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../utils/api';
 import toast from 'react-hot-toast';
@@ -7,91 +7,105 @@ import Loader from '../../../components/Loader';
 const RankRound2Entry = () => {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
-  const [cutoff, setCutoff] = useState('');
-  const [showCutoffModal, setShowCutoffModal] = useState(false);
+  const [settings, setSettings] = useState(null);
   const [showDoneModal, setShowDoneModal] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [isCompleted, setIsCompleted] = useState(false);
   const [processingMsg, setProcessingMsg] = useState('');
+
+  const pollingRef = useRef(null);
 
   useEffect(() => {
     fetchData();
+    return () => stopPolling();
   }, []);
+
+  useEffect(() => {
+    if (settings && settings.r_r2_active && !settings.r_r2_result) {
+      startPolling();
+    } else {
+      stopPolling();
+    }
+  }, [settings]);
+
+  const startPolling = () => {
+    if (pollingRef.current) return;
+    pollingRef.current = setInterval(() => {
+      api.get('/rank-admin/r2/table').then(res => {
+        setData(res.data);
+      }).catch(err => console.error(err));
+    }, 5000); // 5 seconds polling
+  };
+
+  const stopPolling = () => {
+    if (pollingRef.current) {
+      clearInterval(pollingRef.current);
+      pollingRef.current = null;
+    }
+  };
 
   const fetchData = async () => {
     try {
       const [res, settingsRes] = await Promise.all([
         api.get('/rank-admin/r2/table'),
-        api.get('/rank-admin/settings')
+        api.get('/rank-admin/test-settings')
       ]);
       setData(res.data);
-      setIsCompleted(settingsRes.data.r_r2_result);
-      if (!settingsRes.data.r_r2_entry && !settingsRes.data.r_r2_result) {
-        // Written test not active
-      }
+      setSettings(settingsRes.data);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const handleApplyCutoff = async () => {
-    setProcessingMsg('Applying Cutoff...');
+  const handleActivateTest = async () => {
+    setProcessingMsg('Activating Test...');
     try {
-      await api.post('/rank-admin/r2/cutoff', { cutoff: Number(cutoff) });
-      toast.success('Cutoff applied. Unqualified candidates will remain Cadets.');
-      setShowCutoffModal(false);
+      await api.post('/rank-admin/r2/start');
+      toast.success('Test is now LIVE for cadets!');
       fetchData();
     } catch (err) {
-      toast.error('Error applying cutoff');
+      toast.error('Failed to activate test');
     } finally {
       setProcessingMsg('');
     }
   };
 
   const handleDone = async () => {
-    setProcessingMsg('Finalizing Round 2...');
+    setProcessingMsg('Finalizing...');
     try {
       await api.post('/rank-admin/r2/done');
-      toast.success('Written Test Finalized! You are now viewing the locked results.');
+      toast.success('Test Finalized! Absentees marked 0.');
       setShowDoneModal(false);
       fetchData();
     } catch (err) {
-      console.error(err);
-      toast.error('Error finalizing R2');
+      toast.error('Error finalizing test');
     } finally {
       setProcessingMsg('');
     }
   };
 
-  if (!data) return <Loader />;
+  if (!data || !settings) return <Loader />;
+
+  const isCompleted = settings.r_r2_result;
+  const isActive = settings.r_r2_active;
 
   const filteredStudents = data.candidates.filter(p => {
     if (!searchTerm) return true;
     const term = String(searchTerm).toLowerCase();
     return (
       (p.name && String(p.name).toLowerCase().includes(term)) ||
-      (p.buddyNo && String(p.buddyNo).toLowerCase().includes(term)) ||
+      (p.regimentalNo && String(p.regimentalNo).toLowerCase().includes(term)) ||
       (p.department && String(p.department).toLowerCase().includes(term))
     );
   });
-
-
-
-  if (data.candidates.length === 0) {
-    return (
-      <div className="container" style={{ textAlign: 'center', marginTop: '3rem' }}>
-        <h2 style={{ color: 'var(--danger-red)' }}>No Record found</h2>
-        <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>No 2nd-year cadets are currently eligible or registered for this round.</p>
-      </div>
-    );
-  }
 
   return (
     <div>
       {processingMsg && <Loader overlay message={processingMsg} />}
       <div className="action-bar" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-        <h2 style={{ margin: 0 }}>{isCompleted ? "Written Test Results (Locked)" : "Written Test Results"}</h2>
+        <h2 style={{ margin: 0 }}>
+          {isCompleted ? "Written Test Results (Locked)" : isActive ? "🟢 LIVE: Written Test" : "Written Test Entry"}
+        </h2>
         
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <div style={{ padding: '0.5rem 1rem', backgroundColor: '#ebf8ff', color: '#2b6cb0', borderRadius: '4px', fontWeight: 'bold', border: '1px solid #bee3f8', fontSize: '0.9rem', marginRight: '0.5rem' }}>
@@ -99,28 +113,25 @@ const RankRound2Entry = () => {
           </div>
           <input 
             type="text" 
-            placeholder="Search Name, B_Code, Dept..." 
+            placeholder="Search Name, Reg. No..." 
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && setSearchTerm(searchInput)}
             style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)', minWidth: '220px' }}
           />
           <button className="btn btn-primary" onClick={() => setSearchTerm(searchInput)}>Search</button>
-          {searchTerm && (
-            <button className="btn btn-outline" onClick={() => { setSearchInput(''); setSearchTerm(''); }}>Clear</button>
-          )}
         </div>
 
         <div className="action-bar" style={{ margin: 0 }}>
-          {!isCompleted && (
-            <>
-              <div className="input-group" style={{ margin: 0 }}>
-                <label style={{ fontSize: '0.8rem' }}>Set R2 Cutoff</label>
-                <input type="number" value={cutoff} onChange={e => setCutoff(e.target.value)} style={{ width: '100%', maxWidth: '100px' }} />
-              </div>
-              <button className="btn btn-danger" onClick={() => setShowCutoffModal(true)}>Apply Cutoff</button>
-              <button className="btn btn-primary" onClick={() => setShowDoneModal(true)}>Done</button>
-            </>
+          {!isCompleted && !isActive && (
+            <button className="btn btn-primary" style={{ backgroundColor: 'var(--accent-blue)' }} onClick={handleActivateTest}>
+              Activate Test
+            </button>
+          )}
+          {!isCompleted && isActive && (
+            <button className="btn btn-outline" style={{ borderColor: 'var(--accent-green)', color: 'var(--accent-green)', borderWidth: '2px' }} onClick={() => setShowDoneModal(true)}>
+              Finalize Test
+            </button>
           )}
         </div>
       </div>
@@ -130,27 +141,29 @@ const RankRound2Entry = () => {
           <thead>
             <tr>
               <th>Name</th>
+              <th>Reg. No.</th>
               <th>Department</th>
-              <th>Attendance (P/A)</th>
-              <th>Score (out of 40)</th>
+              <th>Attendance</th>
+              <th>Test Score</th>
             </tr>
           </thead>
           <tbody>
             {filteredStudents.map(p => {
-              const r2Score = data.r2Scores.find(s => String(s.candidateId) === String(p._id) || (s.candidateId && s.candidateId._id && String(s.candidateId._id) === String(p._id)));
-              const isPresent = r2Score ? r2Score.attendance : true;
+              const r2Score = data.r2Scores.find(s => String(s.candidateId) === String(p._id));
               return (
                 <tr key={p._id}>
                   <td style={{ fontWeight: 'bold' }}>{p.name}</td>
+                  <td>{p.regimentalNo || 'N/A'}</td>
                   <td>{p.department}</td>
                   <td>
                     <select 
                       value={r2Score?.attendance || ''}
-                      disabled={isCompleted} 
+                      disabled={isCompleted || isActive} 
                       onChange={async (e) => {
                         const val = e.target.value;
                         await api.post('/rank-admin/r2/attendance', { candidateId: p._id, attendance: val });
-                        fetchData();
+                        // Re-fetch only table data
+                        api.get('/rank-admin/r2/table').then(res => setData(res.data));
                       }}
                       style={{ padding: '0.25rem', background: 'var(--bg-white)', color: 'inherit', border: '1px solid var(--border-color)' }}
                     >
@@ -160,23 +173,7 @@ const RankRound2Entry = () => {
                     </select>
                   </td>
                   <td style={{ fontWeight: 'bold', color: 'var(--accent-green)' }}>
-                    <input 
-                      type="number" 
-                      defaultValue={r2Score?.totalScore ?? ''} 
-                      onBlur={async (e) => {
-                        const score = e.target.value;
-                        if(score === '') return;
-                        try {
-                          await api.post('/rank-admin/r2/score', { candidateId: p._id, score: Number(score) });
-                          toast.success(`Score updated for ${p.name}`);
-                          fetchData();
-                        } catch (err) {
-                          toast.error('Failed to update score');
-                        }
-                      }}
-                      disabled={isCompleted || r2Score?.attendance === 'A'}
-                      style={{ padding: '0.25rem', width: '80px', border: '1px solid var(--border-color)', background: 'var(--bg-white)', color: 'inherit' }}
-                    />
+                    {r2Score?.completed ? (r2Score.totalScore ?? 0) : (isActive ? 'Testing...' : '-')}
                   </td>
                 </tr>
               );
@@ -184,25 +181,6 @@ const RankRound2Entry = () => {
           </tbody>
         </table>
       </div>
-
-      {showCutoffModal && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
-        }}>
-          <div className="glass-card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
-            <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Apply Cutoff?</h3>
-            <p style={{ marginBottom: '1rem' }}>This will mark candidates below the cutoff. Unqualified candidates will remain Cadets.</p>
-            <p style={{ color: 'var(--warning-amber)', marginBottom: '2rem', fontWeight: 'bold' }}>
-              Note: You must hit the 'Done' button after applying the cutoff to finalize the round.
-            </p>
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
-              <button className="btn btn-outline" onClick={() => setShowCutoffModal(false)}>Cancel</button>
-              <button className="btn btn-danger" onClick={handleApplyCutoff}>Yes, Apply Cutoff</button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {showDoneModal && (
         <div style={{
@@ -212,11 +190,11 @@ const RankRound2Entry = () => {
           <div className="glass-card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
             <h3 style={{ color: 'var(--primary-navy)', marginBottom: '1rem' }}>Finalize Written Test</h3>
             <p style={{ color: 'var(--text-primary)', marginBottom: '2rem', fontWeight: 'bold' }}>
-              Are you sure you want to finalize the Written Test? This will sync all written test scores to the Master Record. Make sure you have applied the cutoff first.
+              Are you sure you want to finalize? This will lock all scores and assign '0' to absentees.
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
               <button className="btn btn-outline" onClick={() => setShowDoneModal(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={handleDone}>Yes, Finalize</button>
+              <button className="btn btn-primary" style={{ backgroundColor: 'var(--accent-green)' }} onClick={handleDone}>Yes, Finalize</button>
             </div>
           </div>
         </div>

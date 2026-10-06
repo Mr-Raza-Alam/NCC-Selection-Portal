@@ -86,7 +86,7 @@ exports.enterR1Score = async (req, res) => {
     const record = await RankMasterRecord.findOne({ candidateId });
     if (record) {
       record.r1 = r1Result.totalScore;
-      record.total = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0);
+      record.total = (record.r1 || 0) + (record.r3 || 0) + (record.attendanceBonus || 0);
       await record.save();
     }
     
@@ -107,11 +107,7 @@ exports.finalizeR1 = async (req, res) => {
       );
     }
     
-    const masters = await RankMasterRecord.find();
-    for (let m of masters) {
-      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0);
-      await RankMasterRecord.updateOne({ _id: m._id }, { $set: { total } });
-    }
+    // Redundant Master Record total calculation loop removed as it's correctly synced on entry.
     
     const settings = await getRankSettings();
     settings.r_r1_result = true;
@@ -166,8 +162,9 @@ exports.startR2 = async (req, res) => {
   try {
     const settings = await getRankSettings();
     settings.r_r2_entry = true;
+    settings.r_r2_active = true;
     await settings.save();
-    res.json({ message: 'Round 2 Started' });
+    res.json({ message: 'Round 2 Activated for Cadets' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -198,13 +195,7 @@ exports.enterR2Score = async (req, res) => {
       { upsert: true, returnDocument: 'after' }
     );
 
-    // Sync to RankMasterRecord
-    const record = await RankMasterRecord.findOne({ candidateId });
-    if (record) {
-      record.r2 = score;
-      record.total = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0) + (record.attendanceBonus || 0);
-      await record.save();
-    }
+    // Removed sync to RankMasterRecord since R2 is decoupled from promotion merit list
 
     res.json({ message: 'R2 Score saved and synced' });
   } catch (error) {
@@ -233,69 +224,24 @@ exports.getR2Table = async (req, res) => {
 
 exports.finalizeR2 = async (req, res) => {
   try {
-    // Sync R2 totalScores to RankMasterRecord
-    const r2Results = await RankR2Result.find();
-    for (let r of r2Results) {
-      await RankMasterRecord.findOneAndUpdate(
-        { candidateId: r.candidateId },
-        { r2: r.totalScore }
-      );
-    }
-    
-    const masters = await RankMasterRecord.find();
-    for (let m of masters) {
-      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0) + (m.attendanceBonus || 0);
-      await RankMasterRecord.updateOne({ _id: m._id }, { $set: { total } });
-    }
+    // Give 0 to all absentees automatically
+    await RankR2Result.updateMany(
+      { attendance: 'A' },
+      { $set: { totalScore: 0, completed: true } }
+    );
     
     const settings = await getRankSettings();
     settings.r_r2_result = true;
+    settings.r_r2_active = false; // End live test
     await settings.save();
 
-    res.json({ message: 'R2 Finalized and synced to Master Table' });
+    res.json({ message: 'Written Test Finalized. Absentees marked 0.' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-exports.setR2Cutoff = async (req, res) => {
-  try {
-    const { cutoff } = req.body;
-    const settings = await getRankSettings();
-    settings.r_r2Cutoff = cutoff;
-    await settings.save();
-    
-    // Calculate cutoffs based on actual R2 results
-    const results = await RankR2Result.find();
-    const qualifiedIds = [];
-    const eliminatedIds = [];
-    
-    results.forEach(r => {
-      if (r.totalScore >= cutoff) {
-        qualifiedIds.push(r.candidateId);
-      } else {
-        eliminatedIds.push(r.candidateId);
-      }
-    });
-    
-    await RankCandidate.updateMany(
-      { _id: { $in: qualifiedIds }, status: 'r_r1_qualified' },
-      { $set: { status: 'r_r2_qualified' } }
-    );
-    
-    // Unqualified revert back to cadet
-    await RankCandidate.updateMany(
-      { _id: { $nin: qualifiedIds }, status: 'r_r1_qualified' },
-      { $set: { status: 'cadet' } }
-    );
-    
-    // No master record 'eliminated' update needed
-    
-    res.json({ message: 'R2 Cutoff applied. Unqualified candidates remain Cadets.' });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+
 
 // ==========================================
 // R3: INTERVIEW & MASTER TABLE
@@ -320,7 +266,7 @@ exports.getR3Table = async (req, res) => {
     // Fetch candidates who are currently r2_qualified OR who already have an R3 score
     const candidates = await RankCandidate.find({
       $or: [
-        { status: 'r_r2_qualified' },
+        { status: 'r_r1_qualified' }, // Now pulls from R1 directly, bypassing R2
         { _id: { $in: r3RankCandidateIds } }
       ]
     }).select('name department status');
@@ -349,7 +295,7 @@ exports.enterR3Score = async (req, res) => {
       const record = await RankMasterRecord.findOne({ candidateId });
       if (record) {
         record.r3 = r3Score;
-        record.total = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0) + (record.attendanceBonus || 0);
+        record.total = (record.r1 || 0) + (record.r3 || 0) + (record.attendanceBonus || 0);
         await record.save();
       }
     }
@@ -366,7 +312,7 @@ exports.updateAttendanceBonus = async (req, res) => {
     const record = await RankMasterRecord.findOne({ candidateId });
     if (!record) return res.status(404).json({ message: 'Record not found' });
 
-    const newTotal = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0) + (bonus || 0);
+    const newTotal = (record.r1 || 0) + (record.r3 || 0) + (bonus || 0);
 
     await RankMasterRecord.findOneAndUpdate(
       { candidateId },
@@ -386,7 +332,7 @@ exports.verifyDocs = async (req, res) => {
     const record = await RankMasterRecord.findOne({ candidateId });
     if (!record) return res.status(404).json({ message: 'Record not found' });
     
-    const newTotal = (record.r1 || 0) + (record.r2 || 0) + (record.r3 || 0) + (hs || 0) + (aCert || 0) + (other || 0) + (record.attendanceBonus || 0);
+    const newTotal = (record.r1 || 0) + (record.r3 || 0) + (hs || 0) + (aCert || 0) + (other || 0) + (record.attendanceBonus || 0);
     
     await RankMasterRecord.findOneAndUpdate(
       { candidateId },
@@ -410,16 +356,14 @@ exports.finalizeR3 = async (req, res) => {
       );
     }
 
-    // 2. Auto-calculate total for all master records
-    const masters = await RankMasterRecord.find();
-    for (let m of masters) {
-      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0) + (m.attendanceBonus || 0);
-      await RankMasterRecord.updateOne({ _id: m._id }, { $set: { total } });
-    }
+    // Redundant Master Record total calculation loop removed as it's correctly synced on entry.
+
+    // Upgrade ONLY candidates who actually received an R3 score to r_r3_qualified
+    const completedR3Results = await RankR3Result.find({ r3Score: { $exists: true, $ne: null } });
+    const completedCandidateIds = completedR3Results.map(r => r.candidateId);
     
-    // Upgrade R2 qualified to R3 qualified automatically
     await RankCandidate.updateMany(
-      { status: 'r_r2_qualified' },
+      { _id: { $in: completedCandidateIds }, status: 'r_r1_qualified' },
       { $set: { status: 'r_r3_qualified' } }
     );
 
@@ -610,6 +554,115 @@ exports.updateRankCandidateProfile = async (req, res) => {
     );
 
     res.json({ message: 'RankCandidate profile updated successfully', student: updatedRankCandidate });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// ==========================================
+// REGULAR ASSESSMENT: TEST MANAGEMENT (R2)
+// ==========================================
+
+exports.getTestSettings = async (req, res) => {
+  try {
+    const settings = await getRankSettings();
+    res.json(settings);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.updateTestSettings = async (req, res) => {
+  try {
+    const { r_r2_testDuration, r_r2_markPerQuestion, r_r2_testDate, r_r2_testTime, r_r2_active } = req.body;
+    const settings = await getRankSettings();
+    
+    if (r_r2_testDuration !== undefined) settings.r_r2_testDuration = r_r2_testDuration;
+    if (r_r2_markPerQuestion !== undefined) settings.r_r2_markPerQuestion = r_r2_markPerQuestion;
+    if (r_r2_testDate !== undefined) settings.r_r2_testDate = r_r2_testDate;
+    if (r_r2_testTime !== undefined) settings.r_r2_testTime = r_r2_testTime;
+    if (r_r2_active !== undefined) settings.r_r2_active = r_r2_active;
+    
+    await settings.save();
+    res.json({ message: 'Test settings updated successfully', settings });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const Question = require('../models/Question');
+const { parse } = require('csv-parse');
+
+exports.appendQuestions = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    const csvData = req.file.buffer.toString('utf-8');
+    
+    parse(csvData, { columns: true, skip_empty_lines: true, trim: true }, async (err, records) => {
+      if (err) return res.status(400).json({ message: 'Invalid CSV format' });
+      
+      const newQuestions = records.map(r => ({
+        questionText: r.questionText || r.Question,
+        options: [r.option1 || r.Option1, r.option2 || r.Option2, r.option3 || r.Option3, r.option4 || r.Option4],
+        correctAnswer: parseInt(r.correctAnswer || r.CorrectAnswer),
+        testType: 'rank_selection'
+      }));
+      
+      await Question.insertMany(newQuestions);
+      res.json({ message: `Successfully appended ${newQuestions.length} questions` });
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.replaceQuestions = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    const csvData = req.file.buffer.toString('utf-8');
+    
+    parse(csvData, { columns: true, skip_empty_lines: true, trim: true }, async (err, records) => {
+      if (err) return res.status(400).json({ message: 'Invalid CSV format' });
+      
+      const newQuestions = records.map(r => ({
+        questionText: r.questionText || r.Question,
+        options: [r.option1 || r.Option1, r.option2 || r.Option2, r.option3 || r.Option3, r.option4 || r.Option4],
+        correctAnswer: parseInt(r.correctAnswer || r.CorrectAnswer),
+        testType: 'rank_selection'
+      }));
+      
+      await Question.deleteMany({ testType: 'rank_selection' });
+      await Question.insertMany(newQuestions);
+      
+      res.json({ message: `Successfully replaced question bank with ${newQuestions.length} questions` });
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getQuestions = async (req, res) => {
+  try {
+    const questions = await Question.find({ testType: 'rank_selection' });
+    res.json(questions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.updateQuestion = async (req, res) => {
+  try {
+    const updated = await Question.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json({ message: 'Question updated', question: updated });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteQuestion = async (req, res) => {
+  try {
+    await Question.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Question deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

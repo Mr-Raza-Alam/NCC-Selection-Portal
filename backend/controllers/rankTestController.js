@@ -2,29 +2,31 @@ const Question = require('../models/Question');
 const RankCandidate = require('../models/RankCandidate');
 const RankR2Result = require('../models/RankR2Result');
 const RankSettings = require('../models/RankSettings');
-const TestConfig = require('../models/TestConfig');
-const RankMasterRecord = require('../models/RankMasterRecord');
+
+exports.getTestStatus = async (req, res) => {
+  try {
+    const settings = await RankSettings.findOne();
+    const r2Result = await RankR2Result.findOne({ candidateId: req.user.id });
+    
+    res.json({
+      settings: {
+        r_r2_testDate: settings?.r_r2_testDate,
+        r_r2_testTime: settings?.r_r2_testTime,
+        r_r2_active: settings?.r_r2_active,
+        r_r2_result: settings?.r_r2_result
+      },
+      result: r2Result ? { completed: r2Result.completed } : null
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 exports.getQuestions = async (req, res) => {
   try {
     const settings = await RankSettings.findOne();
-    if (!settings || !settings.r_r2_entry) {
-      return res.status(403).json({ message: 'Written Test is not active' });
-    }
-
-    const config = await TestConfig.findOne({ testType: 'rank_selection' });
-    if (config && !config.isTimeFinalized) {
-      return res.status(403).json({ message: 'Exact test time has not been finalized yet.' });
-    }
-    if (config && config.windowStart && config.windowEnd) {
-      const now = new Date();
-      const start = new Date(config.windowStart);
-      const end = new Date(config.windowEnd);
-      if (now < start || now > end) {
-        return res.status(403).json({ 
-          message: `Test will be available from ${start.toLocaleString()} to ${end.toLocaleString()}` 
-        });
-      }
+    if (!settings || !settings.r_r2_active) {
+      return res.status(403).json({ message: 'Test is not currently active' });
     }
 
     const student = await RankCandidate.findById(req.user.id);
@@ -46,18 +48,23 @@ exports.getQuestions = async (req, res) => {
 
 exports.startTest = async (req, res) => {
   try {
+    const settings = await RankSettings.findOne();
+    if (!settings || !settings.r_r2_active) {
+      return res.status(403).json({ message: 'Test is not active' });
+    }
+
     let r2Result = await RankR2Result.findOne({ candidateId: req.user.id });
     
     if (!r2Result) {
-      r2Result = await RankR2Result.create({ candidateId: req.user.id });
+      r2Result = await RankR2Result.create({ candidateId: req.user.id, attendance: 'P' });
     }
 
     if (!r2Result.testStartTime) {
-      const config = await TestConfig.findOne({ testType: 'rank_selection' });
-      const duration = config && config.timerMinutes ? config.timerMinutes : 30;
+      const duration = settings.r_r2_testDuration || 30;
 
       r2Result.testStartTime = new Date();
       r2Result.testEndTime = new Date(r2Result.testStartTime.getTime() + duration * 60 * 1000);
+      r2Result.attendance = 'P';
       await r2Result.save();
     }
     
@@ -65,19 +72,6 @@ exports.startTest = async (req, res) => {
       startTime: r2Result.testStartTime,
       endTime: r2Result.testEndTime
     });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-exports.saveProgress = async (req, res) => {
-  try {
-    const { answers } = req.body; 
-    await RankR2Result.findOneAndUpdate(
-      { candidateId: req.user.id },
-      { answers }
-    );
-    res.json({ message: 'Progress saved' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -93,36 +87,58 @@ exports.submitTest = async (req, res) => {
     }
 
     const allQuestions = await Question.find({ testType: 'rank_selection' });
+    const settings = await RankSettings.findOne();
+    const markPerQuestion = settings.r_r2_markPerQuestion || 1;
     let score = 0;
     
-    const answersArray = [];
+    const cadetAnswersArray = [];
 
     for (const q of allQuestions) {
-      const selected = answersMap[q._id.toString()];
-      answersArray.push(selected !== undefined ? selected : -1);
+      const selectedIndex = answersMap[q._id.toString()];
+      const isAnswered = selectedIndex !== undefined && selectedIndex !== -1;
+      const isCorrect = isAnswered && selectedIndex === q.correctAnswer;
       
-      if (selected !== undefined && selected === q.correctAnswer) {
-        score += 1;
+      cadetAnswersArray.push({
+        questionId: q._id,
+        questionText: q.questionText,
+        markedAnswer: isAnswered ? q.options[selectedIndex] : 'Skipped',
+        correctAnswer: q.options[q.correctAnswer],
+        isCorrect: isCorrect
+      });
+
+      if (isCorrect) {
+        score += markPerQuestion;
       }
     }
     
     if (!r2Result) {
-       r2Result = await RankR2Result.create({ candidateId: req.user.id });
+       r2Result = await RankR2Result.create({ candidateId: req.user.id, attendance: 'P' });
     }
 
-    r2Result.answers = answersArray;
+    r2Result.cadetAnswers = cadetAnswersArray;
     r2Result.totalScore = score;
     r2Result.completed = true;
     await r2Result.save();
     
-    const record = await RankMasterRecord.findOne({ candidateId: req.user.id });
-    if (record) {
-      record.r2Score = score;
-      record.totalScore = (record.r1Score || 0) + (record.r2Score || 0) + (record.r3Score || 0) + (record.aCertScore || 0) + (record.bCertScore || 0);
-      await record.save();
+    res.json({ message: 'Test submitted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getResult = async (req, res) => {
+  try {
+    const settings = await RankSettings.findOne();
+    if (!settings || !settings.r_r2_result) {
+      return res.status(403).json({ message: 'Results are not published yet' });
     }
-    
-    res.json({ message: 'Test submitted successfully', score });
+
+    const r2Result = await RankR2Result.findOne({ candidateId: req.user.id });
+    if (!r2Result) {
+      return res.status(404).json({ message: 'Result not found' });
+    }
+
+    res.json(r2Result);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

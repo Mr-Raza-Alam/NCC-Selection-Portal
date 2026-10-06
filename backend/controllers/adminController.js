@@ -107,11 +107,7 @@ exports.finalizeR1 = async (req, res) => {
       );
     }
     
-    const masters = await MasterRecord.find();
-    for (let m of masters) {
-      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0) + (m.hs || 0) + (m.aCert || 0) + (m.other || 0);
-      await MasterRecord.updateOne({ _id: m._id }, { $set: { total } });
-    }
+    // Redundant Master Record total calculation loop removed as it's correctly synced on entry.
     
     const settings = await getSettings();
     settings.r1Completed = true;
@@ -250,11 +246,7 @@ exports.finalizeR2 = async (req, res) => {
       );
     }
     
-    const masters = await MasterRecord.find();
-    for (let m of masters) {
-      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0) + (m.hs || 0) + (m.aCert || 0) + (m.other || 0);
-      await MasterRecord.updateOne({ _id: m._id }, { $set: { total } });
-    }
+    // Redundant Master Record total calculation loop removed as it's correctly synced on entry.
     
     const settings = await getSettings();
     settings.r2Completed = true;
@@ -403,9 +395,12 @@ exports.finalizeR3 = async (req, res) => {
       );
     }
     
-    // Upgrade R2 qualified to R3 qualified automatically
+    // Upgrade ONLY candidates who actually received an R3 score to r3_qualified
+    const completedR3Results = await R3Result.find({ r3Score: { $exists: true, $ne: null } });
+    const completedStudentIds = completedR3Results.map(r => r.studentId);
+    
     await Student.updateMany(
-      { status: 'r2_qualified' },
+      { _id: { $in: completedStudentIds }, status: 'r2_qualified' },
       { $set: { status: 'r3_qualified' } }
     );
 
@@ -422,12 +417,7 @@ exports.finalizeR3 = async (req, res) => {
 
 exports.finalizeDocVer = async (req, res) => {
   try {
-    // Calculate grand total for all master records including bonus marks
-    const masters = await MasterRecord.find();
-    for (let m of masters) {
-      const total = (m.r1 || 0) + (m.r2 || 0) + (m.r3 || 0) + (m.hs || 0) + (m.aCert || 0) + (m.other || 0);
-      await MasterRecord.updateOne({ _id: m._id }, { $set: { total } });
-    }
+    // Redundant grand total calculation loop removed as it is properly synced during verifyDocs.
 
     // Mark Document Verification as completed
     const settings = await getSettings();

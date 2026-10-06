@@ -1,11 +1,12 @@
 
 const { 
   setupR1, getR1Table, enterR1Score, finalizeR1, setR1Cutoff,
-  startR2, markR2Attendance, enterR2Score, finalizeR2, getR2Table, setR2Cutoff,
+  startR2, markR2Attendance, enterR2Score, finalizeR2, getR2Table,
   startR3, markR3Attendance, enterR3Score, finalizeR3, getR3Table,
   getMasterTable, deleteEliminated, finalizeSelection, publishFinalResults,
   getAdmins, updateAdminFeatures, getRankSettingsData, wipeAllRankCandidates,
-  deleteRankCandidate, updateRankCandidateProfile, verifyDocs, getRankCandidatesTable, updateAttendanceBonus
+  deleteRankCandidate, updateRankCandidateProfile, verifyDocs, getRankCandidatesTable, updateAttendanceBonus,
+  getTestSettings, updateTestSettings, appendQuestions, replaceQuestions, getQuestions, updateQuestion, deleteQuestion
 } = require('../controllers/rankAdminController');
 const express = require('express');
 const router = express.Router();
@@ -94,7 +95,7 @@ router.post('/r2/attendance', markR2Attendance);
 router.post('/r2/score', enterR2Score);
 router.get('/r2/table', getR2Table);
 router.post('/r2/done', finalizeR2);
-router.post('/r2/cutoff', setR2Cutoff);
+
 
 router.post('/r3/start', startR3);
 router.get('/r3/table', getR3Table);
@@ -116,5 +117,14 @@ router.post('/publish-results', publishFinalResults);
 router.get('/roles', getAdmins);
 router.post('/roles/update', updateAdminFeatures);
 router.get('/settings', getRankSettingsData);
+
+// Test Management Routes (Regular Assessment)
+router.get('/test-settings', getTestSettings);
+router.post('/test-settings', updateTestSettings);
+router.post('/questions/append', upload.single('file'), appendQuestions);
+router.post('/questions/replace', upload.single('file'), replaceQuestions);
+router.get('/questions', getQuestions);
+router.put('/questions/:id', updateQuestion);
+router.delete('/questions/:id', deleteQuestion);
 
 module.exports = router;

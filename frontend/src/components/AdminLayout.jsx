@@ -52,19 +52,21 @@ const AdminLayout = () => {
   ];
 
   const rankMenuItems = [
-    { title: 'Process-Test', isHeader: true },
+    { title: 'Rank Promotion', isHeader: true },
     { name: 'Physical-Test', feature: ['R1_SETUP', 'R1_SCORE'], subItems: [
         { name: 'Set-Activity', path: '/admin/rank/r1/setup', feature: ['R1_SETUP'] },
         { name: 'Entry-Table', path: '/admin/rank/r1/entry', feature: ['R1_SCORE'] },
         { name: 'Result Table', path: '/admin/rank/r1/result', feature: ['R1_SCORE', 'R1_SETUP'] }
     ]},
-    { name: 'Written-Test', feature: ['R2_START', 'R2_ATTENDANCE'], subItems: [
-        { name: 'Entry-Table', path: '/admin/rank/r2/entry', feature: ['R2_START'] },
-        { name: 'Result Table', path: '/admin/rank/r2/result', feature: ['R2_START'] }
-    ]},
     { name: 'Interview', feature: ['R3_SCORE'], subItems: [
         { name: 'Entry-Table', path: '/admin/rank/r3/entry', feature: ['R3_SCORE'] },
         { name: 'Result Table', path: '/admin/rank/r3/result', feature: ['R3_SCORE'] }
+    ]},
+    
+    { title: 'Regular Assessment', isHeader: true },
+    { name: 'Written-Test', feature: ['R2_START', 'R2_ATTENDANCE'], subItems: [
+        { name: 'Entry-Table', path: '/admin/rank/r2/entry', feature: ['R2_START'] },
+        { name: 'Result Table', path: '/admin/rank/r2/result', feature: ['R2_START'] }
     ]},
     
     { title: 'Record', isHeader: true },
