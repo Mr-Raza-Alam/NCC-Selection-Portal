@@ -25,7 +25,15 @@ This application provides a seamless, secure, and intuitive platform for both **
   - 2nd-year cadets verify their identity against this strict list to register and set their password.
   - CTO Master Table enforces rank quotas via a specialized Dropdown (Cadet, Promoted CPL, Promoted LCPL) replacing the standard checkbox.
   - **Attendance Bonus Integration**: Specifically for the 2nd-year rank selection, CTOs can award up to 5 bonus marks based on parade attendance directly within the R3 Master Table, instantly auto-calculating into the grand total.
+- **Standalone Knowledge Hub (Rank Assessment)**: 
+  - The Rank Selection Written Test is fully decoupled from promotion merit, functioning strictly as a "Regular Assessment" and learning tool.
+  - Includes a powerful **Question Bank CRM** allowing Admins to dynamically Append or Replace questions via CSV, and view/delete questions in a live table.
+  - Features a **Live Entry Table** with real-time score polling and a 1-click "Finalize" button that locks the test and auto-assigns '0' to absentees.
 - **Dynamic Test Scheduling (Date First, Time Later)**: Configure the test date early to show a calm "Date Announced" UI on student dashboards, and check "Finalize & Announce Exact Time" a day prior to seamlessly flip their UI into a live countdown timer.
+- **Advanced Exam Engine**:
+  - Unified, secure exam interfaces featuring **Global Sticky Timers**.
+  - **Auto-Submit Protocol**: Instantly catches and submits the cadet's current progress the millisecond the timer hits zero.
+  - **Detailed Review Modal**: Post-exam, Rank Cadets can unlock a massive modal showing exactly which questions they got right and wrong (Question, Your Answer, Correct Answer, Status).
 - **Test Management**: Configure test durations, toggle results visibility, and set strict Test Window start/end times (locked to IST).
 - **Question Bank Management**: Easily download a CSV template and upload hundreds of test questions instantly using an optimized in-memory CSV parser.
 - **Student Management**: View all registered students, their basic details, and test status. Download raw student records as a CSV file. Includes the ability for admins to safely edit and correct student profiles.
