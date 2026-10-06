@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../../utils/api';
 import toast from 'react-hot-toast';
 import Loader from '../../../components/Loader';
-import './RankTest.css';
+
 
 const RankLiveTest = () => {
   const navigate = useNavigate();
