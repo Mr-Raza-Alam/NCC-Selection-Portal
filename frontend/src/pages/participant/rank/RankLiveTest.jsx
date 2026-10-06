@@ -4,7 +4,6 @@ import api from '../../../utils/api';
 import toast from 'react-hot-toast';
 import Loader from '../../../components/Loader';
 
-
 const RankLiveTest = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -29,11 +28,48 @@ const RankLiveTest = () => {
       if (!data.settings.r_r2_active || data.result?.completed) {
         toast.error('Test is not active or you have already completed it.');
         navigate('/participant/rank/dashboard');
+        return;
       }
-      setLoading(false);
+
+      // Check if test was already started (Resuming state)
+      if (data.result?.testStartTime) {
+        const startTime = new Date(data.result.testStartTime).getTime();
+        const durationMs = (data.settings.r_r2_testDuration || 30) * 60 * 1000;
+        const elapsedMs = Date.now() - startTime;
+        const remainingSecs = Math.max(0, Math.floor((durationMs - elapsedMs) / 1000));
+        
+        if (remainingSecs > 0) {
+          toast.success('Resuming your active test...');
+          setTimeLeft(remainingSecs);
+          if (data.result.draftAnswers) {
+            setAnswers(data.result.draftAnswers);
+          }
+          await fetchQuestionsAndStart();
+        } else {
+          // Time is already up
+          toast.error('Your time has already expired. Auto-submitting...');
+          const finalAnswers = data.result.draftAnswers || {};
+          setAnswers(finalAnswers);
+          await submitExam(finalAnswers);
+        }
+      } else {
+        setLoading(false);
+      }
     } catch (err) {
       toast.error('Error fetching test status');
       navigate('/participant/rank/dashboard');
+    }
+  };
+
+  const fetchQuestionsAndStart = async () => {
+    try {
+      const qRes = await api.get('/rank-test/questions');
+      setQuestions(qRes.data);
+      setTestStarted(true);
+      setLoading(false);
+    } catch (err) {
+      toast.error('Failed to load questions.');
+      setLoading(false);
     }
   };
 
@@ -44,15 +80,10 @@ const RankLiveTest = () => {
     }
     setLoading(true);
     try {
-      await api.post('/rank-test/start');
-      const qRes = await api.get('/rank-test/questions');
-      setQuestions(qRes.data);
-      
+      const { data } = await api.post('/rank-test/start');
       const durationInSeconds = (settings?.r_r2_testDuration || 30) * 60;
       setTimeLeft(durationInSeconds);
-      
-      setTestStarted(true);
-      setLoading(false);
+      await fetchQuestionsAndStart();
     } catch (err) {
       toast.error('Failed to start test.');
       setLoading(false);
@@ -74,23 +105,22 @@ const RankLiveTest = () => {
 
   const handleAutoSubmit = async () => {
     toast.error('Time is up! Auto-submitting...');
-    await submitExam();
+    await submitExam(answers);
   };
 
   const handleManualSubmit = async () => {
     if (window.confirm('Are you sure you want to submit? You cannot change answers after this.')) {
-      await submitExam();
+      await submitExam(answers);
     }
   };
 
-  const submitExam = async () => {
+  const submitExam = async (currentAnswers) => {
     setLoading(true);
     clearTimeout(timerRef.current);
     
-    // Format answers array: { questionId, selectedOption }
-    const formattedAnswers = Object.keys(answers).map(qId => ({
+    const formattedAnswers = Object.keys(currentAnswers).map(qId => ({
       questionId: qId,
-      selectedOption: answers[qId]
+      selectedOption: currentAnswers[qId]
     }));
 
     try {
@@ -101,6 +131,13 @@ const RankLiveTest = () => {
       toast.error('Error submitting exam.');
       setLoading(false);
     }
+  };
+
+  const handleAnswerChange = (questionId, optIdx) => {
+    const newAnswers = { ...answers, [questionId]: optIdx };
+    setAnswers(newAnswers);
+    // Fire and forget auto-save to server
+    api.post('/rank-test/save-draft', { questionId, selectedOption: optIdx }).catch(e => console.error("Draft save failed"));
   };
 
   if (loading) return <Loader />;
@@ -118,9 +155,8 @@ const RankLiveTest = () => {
             <ul style={{ lineHeight: '1.8', color: 'var(--text-secondary)' }}>
               <li><strong>Objective:</strong> This test is for assessing your knowledge. It does <strong>NOT</strong> impact your promotion merit.</li>
               <li><strong>Duration:</strong> You will have <strong>{settings?.r_r2_testDuration || 30} minutes</strong> to complete the exam.</li>
-              <li><strong>Format:</strong> All questions are Multiple Choice Questions (MCQ).</li>
-              <li><strong>Navigation:</strong> Do not refresh the page or press the back button once the test starts.</li>
-              <li><strong>Submission:</strong> The test will automatically submit when the timer reaches zero. You can also manually submit before the time ends.</li>
+              <li><strong>Auto-Save (Resumable):</strong> Your progress is automatically saved to the server. If your device dies or loses connection, you can log back in and resume where you left off!</li>
+              <li><strong>Submission:</strong> The test will automatically submit when the global timer reaches zero.</li>
             </ul>
           </div>
 
@@ -158,7 +194,7 @@ const RankLiveTest = () => {
   };
 
   return (
-    <div style={{ paddingBottom: '4rem' }}>
+    <div style={{ paddingBottom: '4rem', userSelect: 'none' }} onContextMenu={(e) => e.preventDefault()}>
       {/* Sticky Timer Bar */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 100, backgroundColor: 'var(--primary-navy)', color: 'var(--bg-white)',
@@ -182,6 +218,10 @@ const RankLiveTest = () => {
       </div>
 
       <div className="container" style={{ maxWidth: '800px' }}>
+        <div style={{ marginBottom: '1.5rem', padding: '1rem', background: 'rgba(255,165,0,0.1)', color: 'var(--warning-amber)', borderRadius: '8px', border: '1px solid var(--warning-amber)', textAlign: 'center', fontSize: '0.9rem' }}>
+          <strong>🔒 Security Active:</strong> Copying, pasting, and right-clicking are disabled. Your answers are auto-saving every time you select an option.
+        </div>
+
         {questions.map((q, idx) => (
           <div key={q._id} className="glass-card" style={{ marginBottom: '1.5rem', padding: '1.5rem' }}>
             <h4 style={{ marginBottom: '1rem', color: 'var(--primary-navy)', lineHeight: '1.5' }}>
@@ -202,7 +242,7 @@ const RankLiveTest = () => {
                     name={`question_${q._id}`} 
                     value={optIdx}
                     checked={answers[q._id] === optIdx}
-                    onChange={() => setAnswers({ ...answers, [q._id]: optIdx })}
+                    onChange={() => handleAnswerChange(q._id, optIdx)}
                     style={{ width: '18px', height: '18px' }}
                   />
                   <span style={{ fontSize: '1rem', color: 'var(--text-primary)' }}>{opt}</span>

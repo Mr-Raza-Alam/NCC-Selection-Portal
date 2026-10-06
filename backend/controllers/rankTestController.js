@@ -15,7 +15,12 @@ exports.getTestStatus = async (req, res) => {
         r_r2_active: settings?.r_r2_active,
         r_r2_result: settings?.r_r2_result
       },
-      result: r2Result ? { completed: r2Result.completed } : null
+      result: r2Result ? { 
+        completed: r2Result.completed,
+        testStartTime: r2Result.testStartTime,
+        testEndTime: r2Result.testEndTime,
+        draftAnswers: r2Result.draftAnswers
+      } : null
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -79,7 +84,7 @@ exports.startTest = async (req, res) => {
 
 exports.submitTest = async (req, res) => {
   try {
-    const { answersMap } = req.body; 
+    const { answers } = req.body; 
     let r2Result = await RankR2Result.findOne({ candidateId: req.user.id });
     
     if (r2Result && r2Result.completed) {
@@ -94,7 +99,8 @@ exports.submitTest = async (req, res) => {
     const cadetAnswersArray = [];
 
     for (const q of allQuestions) {
-      const selectedIndex = answersMap[q._id.toString()];
+      const answeredObj = answers.find(a => a.questionId === q._id.toString());
+      const selectedIndex = answeredObj ? answeredObj.selectedOption : undefined;
       const isAnswered = selectedIndex !== undefined && selectedIndex !== -1;
       const isCorrect = isAnswered && selectedIndex === q.correctAnswer;
       
@@ -139,6 +145,27 @@ exports.getResult = async (req, res) => {
     }
 
     res.json(r2Result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.saveDraft = async (req, res) => {
+  try {
+    const { questionId, selectedOption } = req.body;
+    let r2Result = await RankR2Result.findOne({ candidateId: req.user.id });
+    
+    if (!r2Result || r2Result.completed) {
+      return res.status(400).json({ message: 'Cannot save draft' });
+    }
+    
+    if (!r2Result.draftAnswers) {
+      r2Result.draftAnswers = new Map();
+    }
+    r2Result.draftAnswers.set(questionId, selectedOption);
+    await r2Result.save();
+    
+    res.json({ success: true });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

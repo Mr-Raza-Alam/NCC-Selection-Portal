@@ -13,6 +13,7 @@ const rankR2ResultSchema = new mongoose.Schema({
   totalScore: { type: Number, default: 0 },
   testStartTime: { type: Date },
   testEndTime: { type: Date },
+  draftAnswers: { type: Map, of: Number, default: {} },
   completed: { type: Boolean, default: false }
 });
 
